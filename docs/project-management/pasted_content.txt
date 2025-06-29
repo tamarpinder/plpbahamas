@@ -1,0 +1,90 @@
+Prompt for Manus AI: PLP Mobile Application Redesign
+Objective:Redesign the Progressive Liberal Party (PLP) mobile application prototype to deliver a modern, sleek, and professional aesthetic while preserving all existing features and functionality. The design should be visually engaging, intuitive, and culturally relevant to Bahamian users, aligning with the PLP’s branding and appealing to a broad audience.
+Key Design Guidelines:
+
+Color Scheme:  
+
+Use the PLP’s official colors, gold and blue, as the primary palette.  
+Gold for accents, highlights, and branding elements (e.g., buttons, icons, headers).  
+Blue for backgrounds or text where contrast is needed.
+
+
+Incorporate secondary Bahamian cultural colors (e.g., aquamarine, coral) sparingly to reflect local identity.  
+Ensure high contrast for readability and compliance with accessibility standards.
+
+
+Typography:  
+
+Select modern, sans-serif fonts such as Roboto, Open Sans, or Montserrat.  
+Establish a clear hierarchy with distinct sizes and weights for headings, subheadings, body text, and captions.  
+Ensure text is legible on all screen sizes and consistent across the app.
+
+
+Layout and Navigation:  
+
+Design a clean, intuitive layout with a bottom navigation bar for easy access to key sections (e.g., Home, News, Events, Live, Profile).  
+Use whitespace effectively to create an uncluttered, open feel.  
+Ensure navigation is simple, especially for users with limited tech experience.
+
+
+Visual Hierarchy:  
+
+Highlight important content using size, color, and placement.  
+Use larger fonts for headings, bold text for calls to action, and clear distinctions for content types (e.g., news, events, live streams).  
+Guide users’ attention to critical features like live streaming and donation options.
+
+
+Imagery and Icons:  
+
+Include high-quality images of PLP leaders, campaign events, and supporters.  
+Use modern, consistent icons for navigation and actions, ensuring scalability and clarity.  
+Optimize visuals for fast loading on mobile devices.
+
+
+Animations and Transitions:  
+
+Add subtle animations for screen transitions and interactions (e.g., button presses, menu openings) to enhance dynamism.  
+Ensure animations are smooth and non-intrusive.
+
+
+Cultural Integration:  
+
+Subtly incorporate Bahamian cultural elements, such as local patterns, art, or symbols, in backgrounds, icons, or decorative elements.  
+Ensure these elements enhance the modern aesthetic without dominating the design.
+
+
+Accessibility:  
+
+Follow WCAG guidelines for color contrast, alt text for images, and screen reader compatibility.  
+Use clear labels for buttons and forms to support all users.
+
+
+Consistency and Branding:  
+
+Maintain a consistent design language across all screens, using the same colors, typography, and icon styles.  
+Reflect the PLP’s brand identity, conveying professionalism and trust.  
+Avoid overly casual elements to maintain the app’s political credibility.
+
+
+Responsiveness:  
+
+Ensure the design is responsive and performs well on various mobile devices and screen sizes.  
+Support both iOS and Android platforms.
+
+
+
+Important Notes:  
+
+Preserve Functionality: Do not alter the app’s existing features or functionality. Focus exclusively on the design.  
+User-Centric Design: Create an interface that is intuitive for a diverse Bahamian audience, balancing modernity with cultural relevance.  
+Professional Tone: The design should instill trust and reliability, suitable for a political party.  
+Prototype Focus: Ensure the redesigned prototype is visually polished to demonstrate the potential of the final app.
+
+Feature-Specific Design Considerations:  
+
+Live Streaming: Create an immersive, clean layout for live streams, prioritizing video content with easy access to related features (e.g., event details, sharing options).  
+News Feed: Design a scrollable, readable feed with clear distinctions between articles, videos, and announcements.  
+Event Calendar: Make the calendar visually appealing with intuitive RSVP and reminder options.  
+Donation Platform: Ensure the donation section is secure, professional, and user-friendly to build user confidence.
+
+By adhering to these guidelines, create a visually stunning, modern, and culturally relevant mobile app that effectively engages PLP supporters and strengthens the party’s campaign presence.

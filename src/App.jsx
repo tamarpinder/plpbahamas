@@ -11,7 +11,7 @@ function App() {
   const [currentView, setCurrentView] = useState('welcome')
   const [user, setUser] = useState(null)
   const [isGuest, setIsGuest] = useState(false)
-  const [dashboardStats, setDashboardStats] = useState({ activeMembers: 0, upcomingEvents: 0 })
+  const [dashboardStats, setDashboardStats] = useState({ activeMembers: 0 })
   const [news, setNews] = useState([])
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(false)
@@ -44,6 +44,11 @@ function App() {
     if (currentUser) {
       setUser(currentUser)
       setIsGuest(false)
+      setCurrentView('dashboard')
+      // Load dashboard data for existing user
+      fetchDashboardStats()
+      fetchNews()
+      fetchEvents()
     }
   }, [])
 
@@ -190,14 +195,13 @@ function App() {
       setLoading(true)
       const data = await mockApi.fetchDashboardStats()
       setDashboardStats({
-        activeMembers: data.activeMembers,
-        upcomingEvents: data.upcomingEvents
+        activeMembers: data.activeMembers
       })
     } catch (error) {
       console.error('Error fetching dashboard stats:', error)
       setMessage('Error loading dashboard data. Please try again.')
       setTimeout(() => setMessage(''), 3000)
-      setDashboardStats({ activeMembers: 3, upcomingEvents: 5 })
+      setDashboardStats({ activeMembers: 3 })
     } finally {
       setLoading(false)
     }
@@ -650,7 +654,7 @@ function App() {
               style={{width: '100%'}}
               onClick={() => setCurrentView('welcome')}
             >
-              Back to Welcome
+              Back
             </button>
           </form>
           </div>
@@ -770,7 +774,14 @@ function App() {
               <div className="stat-label">Active Members</div>
             </div>
             <div className="stat-card">
-              <div className="stat-number">{dashboardStats.upcomingEvents}</div>
+              <div className="stat-number">{(() => {
+                const upcomingEvents = events.filter(event => new Date(event.date_time) > new Date());
+                console.log('Total events:', events.length);
+                console.log('Upcoming events:', upcomingEvents.length);
+                console.log('Current date:', new Date());
+                console.log('Events:', events.map(e => ({ title: e.title, date: e.date_time, isUpcoming: new Date(e.date_time) > new Date() })));
+                return upcomingEvents.length;
+              })()}</div>
               <div className="stat-label">Upcoming Events</div>
             </div>
           </div>
@@ -1016,7 +1027,7 @@ function App() {
                 onClick={() => setShowDonationForm(true)}
                 style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}
               >
-                💰 Make a Donation
+                💰 Make A Donation
               </button>
               
               <button 
@@ -1024,7 +1035,7 @@ function App() {
                 onClick={() => setShowVolunteerForm(true)}
                 style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'}}
               >
-                🤝 Volunteer with Us
+                🤝 Volunteer With Us
               </button>
               
               <button 

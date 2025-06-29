@@ -1219,3 +1219,22 @@
       at JSXParserMixin.parseMaybeAssignAllowIn (/Users/internaut/Desktop/PLP MOBILE APPLICATION (UPDATED)/node_modules/@babel/parser/lib/index.js:10748:17)
       at JSXParserMixin.parseParenAndDistinguishExpression (/Users/internaut/Desktop/PLP MOBILE APPLICATION (UPDATED)/node_modules/@babel/parser/lib/index.js:11622:28)
 12:50:40 AM [vite] (client) hmr update /src/App.jsx
+1:02:13 AM [vite] (client) hmr update /src/App.css
+1:02:52 AM [vite] (client) hmr update /src/App.css
+1:07:18 AM [vite] (client) hmr update /src/App.jsx
+1:08:42 AM [vite] (client) hmr update /src/App.jsx
+1:08:58 AM [vite] (client) hmr update /src/App.jsx
+1:11:47 AM [vite] (client) hmr update /src/App.jsx
+1:11:54 AM [vite] (client) hmr update /src/App.jsx
+1:12:01 AM [vite] (client) hmr update /src/App.jsx
+1:12:07 AM [vite] (client) hmr update /src/App.jsx
+1:15:00 AM [vite] (client) hmr update /src/App.jsx
+1:15:18 AM [vite] (client) hmr update /src/App.jsx
+1:17:14 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:17:21 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:17:38 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:18:00 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:18:06 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:18:12 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:18:17 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx
+1:18:23 AM [vite] (client) hmr update /src/App.jsx, /src/components/DonationForm.jsx, /src/components/VolunteerForm.jsx

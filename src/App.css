@@ -417,28 +417,59 @@ body::before {
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
+  background: var(--turquoise);
+  color: white;
+  border-color: var(--turquoise);
+  box-shadow: 0 0 20px rgba(64, 224, 208, 0.3);
+}
+
+/* Dark mode specific secondary button styles */
+[data-theme="dark"] .btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
   background: rgba(255, 255, 255, 0.2);
+  color: white;
   border-color: var(--turquoise);
   box-shadow: 0 0 20px rgba(64, 224, 208, 0.3);
 }
 
 .btn-ghost {
   background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-secondary);
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(0, 51, 102, 0.3);
+  color: var(--text-primary);
+}
+
+/* Dark mode specific ghost button styles */
+[data-theme="dark"] .btn-ghost {
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.btn-ghost:hover {
+[data-theme="dark"] .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--accent);
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  color: white;
 }
 
 /* Dashboard with enhanced cultural elements */

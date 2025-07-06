@@ -3,9 +3,17 @@ import plpLogo from './assets/Flag_of_the_Progressive_Liberal_Party.png'
 import './App.css'
 import { mockApi } from './services/mockApi.js'
 import DonationForm from './components/DonationForm.jsx'
+import DonationFormMobile from './components/DonationFormMobile.jsx'
 import VolunteerForm from './components/VolunteerForm.jsx'
 import ScreenContainer from './components/ScreenContainer.jsx'
 import EventCard from './components/EventCard.jsx'
+import QuickActions from './components/QuickActions.jsx'
+import ImpactDashboard from './components/ImpactDashboard.jsx'
+import TrendingSection from './components/TrendingSection.jsx'
+import QuickDonate from './components/QuickDonate.jsx'
+import { getCurrentUser } from './data/mockUserGamified.js'
+import { mockBadges, getUserLevel } from './data/mockBadges.js'
+import { mockCampaigns } from './data/mockDonations.js'
 
 function App() {
   const [currentView, setCurrentView] = useState('welcome')
@@ -20,6 +28,7 @@ function App() {
   const [newComment, setNewComment] = useState('')
   const [showComments, setShowComments] = useState({})
   const [showDonationForm, setShowDonationForm] = useState(false)
+  const [showQuickDonate, setShowQuickDonate] = useState(false)
   const [showVolunteerForm, setShowVolunteerForm] = useState(false)
   const [signupForm, setSignupForm] = useState({
     name: '',
@@ -327,7 +336,11 @@ function App() {
   }
 
   const handleDonationSuccess = (donation) => {
-    setMessage(`Thank you for your $${donation.amount} donation! 🙏`)
+    if (donation.gamification && donation.gamification.points_earned) {
+      setMessage(`Thank you for your $${donation.amount} donation! You earned ${donation.gamification.points_earned} PLP Points! 🎯`)
+    } else {
+      setMessage(`Thank you for your $${donation.amount} donation! 🙏`)
+    }
     setTimeout(() => setMessage(''), 5000)
   }
 
@@ -760,67 +773,56 @@ function App() {
             <div className="dashboard-header">
               <img src={plpLogo} alt="PLP Logo" className="dashboard-logo" />
               <h1 className="dashboard-title">Welcome {isGuest ? 'Guest' : user?.name || 'Member'}!</h1>
-              <p className="dashboard-subtitle">Stay connected with your PLP community</p>
+              <p className="dashboard-subtitle">Make an impact with the PLP</p>
             </div>
 
             {message && <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>{message}</div>}
             {loading && <div className="loading-indicator">Loading...</div>}
 
             <div className="scrollable-content">
+              {/* Quick Actions */}
+              <QuickActions 
+                onDonate={() => {
+                  const currentUser = getCurrentUser();
+                  if (currentUser?.paymentMethod) {
+                    setShowQuickDonate(true);
+                  } else {
+                    setShowDonationForm(true);
+                  }
+                }}
+                onVolunteer={() => setShowVolunteerForm(true)}
+                onEvents={() => setCurrentView('events')}
+                user={getCurrentUser()}
+              />
 
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-number">{dashboardStats.activeMembers}</div>
-              <div className="stat-label">Active Members</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-number">{(() => {
-                const upcomingEvents = events.filter(event => new Date(event.date_time) > new Date());
-                console.log('Total events:', events.length);
-                console.log('Upcoming events:', upcomingEvents.length);
-                console.log('Current date:', new Date());
-                console.log('Events:', events.map(e => ({ title: e.title, date: e.date_time, isUpcoming: new Date(e.date_time) > new Date() })));
-                return upcomingEvents.length;
-              })()}</div>
-              <div className="stat-label">Upcoming Events</div>
-            </div>
-          </div>
+              {/* Impact Dashboard (only for logged in users) */}
+              <ImpactDashboard user={getCurrentUser()} />
 
-          <div className="news-section">
-            <h2 className="section-title">Latest News</h2>
-            <div className="news-list">
-              {news.slice(0, 3).map(item => (
-                <div key={item.id} className="news-card">
-                  <div 
-                    className="news-category"
-                    style={{ background: getCategoryColor(item.category) }}
-                  >
-                    {item.category}
-                  </div>
-                  <h3 className="news-title">{item.title}</h3>
-                  <p className="news-excerpt">{item.content}</p>
-                  <div className="news-meta">
-                    <span>{formatDate(item.date)}</span>
-                  </div>
-                  <div className="news-actions">
-                    <button 
-                      className="action-btn"
-                      onClick={() => handleLike(item.id)}
-                    >
-                      ❤️ {item.likes}
-                    </button>
-                    <button className="action-btn">
-                      💬 {item.comments?.length || 0}
-                    </button>
-                    <button className="action-btn">
-                      📤 {item.shares}
-                    </button>
-                  </div>
+              {/* Trending Section */}
+              <TrendingSection 
+                news={news}
+                campaigns={mockCampaigns}
+                events={events}
+                onNewsClick={(newsItem) => setCurrentView('news')}
+                onCampaignClick={() => setShowDonationForm(true)}
+                onEventClick={() => setCurrentView('events')}
+              />
+
+              {/* Community Stats */}
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-number">{dashboardStats.activeMembers}</div>
+                  <div className="stat-label">Active Members</div>
                 </div>
-              ))}
+                <div className="stat-card">
+                  <div className="stat-number">{(() => {
+                    const upcomingEvents = events.filter(event => new Date(event.date_time) > new Date());
+                    return upcomingEvents.length;
+                  })()}</div>
+                  <div className="stat-label">Upcoming Events</div>
+                </div>
+              </div>
             </div>
-          </div>
-          </div>
           </div>
         </ScreenContainer>
       )}
@@ -973,16 +975,149 @@ function App() {
                 : `Welcome back, ${user?.name}! Manage your account settings and stay connected with the PLP community.`}
             </p>
             
-            {user && !isGuest && (
-              <div style={{marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius)', marginBottom: '1rem'}}>
-                <h4 style={{margin: '0 0 0.5rem 0', color: 'var(--primary)'}}>Account Details</h4>
-                <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Email:</strong> {user.email}</p>
-                {user.age && <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Age:</strong> {user.age}</p>}
-                {user.votingDistrict && <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>District:</strong> {user.votingDistrict}</p>}
-                <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Member since:</strong> {new Date(user.memberSince).toLocaleDateString()}</p>
-                <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Status:</strong> {user.verified ? '✅ Verified' : '⏳ Pending Verification'}</p>
-              </div>
-            )}
+{user && !isGuest && (() => {
+              const gamifiedUser = getCurrentUser();
+              const levelInfo = getUserLevel(gamifiedUser?.total_points || 0);
+              
+              return (
+                <>
+                  {/* Gamification Stats */}
+                  <div style={{
+                    marginTop: '1rem', 
+                    padding: '1rem', 
+                    background: 'linear-gradient(135deg, #EBF8FF 0%, #DBEAFE 100%)', 
+                    borderRadius: 'var(--radius)', 
+                    marginBottom: '1rem',
+                    border: '2px solid #93C5FD'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                      <div>
+                        <h4 style={{margin: '0', color: '#1D4ED8', fontSize: '1rem'}}>
+                          {levelInfo.name} Level {gamifiedUser?.current_level || 1}
+                        </h4>
+                        <p style={{margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: '#6B7280'}}>
+                          {(gamifiedUser?.total_points || 0).toLocaleString()} PLP Points
+                        </p>
+                      </div>
+                      <div style={{ fontSize: '2rem' }}>
+                        {levelInfo.name === 'Legend' ? '👑' : 
+                         levelInfo.name === 'Guardian' ? '🛡️' :
+                         levelInfo.name === 'Ambassador' ? '🏆' : 
+                         levelInfo.name === 'Champion' ? '⭐' : '🌱'}
+                      </div>
+                    </div>
+                    
+                    {/* Progress to next level */}
+                    {levelInfo.level < 6 && (
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                          Progress to {levelInfo.level === 1 ? 'Advocate' : 
+                                    levelInfo.level === 2 ? 'Champion' :
+                                    levelInfo.level === 3 ? 'Ambassador' :
+                                    levelInfo.level === 4 ? 'Guardian' : 'Legend'}
+                        </div>
+                        <div style={{ 
+                          width: '100%', 
+                          backgroundColor: '#E5E7EB', 
+                          borderRadius: '0.5rem', 
+                          height: '0.5rem' 
+                        }}>
+                          <div style={{ 
+                            width: `${Math.min(((gamifiedUser?.total_points || 0) % (levelInfo.level === 1 ? 500 : levelInfo.level === 2 ? 1500 : levelInfo.level === 3 ? 3000 : levelInfo.level === 4 ? 5000 : 15000)) / (levelInfo.level === 1 ? 500 : levelInfo.level === 2 ? 1500 : levelInfo.level === 3 ? 3000 : levelInfo.level === 4 ? 5000 : 15000)) * 100, 100}%`,
+                            backgroundColor: '#3B82F6',
+                            height: '100%',
+                            borderRadius: '0.5rem',
+                            transition: 'width 0.3s ease'
+                          }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Activity Stats */}
+                  <div style={{
+                    marginBottom: '1rem',
+                    padding: '1rem',
+                    background: 'var(--bg-secondary)',
+                    borderRadius: 'var(--radius)'
+                  }}>
+                    <h4 style={{margin: '0 0 0.75rem 0', color: 'var(--primary)'}}>Your Impact</h4>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                      <div style={{ textAlign: 'center', padding: '0.5rem' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#059669' }}>
+                          ${(gamifiedUser?.total_donations || 0).toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>Donated</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '0.5rem' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#7C3AED' }}>
+                          {gamifiedUser?.volunteer_hours || 0}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>Vol. Hours</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '0.5rem' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#DC2626' }}>
+                          {gamifiedUser?.events_attended || 0}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>Events</div>
+                      </div>
+                      <div style={{ textAlign: 'center', padding: '0.5rem' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#0284C7' }}>
+                          {gamifiedUser?.consecutive_days || 0}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>Day Streak</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Badges */}
+                  {gamifiedUser?.badges_unlocked && gamifiedUser.badges_unlocked.length > 0 && (
+                    <div style={{
+                      marginBottom: '1rem',
+                      padding: '1rem',
+                      background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+                      borderRadius: 'var(--radius)',
+                      border: '2px solid #F59E0B'
+                    }}>
+                      <h4 style={{margin: '0 0 0.75rem 0', color: '#92400E'}}>Recent Badges</h4>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {gamifiedUser.badges_unlocked.slice(-4).map((userBadge, index) => {
+                          const badge = mockBadges.find(b => b.name === userBadge.name);
+                          return (
+                            <div key={index} style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              padding: '0.5rem',
+                              backgroundColor: 'white',
+                              borderRadius: '0.5rem',
+                              minWidth: '60px'
+                            }}>
+                              <div style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>
+                                {badge?.icon || '🏆'}
+                              </div>
+                              <div style={{ fontSize: '0.6rem', textAlign: 'center', color: '#374151' }}>
+                                {userBadge.name}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Account Details */}
+                  <div style={{marginTop: '1rem', padding: '1rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius)', marginBottom: '1rem'}}>
+                    <h4 style={{margin: '0 0 0.5rem 0', color: 'var(--primary)'}}>Account Details</h4>
+                    <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Email:</strong> {user.email}</p>
+                    {user.age && <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Age:</strong> {user.age}</p>}
+                    {user.votingDistrict && <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>District:</strong> {user.votingDistrict}</p>}
+                    <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Member since:</strong> {new Date(user.memberSince).toLocaleDateString()}</p>
+                    <p style={{margin: '0.25rem 0', fontSize: '0.875rem'}}><strong>Status:</strong> {user.verified ? '✅ Verified' : '⏳ Pending Verification'}</p>
+                  </div>
+                </>
+              );
+            })()}
 
             {isGuest && (
               <div style={{marginTop: '1rem', marginBottom: '1rem'}}>
@@ -1123,8 +1258,15 @@ function App() {
 
       {/* Modal Forms */}
       {showDonationForm && (
-        <DonationForm
+        <DonationFormMobile
           onClose={() => setShowDonationForm(false)}
+          onSuccess={handleDonationSuccess}
+        />
+      )}
+
+      {showQuickDonate && (
+        <QuickDonate
+          onClose={() => setShowQuickDonate(false)}
           onSuccess={handleDonationSuccess}
         />
       )}

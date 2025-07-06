@@ -17,6 +17,24 @@ class User(db.Model):
     last_active = db.Column(db.DateTime, default=datetime.utcnow)
     notification_preferences = db.Column(db.Text, nullable=True)  # JSON string
     is_active = db.Column(db.Boolean, default=True)
+    
+    # Gamification fields
+    total_points = db.Column(db.Integer, default=0)
+    current_level = db.Column(db.Integer, default=1)
+    level_name = db.Column(db.String(50), default='Supporter')
+    consecutive_days = db.Column(db.Integer, default=0)
+    last_login_date = db.Column(db.Date, nullable=True)
+    total_donations = db.Column(db.Float, default=0.0)
+    volunteer_hours = db.Column(db.Float, default=0.0)
+    referral_count = db.Column(db.Integer, default=0)
+    achievements_unlocked = db.Column(db.Text, nullable=True)  # JSON string of badge IDs
+    
+    # Social features
+    squad_id = db.Column(db.Integer, db.ForeignKey('squad.id'), nullable=True)
+    is_verified = db.Column(db.Boolean, default=False)
+    profile_picture_url = db.Column(db.String(255), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'<User {self.full_name}>'

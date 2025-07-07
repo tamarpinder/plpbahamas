@@ -4,6 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PhoneMockup from './components/PhoneMockup';
 import MobileLayout from './components/mobile/MobileLayout';
 import ScreenLoader from './components/shared/ScreenLoader';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import useAuthStore from '@/stores/useAuthStore';
 import { preloadCoreScreens } from '@/utils/preloadComponents';
 import './App.css';
@@ -78,26 +79,28 @@ function App() {
   };
 
   return (
-    <ErrorBoundary>
-      <div className="min-h-screen bg-gray-100">
-        <PhoneMockup>
-          {!isAuthenticated ? (
-            <Suspense fallback={<ScreenLoader screenName="Login" />}>
-              <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
-            </Suspense>
-          ) : (
-            <MobileLayout 
-              activeTab={activeScreen} 
-              onTabChange={handleNavigation}
-              showTabBar={true}
-            >
-              {renderCurrentScreen()}
-            </MobileLayout>
-          )}
-        </PhoneMockup>
-        <Toaster position="top-center" richColors />
-      </div>
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-gray-100">
+          <PhoneMockup>
+            {!isAuthenticated ? (
+              <Suspense fallback={<ScreenLoader screenName="Login" />}>
+                <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
+              </Suspense>
+            ) : (
+              <MobileLayout 
+                activeTab={activeScreen} 
+                onTabChange={handleNavigation}
+                showTabBar={true}
+              >
+                {renderCurrentScreen()}
+              </MobileLayout>
+            )}
+          </PhoneMockup>
+          <Toaster position="top-center" richColors />
+        </div>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }
 

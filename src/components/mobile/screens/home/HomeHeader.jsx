@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Star, User } from 'lucide-react';
+import { Bell, Star, User, Moon, Sun } from 'lucide-react';
 import { PLPColors } from '@/constants/brandColors';
+import { useTheme } from '@/contexts/ThemeContext';
 import LevelProgressBar from '../../../gamification/LevelProgressBar';
 import styles from './HomeHeader.module.css';
 
@@ -13,6 +14,8 @@ const HomeHeader = ({
   onNavigate,
   itemVariants 
 }) => {
+  const { theme, toggleTheme, isDark } = useTheme();
+  
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good Morning';
@@ -51,6 +54,18 @@ const HomeHeader = ({
             }}
           >
             <Bell size={20} color={PLPColors.primary.navy} />
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleTheme}
+            className={styles.actionButton}
+            style={{
+              background: PLPColors.getColorWithOpacity(isDark ? PLPColors.primary.gold : PLPColors.primary.blue, 0.1)
+            }}
+          >
+            {isDark ? <Sun size={20} color={PLPColors.primary.navy} /> : <Moon size={20} color={PLPColors.primary.navy} />}
           </motion.button>
           
           <motion.button

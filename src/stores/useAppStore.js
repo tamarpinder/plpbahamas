@@ -125,6 +125,48 @@ const useAppStore = create((set, get) => ({
     }
   },
   
+  // Live streaming functionality
+  getLiveEvents: () => {
+    const { events } = get();
+    const now = new Date();
+    return events.filter(event => {
+      if (!event.is_live_streamed) return false;
+      const eventStart = new Date(event.date_time);
+      const eventEnd = new Date(event.end_time);
+      return now >= eventStart && now <= eventEnd;
+    });
+  },
+  
+  getUpcomingLiveEvents: () => {
+    const { events } = get();
+    const now = new Date();
+    const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    return events.filter(event => {
+      if (!event.is_live_streamed) return false;
+      const eventStart = new Date(event.date_time);
+      return eventStart > now && eventStart <= next24Hours;
+    }).sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+  },
+  
+  joinLiveStream: async (eventId) => {
+    try {
+      // In a real app, this would open the live stream
+      console.log('Joining live stream for event:', eventId);
+      // Add viewer count simulation
+      set((state) => ({
+        events: state.events.map(event => 
+          event.id === eventId 
+            ? { ...event, viewerCount: (event.viewerCount || 0) + 1 }
+            : event
+        )
+      }));
+      return { success: true };
+    } catch (error) {
+      console.error('Error joining live stream:', error);
+      return { success: false, error };
+    }
+  },
+  
   // Initialize app data
   initializeApp: async () => {
     await Promise.all([

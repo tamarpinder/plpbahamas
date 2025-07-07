@@ -179,6 +179,44 @@ export const ACHIEVEMENT_BADGES = [
     color: '#FFD700',
     rarity: 'epic',
     requirements: { action: 'TOWN_HALL_ATTEND', count: 5 }
+  },
+  
+  // Live Streaming Badges
+  {
+    id: 'stream_viewer',
+    name: 'Stream Viewer',
+    description: 'Join your first live stream',
+    icon: '📺',
+    color: '#DC2626',
+    rarity: 'common',
+    requirements: { action: 'LIVESTREAM_JOIN', count: 1 }
+  },
+  {
+    id: 'stream_enthusiast',
+    name: 'Stream Enthusiast',
+    description: 'Join 10 live streams',
+    icon: '🎬',
+    color: '#DC2626',
+    rarity: 'rare',
+    requirements: { action: 'LIVESTREAM_JOIN', count: 10 }
+  },
+  {
+    id: 'live_loyalist',
+    name: 'Live Loyalist',
+    description: 'Join 25 live streams',
+    icon: '🔴',
+    color: '#B91C1C',
+    rarity: 'epic',
+    requirements: { action: 'LIVESTREAM_JOIN', count: 25 }
+  },
+  {
+    id: 'stream_legend',
+    name: 'Stream Legend',
+    description: 'Join 50 live streams',
+    icon: '👑',
+    color: '#7C2D12',
+    rarity: 'legendary',
+    requirements: { action: 'LIVESTREAM_JOIN', count: 50 }
   }
 ];
 
@@ -212,6 +250,14 @@ export const DAILY_CHALLENGES = [
     points: 25,
     icon: '🗓️',
     requirements: { action: 'EVENT_RSVP', count: 1, timeframe: 'daily' }
+  },
+  {
+    id: 'live_viewer',
+    name: 'Live Viewer',
+    description: 'Join a live stream today',
+    points: 20,
+    icon: '🔴',
+    requirements: { action: 'LIVESTREAM_JOIN', count: 1, timeframe: 'daily' }
   }
 ];
 

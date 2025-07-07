@@ -1,4 +1,50 @@
 export const mockEvents = [
+  // Live/Upcoming events for testing
+  {
+    id: 101,
+    title: 'Live Town Hall - Current Issues',
+    description: 'Join our live discussion on current issues affecting The Bahamas. Real-time Q&A with party leadership and community members.',
+    date_time: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // Started 30 minutes ago
+    end_time: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // Ends in 1 hour
+    location: 'Virtual Event',
+    address: 'Online Stream',
+    event_type: 'Town Hall',
+    is_live_streamed: true,
+    is_virtual: true,
+    interested_count: 312,
+    attending_count: 189,
+    viewerCount: 147,
+    max_capacity: 1000,
+    registration_required: false,
+    cost: 'Free',
+    organizer: 'PLP Digital Engagement',
+    contact_email: 'digital@plp.bs',
+    contact_phone: '(242) 322-2400',
+    speakers: ['Hon. Philip Davis', 'Community Leaders'],
+    tags: ['live', 'town-hall', 'virtual', 'politics']
+  },
+  {
+    id: 102,
+    title: 'Youth Leadership Forum',
+    description: 'Upcoming live stream focusing on youth engagement and leadership development in our communities.',
+    date_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // In 2 hours
+    end_time: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // Runs for 2 hours
+    location: 'Virtual Event',
+    address: 'Online Stream',
+    event_type: 'Forum',
+    is_live_streamed: true,
+    is_virtual: true,
+    interested_count: 156,
+    attending_count: 98,
+    max_capacity: 500,
+    registration_required: true,
+    cost: 'Free',
+    organizer: 'PLP Youth Wing',
+    contact_email: 'youth@plp.bs',
+    contact_phone: '(242) 322-2400',
+    speakers: ['Youth Leaders', 'Education Minister'],
+    tags: ['youth', 'leadership', 'live', 'virtual']
+  },
   {
     id: 1,
     title: 'Community Rally - Nassau',

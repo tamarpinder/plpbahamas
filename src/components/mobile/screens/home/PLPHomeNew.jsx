@@ -7,13 +7,15 @@ import { PLPColors } from '@/constants/brandColors';
 
 // Import section components
 import HomeHeader from './HomeHeader';
+import LiveNowBanner from './LiveNowBanner';
+import UpcomingLiveEvents from './UpcomingLiveEvents';
 import QuickStatsGrid from './QuickStatsGrid';
 import DailyChallenges from './DailyChallenges';
 import QuickActionsGrid from './QuickActionsGrid';
 import LatestNews from './LatestNews';
 
 const PLPHomeNew = ({ onNavigate }) => {
-  const { dashboardStats, news, events, initializeApp } = useAppStore();
+  const { dashboardStats, news, events, initializeApp, getLiveEvents, getUpcomingLiveEvents, joinLiveStream } = useAppStore();
   const { user } = useAuthStore();
   const { 
     userProfile, 
@@ -35,6 +37,16 @@ const PLPHomeNew = ({ onNavigate }) => {
 
   const currentLevel = getUserLevel();
   const levelProgress = getLevelProgress();
+  const liveEvents = getLiveEvents();
+  const upcomingLiveEvents = getUpcomingLiveEvents();
+  const currentLiveEvent = liveEvents.length > 0 ? liveEvents[0] : null;
+  
+  const handleJoinStream = async (event) => {
+    await joinLiveStream(event.id);
+    awardUserPoints('LIVESTREAM_JOIN');
+    // In a real app, this would navigate to the live stream player
+    console.log('Joining live stream:', event.title);
+  };
 
   // Animation variants
   const containerVariants = {
@@ -60,10 +72,9 @@ const PLPHomeNew = ({ onNavigate }) => {
       initial="hidden"
       animate="visible"
       style={{
-        height: '100%',
+        minHeight: '100vh',
         background: PLPColors.gradients.hero,
-        position: 'relative',
-        overflow: 'hidden'
+        position: 'relative'
       }}
     >
       {/* Background Elements */}
@@ -89,7 +100,21 @@ const PLPHomeNew = ({ onNavigate }) => {
       />
 
       {/* Main Content */}
-      <div style={{ padding: '0 1rem 1rem', height: '100%', overflow: 'auto' }}>
+      <div style={{ padding: '0 1rem 2rem' }}>
+        {/* Live Now Banner */}
+        <LiveNowBanner
+          liveEvent={currentLiveEvent}
+          onJoinStream={handleJoinStream}
+          itemVariants={itemVariants}
+        />
+        
+        {/* Upcoming Live Events */}
+        <UpcomingLiveEvents
+          upcomingEvents={upcomingLiveEvents}
+          onNavigate={onNavigate}
+          itemVariants={itemVariants}
+        />
+        
         {/* Quick Stats */}
         <QuickStatsGrid
           dashboardStats={dashboardStats}

@@ -8,30 +8,30 @@ const VolunteerPage = () => {
   const volunteerOpportunities = [
     {
       id: 1,
-      title: "Community Canvassing",
-      description: "Join our door-to-door outreach efforts to connect with voters",
-      location: "Nassau Central",
-      timeCommitment: "4 hours",
+      title: 'Community Canvassing',
+      description: 'Join our door-to-door outreach efforts to connect with voters',
+      location: 'Nassau Central',
+      timeCommitment: '4 hours',
       volunteersNeeded: 15,
-      skills: ["Communication", "Community Engagement"]
+      skills: ['Communication', 'Community Engagement']
     },
     {
       id: 2,
-      title: "Event Coordination",
-      description: "Help organize and run community events and town halls",
-      location: "Various Locations",
-      timeCommitment: "6-8 hours",
+      title: 'Event Coordination',
+      description: 'Help organize and run community events and town halls',
+      location: 'Various Locations',
+      timeCommitment: '6-8 hours',
       volunteersNeeded: 8,
-      skills: ["Organization", "Event Planning"]
+      skills: ['Organization', 'Event Planning']
     },
     {
       id: 3,
-      title: "Digital Outreach",
-      description: "Manage social media and online campaign activities",
-      location: "Remote",
-      timeCommitment: "Flexible",
+      title: 'Digital Outreach',
+      description: 'Manage social media and online campaign activities',
+      location: 'Remote',
+      timeCommitment: 'Flexible',
       volunteersNeeded: 5,
-      skills: ["Social Media", "Content Creation"]
+      skills: ['Social Media', 'Content Creation']
     }
   ];
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const PointsDisplay = ({ points, level, levelName, showAnimation = false, className = "" }) => {
+const PointsDisplay = ({ points, level, levelName, showAnimation = false, className = '' }) => {
   const getLevelColor = (levelName) => {
     const colors = {
       'Supporter': '#3B82F6',
@@ -31,13 +31,13 @@ const PointsDisplay = ({ points, level, levelName, showAnimation = false, classN
       className={`points-display ${className}`}
       initial={showAnimation ? { scale: 0.8, opacity: 0 } : false}
       animate={showAnimation ? { scale: 1, opacity: 1 } : false}
-      transition={{ type: "spring", duration: 0.5 }}
+      transition={{ type: 'spring', duration: 0.5 }}
     >
       <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl border border-blue-200/20 backdrop-blur-sm">
         <motion.div 
           className="level-icon text-2xl"
           animate={showAnimation ? { rotate: [0, 360] } : false}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          transition={{ duration: 1, ease: 'easeInOut' }}
         >
           {getLevelIcon(levelName)}
         </motion.div>

@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { getCurrentUser } from '../data/mockUserGamified.js'
-import { mockCampaigns, getDonationMilestone, getNextDonationMilestone } from '../data/mockDonations.js'
-import gamificationService from '../services/gamificationService.js'
+import { useState } from 'react';
+import { getCurrentUser } from '../data/mockUserGamified.js';
+import { mockCampaigns, getDonationMilestone, getNextDonationMilestone } from '../data/mockDonations.js';
+import gamificationService from '../services/gamificationService.js';
 
 function DonationFormMobile({ onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -9,72 +9,72 @@ function DonationFormMobile({ onClose, onSuccess }) {
     campaignId: 1,
     paymentMethod: 'credit_card',
     isRecurring: false
-  })
+  });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0])
-  const [showCelebration, setShowCelebration] = useState(false)
-  const [celebrationData, setCelebrationData] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0]);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationData, setCelebrationData] = useState(null);
   
-  const currentUser = getCurrentUser()
-  const predefinedAmounts = [25, 50, 100, 250, 500]
+  const currentUser = getCurrentUser();
+  const predefinedAmounts = [25, 50, 100, 250, 500];
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }))
-  }
+    }));
+  };
 
   const handleCampaignChange = (campaignId) => {
-    const campaign = mockCampaigns.find(c => c.id === campaignId)
-    setSelectedCampaign(campaign)
-    setFormData(prev => ({ ...prev, campaignId }))
-  }
+    const campaign = mockCampaigns.find(c => c.id === campaignId);
+    setSelectedCampaign(campaign);
+    setFormData(prev => ({ ...prev, campaignId }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     setTimeout(() => {
       // Award points for donation
       const donationResult = gamificationService.awardPoints('donation', { 
         amount: parseFloat(formData.amount) 
-      })
+      });
 
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       
       // Show celebration message
       if (donationResult && (donationResult.level_up || donationResult.badges_earned.length > 0)) {
-        setCelebrationData(donationResult)
-        setShowCelebration(true)
+        setCelebrationData(donationResult);
+        setShowCelebration(true);
         
         // Auto-hide celebration after 3 seconds
         setTimeout(() => {
-          setShowCelebration(false)
-        }, 3000)
+          setShowCelebration(false);
+        }, 3000);
       }
 
       onSuccess({
         ...formData,
         gamification: donationResult
-      })
+      });
       
       setTimeout(() => {
-        onClose()
-      }, showCelebration ? 3500 : 500)
-    }, 2000)
-  }
+        onClose();
+      }, showCelebration ? 3500 : 500);
+    }, 2000);
+  };
 
   // Get milestone info
-  const nextMilestone = getNextDonationMilestone(currentUser?.total_donations || 0)
+  const nextMilestone = getNextDonationMilestone(currentUser?.total_donations || 0);
   const previewMilestone = formData.amount ? 
-    getDonationMilestone((currentUser?.total_donations || 0) + parseFloat(formData.amount)) : null
+    getDonationMilestone((currentUser?.total_donations || 0) + parseFloat(formData.amount)) : null;
 
   const getCampaignProgress = (campaign) => {
-    return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100)
-  }
+    return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100);
+  };
 
   return (
     <div className="modal-overlay">
@@ -308,7 +308,7 @@ function DonationFormMobile({ onClose, onSuccess }) {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default DonationFormMobile
+export default DonationFormMobile;

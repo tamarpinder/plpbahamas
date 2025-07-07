@@ -151,7 +151,7 @@ const MobileLogin = ({ onLoginSuccess }) => {
             onClick={() => setIsSignUp(!isSignUp)}
             className="text-[#FFC600] font-medium"
           >
-            {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+            {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
           </button>
         </div>
         

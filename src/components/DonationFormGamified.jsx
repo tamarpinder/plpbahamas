@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { mockCampaigns, getDonationMilestone, getNextDonationMilestone } from '../data/mockDonations.js'
-import { getCurrentUser } from '../data/mockUserGamified.js'
-import gamificationService from '../services/gamificationService.js'
-import CelebrationModal from './gamification/CelebrationModal.jsx'
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { mockCampaigns, getDonationMilestone, getNextDonationMilestone } from '../data/mockDonations.js';
+import { getCurrentUser } from '../data/mockUserGamified.js';
+import gamificationService from '../services/gamificationService.js';
+import CelebrationModal from './gamification/CelebrationModal.jsx';
 
 function DonationFormGamified({ onClose, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -17,76 +17,76 @@ function DonationFormGamified({ onClose, onSuccess }) {
     isAnonymous: false,
     message: '',
     campaignId: 1
-  })
+  });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showCelebration, setShowCelebration] = useState(false)
-  const [celebrationData, setCelebrationData] = useState(null)
-  const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0])
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationData, setCelebrationData] = useState(null);
+  const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0]);
   
-  const currentUser = getCurrentUser()
+  const currentUser = getCurrentUser();
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }))
-  }
+    }));
+  };
 
   const handleCampaignChange = (campaignId) => {
-    const campaign = mockCampaigns.find(c => c.id === campaignId)
-    setSelectedCampaign(campaign)
-    setFormData(prev => ({ ...prev, campaignId }))
-  }
+    const campaign = mockCampaigns.find(c => c.id === campaignId);
+    setSelectedCampaign(campaign);
+    setFormData(prev => ({ ...prev, campaignId }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     // Simulate API call
     setTimeout(() => {
       // Award points for donation
       const donationResult = gamificationService.awardPoints('donation', { 
         amount: parseFloat(formData.amount) 
-      })
+      });
 
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       
       // Show celebration if significant achievement
       if (donationResult && (donationResult.level_up || donationResult.badges_earned.length > 0)) {
-        setCelebrationData(donationResult)
-        setShowCelebration(true)
+        setCelebrationData(donationResult);
+        setShowCelebration(true);
       }
 
-      onSuccess(formData)
+      onSuccess(formData);
       
       // Don't close immediately if showing celebration
       if (!showCelebration) {
-        onClose()
+        onClose();
       }
-    }, 2000)
-  }
+    }, 2000);
+  };
 
-  const predefinedAmounts = [25, 50, 100, 250, 500, 1000]
+  const predefinedAmounts = [25, 50, 100, 250, 500, 1000];
 
   // Get current milestone info
-  const currentMilestone = getDonationMilestone(currentUser?.total_donations || 0)
-  const nextMilestone = getNextDonationMilestone(currentUser?.total_donations || 0)
+  const currentMilestone = getDonationMilestone(currentUser?.total_donations || 0);
+  const nextMilestone = getNextDonationMilestone(currentUser?.total_donations || 0);
 
   // Preview what milestone the donation would unlock
   const previewMilestone = formData.amount ? 
-    getDonationMilestone((currentUser?.total_donations || 0) + parseFloat(formData.amount)) : null
+    getDonationMilestone((currentUser?.total_donations || 0) + parseFloat(formData.amount)) : null;
 
   const getCampaignProgress = (campaign) => {
-    return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100)
-  }
+    return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100);
+  };
 
   const handleCelebrationClose = () => {
-    setShowCelebration(false)
-    setCelebrationData(null)
-    onClose()
-  }
+    setShowCelebration(false);
+    setCelebrationData(null);
+    onClose();
+  };
 
   return (
     <>
@@ -404,7 +404,7 @@ function DonationFormGamified({ onClose, onSuccess }) {
         celebrationData={celebrationData}
       />
     </>
-  )
+  );
 }
 
-export default DonationFormGamified
+export default DonationFormGamified;

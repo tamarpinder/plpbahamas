@@ -90,9 +90,9 @@ const useAuthStore = create(
 
       loginAsGuest: () => {
         const guestUser = {
-          id: "guest",
-          name: "Guest User",
-          email: "guest@plp.bs",
+          id: 'guest',
+          name: 'Guest User',
+          email: 'guest@plp.bs',
           isGuest: true,
           memberSince: new Date().toISOString(),
           verified: false,

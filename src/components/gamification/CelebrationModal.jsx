@@ -7,7 +7,7 @@ const CelebrationModal = ({
   isOpen, 
   onClose, 
   celebrationData, 
-  className = "" 
+  className = '' 
 }) => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -137,14 +137,14 @@ const CelebrationModal = ({
           initial={{ scale: 0.5, y: 50, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.5, y: 50, opacity: 0 }}
-          transition={{ type: "spring", duration: 0.6 }}
+          transition={{ type: 'spring', duration: 0.6 }}
         >
           {/* Header */}
           <motion.div
             className={`celebration-header p-4 rounded-xl bg-gradient-to-r ${currentCelebration.color} text-white mb-4`}
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
+            transition={{ delay: 0.2, type: 'spring' }}
           >
             <motion.div
               className="celebration-icon text-4xl mb-2"
@@ -155,7 +155,7 @@ const CelebrationModal = ({
               transition={{ 
                 duration: 1,
                 repeat: Infinity,
-                repeatType: "reverse"
+                repeatType: 'reverse'
               }}
             >
               {currentCelebration.icon}
@@ -243,7 +243,7 @@ const CelebrationModal = ({
             transition={{ 
               duration: 3,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: 'easeInOut'
             }}
           >
             ✨
@@ -258,7 +258,7 @@ const CelebrationModal = ({
             transition={{ 
               duration: 3,
               repeat: Infinity,
-              ease: "easeInOut",
+              ease: 'easeInOut',
               delay: 1.5
             }}
           >

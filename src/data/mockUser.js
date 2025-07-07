@@ -1,24 +1,24 @@
 export const mockUserProfiles = [
   {
     id: 0,
-    name: "Demo User",
-    email: "demo@plp.bs",
-    phone: "(242) 555-0123",
+    name: 'Demo User',
+    email: 'demo@plp.bs',
+    phone: '(242) 555-0123',
     age: 30,
-    votingDistrict: "Nassau Central",
-    parish: "New Providence",
-    memberSince: "2024-01-15",
-    profilePicture: "/assets/images/profiles/demo.jpg",
+    votingDistrict: 'Nassau Central',
+    parish: 'New Providence',
+    memberSince: '2024-01-15',
+    profilePicture: '/assets/images/profiles/demo.jpg',
     verified: true,
-    volunteerStatus: "Active",
+    volunteerStatus: 'Active',
     donationTotal: 200.00,
     eventsAttended: 8,
-    badges: ["Demo User", "Community Supporter", "Early Adopter"],
-    interests: ["Healthcare", "Education", "Community Development"],
+    badges: ['Demo User', 'Community Supporter', 'Early Adopter'],
+    interests: ['Healthcare', 'Education', 'Community Development'],
     socialMedia: {
-      facebook: "demo.user.plp",
-      instagram: "@demoplp",
-      twitter: "@DemoUserPLP"
+      facebook: 'demo.user.plp',
+      instagram: '@demoplp',
+      twitter: '@DemoUserPLP'
     },
     notifications: {
       email: true,
@@ -34,24 +34,24 @@ export const mockUserProfiles = [
   },
   {
     id: 1,
-    name: "Marcus Johnson",
-    email: "marcus.johnson@email.com",
-    phone: "(242) 432-1234",
+    name: 'Marcus Johnson',
+    email: 'marcus.johnson@email.com',
+    phone: '(242) 432-1234',
     age: 34,
-    votingDistrict: "Nassau Central",
-    parish: "New Providence",
-    memberSince: "2022-03-15",
-    profilePicture: "/assets/images/profiles/marcus.jpg",
+    votingDistrict: 'Nassau Central',
+    parish: 'New Providence',
+    memberSince: '2022-03-15',
+    profilePicture: '/assets/images/profiles/marcus.jpg',
     verified: true,
-    volunteerStatus: "Active",
+    volunteerStatus: 'Active',
     donationTotal: 450.00,
     eventsAttended: 12,
-    badges: ["Community Champion", "Event Organizer", "Volunteer Leader"],
-    interests: ["Healthcare", "Education", "Community Development"],
+    badges: ['Community Champion', 'Event Organizer', 'Volunteer Leader'],
+    interests: ['Healthcare', 'Education', 'Community Development'],
     socialMedia: {
-      facebook: "marcus.johnson.bs",
-      instagram: "@marcusj_bs",
-      twitter: "@MarcusJohnsonBS"
+      facebook: 'marcus.johnson.bs',
+      instagram: '@marcusj_bs',
+      twitter: '@MarcusJohnsonBS'
     },
     notifications: {
       email: true,
@@ -67,23 +67,23 @@ export const mockUserProfiles = [
   },
   {
     id: 2,
-    name: "Sophia Williams",
-    email: "sophia.williams@email.com",
-    phone: "(242) 456-7890",
+    name: 'Sophia Williams',
+    email: 'sophia.williams@email.com',
+    phone: '(242) 456-7890',
     age: 28,
-    votingDistrict: "Nassau East",
-    parish: "New Providence",
-    memberSince: "2023-01-22",
-    profilePicture: "/assets/images/profiles/sophia.jpg",
+    votingDistrict: 'Nassau East',
+    parish: 'New Providence',
+    memberSince: '2023-01-22',
+    profilePicture: '/assets/images/profiles/sophia.jpg',
     verified: true,
-    volunteerStatus: "Occasional",
+    volunteerStatus: 'Occasional',
     donationTotal: 125.00,
     eventsAttended: 5,
-    badges: ["New Member", "Healthcare Advocate"],
-    interests: ["Healthcare", "Women's Rights", "Environment"],
+    badges: ['New Member', 'Healthcare Advocate'],
+    interests: ['Healthcare', 'Women\'s Rights', 'Environment'],
     socialMedia: {
-      facebook: "sophia.williams.242",
-      instagram: "@sophiaw_healthcare"
+      facebook: 'sophia.williams.242',
+      instagram: '@sophiaw_healthcare'
     },
     notifications: {
       email: true,
@@ -100,8 +100,8 @@ export const mockUserProfiles = [
 ];
 
 export const mockGuestUser = {
-  id: "guest",
-  name: "Guest User",
+  id: 'guest',
+  name: 'Guest User',
   email: null,
   isGuest: true,
   permissions: {

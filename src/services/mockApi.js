@@ -123,7 +123,7 @@ export class MockApiService {
     if (newsIndex !== -1) {
       const newComment = {
         id: Date.now(),
-        author: this.currentUser?.name || "Guest",
+        author: this.currentUser?.name || 'Guest',
         text: comment,
         timestamp: new Date().toISOString()
       };
@@ -241,21 +241,21 @@ export class MockApiService {
     return [
       {
         id: 1,
-        title: "Canvassing - Nassau Central",
-        description: "Door-to-door community outreach",
-        date: "2024-12-28",
-        timeCommitment: "4 hours",
-        location: "Nassau Central District",
+        title: 'Canvassing - Nassau Central',
+        description: 'Door-to-door community outreach',
+        date: '2024-12-28',
+        timeCommitment: '4 hours',
+        location: 'Nassau Central District',
         volunteersNeeded: 15,
         volunteersSignedUp: 8
       },
       {
         id: 2,
-        title: "Event Setup - Youth Summit",
-        description: "Help set up the Youth Leadership Summit",
-        date: "2025-01-05",
-        timeCommitment: "6 hours",
-        location: "University of The Bahamas",
+        title: 'Event Setup - Youth Summit',
+        description: 'Help set up the Youth Leadership Summit',
+        date: '2025-01-05',
+        timeCommitment: '6 hours',
+        location: 'University of The Bahamas',
         volunteersNeeded: 20,
         volunteersSignedUp: 12
       }
@@ -268,19 +268,19 @@ export class MockApiService {
     return [
       {
         id: 1,
-        title: "Community Priorities Survey",
-        description: "Help us understand what matters most to you",
+        title: 'Community Priorities Survey',
+        description: 'Help us understand what matters most to you',
         questions: [
           {
             id: 1,
-            question: "What is your top priority for community development?",
-            type: "multiple-choice",
-            options: ["Healthcare", "Education", "Infrastructure", "Economy", "Environment"]
+            question: 'What is your top priority for community development?',
+            type: 'multiple-choice',
+            options: ['Healthcare', 'Education', 'Infrastructure', 'Economy', 'Environment']
           },
           {
             id: 2,
-            question: "How would you rate current government services?",
-            type: "rating",
+            question: 'How would you rate current government services?',
+            type: 'rating',
             scale: 5
           }
         ],
@@ -292,7 +292,7 @@ export class MockApiService {
 
   async submitSurvey(surveyId, responses) {
     await simulateNetworkDelay(600, 1200);
-    return { success: true, message: "Thank you for your feedback!" };
+    return { success: true, message: 'Thank you for your feedback!' };
   }
 
   // Notifications
@@ -301,17 +301,17 @@ export class MockApiService {
     return [
       {
         id: 1,
-        title: "New Event: Community Rally",
-        message: "Join us for a community rally in Nassau on December 25th",
-        type: "event",
+        title: 'New Event: Community Rally',
+        message: 'Join us for a community rally in Nassau on December 25th',
+        type: 'event',
         date: new Date().toISOString(),
         read: false
       },
       {
         id: 2,
-        title: "Healthcare Initiative Update",
-        message: "New details about the universal healthcare program",
-        type: "news",
+        title: 'Healthcare Initiative Update',
+        message: 'New details about the universal healthcare program',
+        type: 'news',
         date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
         read: true
       }

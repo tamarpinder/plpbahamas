@@ -23,21 +23,21 @@ export const mockUsers = [
     
     // Badges earned
     badges_unlocked: [
-      { id: 1, name: "Early Bird", earned_date: "2024-01-16" },
-      { id: 6, name: "Rally Regular", earned_date: "2024-03-10" },
-      { id: 10, name: "Blue Heart", earned_date: "2024-01-20" },
-      { id: 11, name: "Wave Maker", earned_date: "2024-05-15" },
-      { id: 12, name: "Thunder Strike", earned_date: "2024-11-01" },
-      { id: 16, name: "Helper", earned_date: "2024-02-01" },
-      { id: 17, name: "Dedicated Volunteer", earned_date: "2024-09-15" },
-      { id: 4, name: "Dedicated Supporter", earned_date: "2024-10-30" }
+      { id: 1, name: 'Early Bird', earned_date: '2024-01-16' },
+      { id: 6, name: 'Rally Regular', earned_date: '2024-03-10' },
+      { id: 10, name: 'Blue Heart', earned_date: '2024-01-20' },
+      { id: 11, name: 'Wave Maker', earned_date: '2024-05-15' },
+      { id: 12, name: 'Thunder Strike', earned_date: '2024-11-01' },
+      { id: 16, name: 'Helper', earned_date: '2024-02-01' },
+      { id: 17, name: 'Dedicated Volunteer', earned_date: '2024-09-15' },
+      { id: 4, name: 'Dedicated Supporter', earned_date: '2024-10-30' }
     ],
     
     // Social features
     squad_id: 1,
-    squad_name: "Nassau Warriors",
-    profile_picture_url: "/avatars/marcus.jpg",
-    bio: "Proud Bahamian working for a better future. Let's build something great together! 🇧🇸",
+    squad_name: 'Nassau Warriors',
+    profile_picture_url: '/avatars/marcus.jpg',
+    bio: 'Proud Bahamian working for a better future. Let\'s build something great together! 🇧🇸',
     
     // Activity stats
     news_read_count: 156,
@@ -47,10 +47,10 @@ export const mockUsers = [
     surveys_completed: 12,
     
     // Achievements showcase (top 3)
-    featured_achievements: ["Thunder Strike", "Dedicated Volunteer", "Dedicated Supporter"],
+    featured_achievements: ['Thunder Strike', 'Dedicated Volunteer', 'Dedicated Supporter'],
     
     // Current challenges
-    active_challenges: ["daily_1", "weekly_2", "special_3"],
+    active_challenges: ['daily_1', 'weekly_2', 'special_3'],
     
     // Preferences
     notification_preferences: {
@@ -85,18 +85,18 @@ export const mockUsers = [
     
     // Badges earned
     badges_unlocked: [
-      { id: 1, name: "Early Bird", earned_date: "2024-02-21" },
-      { id: 10, name: "Blue Heart", earned_date: "2024-02-25" },
-      { id: 11, name: "Wave Maker", earned_date: "2024-08-10" },
-      { id: 16, name: "Helper", earned_date: "2024-03-15" },
-      { id: 2, name: "Voice of the People", earned_date: "2024-11-20" }
+      { id: 1, name: 'Early Bird', earned_date: '2024-02-21' },
+      { id: 10, name: 'Blue Heart', earned_date: '2024-02-25' },
+      { id: 11, name: 'Wave Maker', earned_date: '2024-08-10' },
+      { id: 16, name: 'Helper', earned_date: '2024-03-15' },
+      { id: 2, name: 'Voice of the People', earned_date: '2024-11-20' }
     ],
     
     // Social features
     squad_id: 2,
-    squad_name: "Freeport Champions",
-    profile_picture_url: "/avatars/sophia.jpg",
-    bio: "Digital creator passionate about community engagement and positive change! 📱✨",
+    squad_name: 'Freeport Champions',
+    profile_picture_url: '/avatars/sophia.jpg',
+    bio: 'Digital creator passionate about community engagement and positive change! 📱✨',
     
     // Activity stats
     news_read_count: 89,
@@ -106,10 +106,10 @@ export const mockUsers = [
     surveys_completed: 8,
     
     // Achievements showcase
-    featured_achievements: ["Voice of the People", "Wave Maker", "Helper"],
+    featured_achievements: ['Voice of the People', 'Wave Maker', 'Helper'],
     
     // Current challenges
-    active_challenges: ["daily_2", "weekly_1"],
+    active_challenges: ['daily_2', 'weekly_1'],
     
     // Preferences
     notification_preferences: {
@@ -143,14 +143,14 @@ export const mockUsers = [
     
     // Badges earned (new user)
     badges_unlocked: [
-      { id: 1, name: "Early Bird", earned_date: "2024-12-02" }
+      { id: 1, name: 'Early Bird', earned_date: '2024-12-02' }
     ],
     
     // Social features
     squad_id: null,
     squad_name: null,
-    profile_picture_url: "/avatars/default.jpg",
-    bio: "New to PLP but excited to get involved and make a difference!",
+    profile_picture_url: '/avatars/default.jpg',
+    bio: 'New to PLP but excited to get involved and make a difference!',
     
     // Activity stats
     news_read_count: 12,
@@ -160,10 +160,10 @@ export const mockUsers = [
     surveys_completed: 1,
     
     // Achievements showcase
-    featured_achievements: ["Early Bird"],
+    featured_achievements: ['Early Bird'],
     
     // Current challenges
-    active_challenges: ["daily_1", "daily_3"],
+    active_challenges: ['daily_1', 'daily_3'],
     
     // Preferences
     notification_preferences: {
@@ -181,29 +181,29 @@ export const mockUsers = [
 export const mockSquads = [
   {
     id: 1,
-    name: "Nassau Warriors",
-    description: "Fighting for progress in Nassau Central! 💪",
+    name: 'Nassau Warriors',
+    description: 'Fighting for progress in Nassau Central! 💪',
     created_by: 1,
-    created_date: "2024-03-15",
+    created_date: '2024-03-15',
     max_members: 10,
     total_points: 45890,
     is_active: true,
     member_count: 8,
-    squad_badge: "🏆",
-    leader_name: "Marcus Johnson"
+    squad_badge: '🏆',
+    leader_name: 'Marcus Johnson'
   },
   {
     id: 2,
-    name: "Freeport Champions",
-    description: "United for a better Grand Bahama! 🌊",
+    name: 'Freeport Champions',
+    description: 'United for a better Grand Bahama! 🌊',
     created_by: 2,
-    created_date: "2024-04-20",
+    created_date: '2024-04-20',
     max_members: 10,
     total_points: 38750,
     is_active: true,
     member_count: 7,
-    squad_badge: "⚡",
-    leader_name: "Sophia Williams"
+    squad_badge: '⚡',
+    leader_name: 'Sophia Williams'
   }
 ];
 

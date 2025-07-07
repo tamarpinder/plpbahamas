@@ -112,7 +112,7 @@ const ImpactDashboard = ({ user }) => {
               }}
               initial={{ width: 0 }}
               animate={{ width: `${progressToNext}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: 1, ease: 'easeOut' }}
             />
           </div>
         </div>

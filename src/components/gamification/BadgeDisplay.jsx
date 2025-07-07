@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const BadgeDisplay = ({ badge, size = 'medium', showDetails = false, earned = false, className = "" }) => {
+const BadgeDisplay = ({ badge, size = 'medium', showDetails = false, earned = false, className = '' }) => {
   const getSizeClasses = (size) => {
     const sizes = {
       small: 'w-8 h-8 text-sm',
@@ -68,8 +68,8 @@ const BadgeDisplay = ({ badge, size = 'medium', showDetails = false, earned = fa
         transition={{
           duration: 2,
           repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut"
+          repeatType: 'reverse',
+          ease: 'easeInOut'
         }}
       >
         <div 
@@ -97,7 +97,7 @@ const BadgeDisplay = ({ badge, size = 'medium', showDetails = false, earned = fa
           <motion.div
             className={`absolute inset-0 rounded-full bg-gradient-to-br ${getRarityColor(badge)} opacity-30 blur-sm -z-10`}
             animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           />
         )}
       </motion.div>

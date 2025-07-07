@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster } from 'sonner';
+import ErrorBoundary from './components/ErrorBoundary';
 import PhoneMockup from './components/PhoneMockup';
 import MobileLayout from './components/mobile/MobileLayout';
 import PLPLoginNew from './components/mobile/PLPLoginNew';
@@ -48,22 +49,24 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <PhoneMockup>
-        {!isAuthenticated ? (
-          <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
-        ) : (
-          <MobileLayout 
-            activeTab={activeScreen} 
-            onTabChange={handleNavigation}
-            showTabBar={true}
-          >
-            {renderCurrentScreen()}
-          </MobileLayout>
-        )}
-      </PhoneMockup>
-      <Toaster position="top-center" richColors />
-    </div>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-100">
+        <PhoneMockup>
+          {!isAuthenticated ? (
+            <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
+          ) : (
+            <MobileLayout 
+              activeTab={activeScreen} 
+              onTabChange={handleNavigation}
+              showTabBar={true}
+            >
+              {renderCurrentScreen()}
+            </MobileLayout>
+          )}
+        </PhoneMockup>
+        <Toaster position="top-center" richColors />
+      </div>
+    </ErrorBoundary>
   );
 }
 

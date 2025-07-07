@@ -171,20 +171,20 @@ const ProfilePage = () => {
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm">Email Notifications</span>
-                <Badge variant={user.notifications?.email ? "default" : "secondary"}>
-                  {user.notifications?.email ? "On" : "Off"}
+                <Badge variant={user.notifications?.email ? 'default' : 'secondary'}>
+                  {user.notifications?.email ? 'On' : 'Off'}
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Push Notifications</span>
-                <Badge variant={user.notifications?.push ? "default" : "secondary"}>
-                  {user.notifications?.push ? "On" : "Off"}
+                <Badge variant={user.notifications?.push ? 'default' : 'secondary'}>
+                  {user.notifications?.push ? 'On' : 'Off'}
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Newsletter</span>
-                <Badge variant={user.notifications?.newsletter ? "default" : "secondary"}>
-                  {user.notifications?.newsletter ? "On" : "Off"}
+                <Badge variant={user.notifications?.newsletter ? 'default' : 'secondary'}>
+                  {user.notifications?.newsletter ? 'On' : 'Off'}
                 </Badge>
               </div>
               <Button variant="outline" size="sm" className="w-full mt-4">

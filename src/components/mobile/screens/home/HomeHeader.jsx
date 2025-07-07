@@ -4,7 +4,7 @@ import { Bell, Star, User, Moon, Sun } from 'lucide-react';
 import { PLPColors } from '@/constants/brandColors';
 import { useTheme } from '@/contexts/ThemeContext';
 import LevelProgressBar from '../../../gamification/LevelProgressBar';
-import styles from './HomeHeader.module.css';
+// Removed CSS module import as we're using inline styles for better control
 
 const HomeHeader = ({ 
   user, 
@@ -26,73 +26,129 @@ const HomeHeader = ({
   return (
     <motion.div 
       variants={itemVariants}
-      className={styles.header}
+      style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        borderBottomLeftRadius: '1.5rem',
+        borderBottomRightRadius: '1.5rem',
+        marginBottom: '1rem',
+        paddingTop: 'env(safe-area-inset-top, 0.5rem)', // Respect iOS safe area
+        paddingBottom: '1rem',
+        paddingLeft: '1rem',
+        paddingRight: '1rem'
+      }}
     >
-      <div className={styles.topRow}>
-        <div>
-          <h1 
-            className={styles.greeting}
-            style={{ color: PLPColors.primary.navy }}
-          >
-            {getGreeting()}, {user?.name?.split(' ')[0] || 'Supporter'}!
-          </h1>
-          <p 
-            className={styles.subtitle}
-            style={{ color: PLPColors.neutral.gray600 }}
-          >
-            Ready to make a difference today?
-          </p>
-        </div>
+      {/* Compact Action Buttons Row - Just below status bar */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        gap: '0.375rem',
+        marginBottom: '1rem',
+        paddingTop: '0.5rem' // Additional spacing from status bar
+      }}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            padding: '0.5rem',
+            border: 'none',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Bell size={16} color={PLPColors.primary.navy} />
+        </motion.button>
         
-        <div className={styles.actions}>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className={styles.actionButton}
-            style={{
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)
-            }}
-          >
-            <Bell size={20} color={PLPColors.primary.navy} />
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={toggleTheme}
-            className={styles.actionButton}
-            style={{
-              background: PLPColors.getColorWithOpacity(isDark ? PLPColors.primary.gold : PLPColors.primary.blue, 0.1)
-            }}
-          >
-            {isDark ? <Sun size={20} color={PLPColors.primary.navy} /> : <Moon size={20} color={PLPColors.primary.navy} />}
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => onNavigate('profile')}
-            className={styles.actionButton}
-            style={{
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)
-            }}
-          >
-            <User size={20} color={PLPColors.primary.navy} />
-          </motion.button>
-          
-          <div 
-            className={styles.pointsDisplay}
-            style={{ background: PLPColors.gradients.button }}
-          >
-            <Star size={16} color={PLPColors.primary.navy} />
-            <span 
-              className={styles.pointsText}
-              style={{ color: PLPColors.primary.navy }}
-            >
-              {userProfile?.totalPoints || 0}
-            </span>
-          </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          style={{
+            padding: '0.5rem',
+            border: 'none',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            background: PLPColors.getColorWithOpacity(isDark ? PLPColors.primary.gold : PLPColors.primary.blue, 0.1),
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {isDark ? <Sun size={16} color={PLPColors.primary.navy} /> : <Moon size={16} color={PLPColors.primary.navy} />}
+        </motion.button>
+        
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => onNavigate('profile')}
+          style={{
+            padding: '0.5rem',
+            border: 'none',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <User size={16} color={PLPColors.primary.navy} />
+        </motion.button>
+        
+        <div style={{
+          background: PLPColors.gradients.button,
+          padding: '0.375rem 0.625rem',
+          borderRadius: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.25rem',
+          minWidth: 'fit-content'
+        }}>
+          <Star size={14} color={PLPColors.primary.navy} />
+          <span style={{
+            fontWeight: 'bold',
+            fontSize: '0.8rem',
+            color: PLPColors.primary.navy,
+            lineHeight: '1'
+          }}>
+            {userProfile?.totalPoints?.toLocaleString() || '0'}
+          </span>
         </div>
+      </div>
+
+      {/* Enhanced Greeting Section */}
+      <div style={{
+        marginBottom: userProfile ? '1rem' : '0'
+      }}>
+        <h1 style={{
+          fontSize: '1.75rem',
+          fontWeight: 'bold',
+          color: PLPColors.primary.navy,
+          marginBottom: '0.375rem',
+          lineHeight: '1.2',
+          margin: 0
+        }}>
+          {getGreeting()}, {user?.name?.split(' ')[0] || 'Supporter'}!
+        </h1>
+        <p style={{
+          fontSize: '0.9rem',
+          color: PLPColors.neutral.gray600,
+          lineHeight: '1.4',
+          margin: 0
+        }}>
+          Ready to make a difference today?
+        </p>
       </div>
 
       {/* Level Progress */}

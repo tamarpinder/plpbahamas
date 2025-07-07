@@ -22,11 +22,16 @@ import {
 } from 'lucide-react';
 import useAuthStore from '../../../stores/useAuthStore';
 import useGamificationStore from '../../../stores/useGamificationStore';
+import useAppStore from '../../../stores/useAppStore';
 import LevelProgressBar from '../../gamification/LevelProgressBar';
+import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
+import PersonalImpactCard from './home/PersonalImpactCard';
+import RecentActivityFeed from './home/RecentActivityFeed';
 import { PLPColors } from '../../../constants/brandColors';
 
-const MobileProfile = () => {
+const MobileProfileContent = () => {
   const { user, logout } = useAuthStore();
+  const { dashboardStats } = useAppStore();
   const { 
     userProfile, 
     getUserLevel, 
@@ -37,9 +42,12 @@ const MobileProfile = () => {
   
   const [editMode, setEditMode] = useState(false);
   
-  const currentLevel = getUserLevel();
-  const levelProgress = getLevelProgress();
-  const userBadges = getUserBadges();
+  // Safe data access with fallbacks
+  const currentLevel = getUserLevel() || { id: 1, name: 'Supporter', icon: '🤝', color: '#6B7280' };
+  const levelProgress = getLevelProgress() || { progress: 0, pointsNeeded: 0, nextLevel: null };
+  const userBadges = getUserBadges() || [];
+  const safeUserProfile = userProfile || { totalPoints: 0, actions: {} };
+  const safeRecentAchievements = recentAchievements || [];
 
   const handleLogout = async () => {
     await logout();
@@ -49,28 +57,28 @@ const MobileProfile = () => {
     { 
       icon: Star, 
       label: 'Total Points', 
-      value: userProfile?.totalPoints?.toLocaleString() || '0',
+      value: safeUserProfile.totalPoints?.toLocaleString() || '0',
       color: PLPColors.primary.gold,
       background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)
     },
     { 
       icon: Calendar, 
       label: 'Events Attended', 
-      value: userProfile?.actions?.EVENT_ATTEND || 0,
+      value: safeUserProfile.actions?.EVENT_ATTEND || 0,
       color: PLPColors.primary.blue,
       background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)
     },
     { 
       icon: Heart, 
       label: 'Donations Made', 
-      value: userProfile?.actions?.FIRST_DONATION || 0,
+      value: safeUserProfile.actions?.FIRST_DONATION || 0,
       color: '#EF4444',
       background: PLPColors.getColorWithOpacity('#EF4444', 0.1)
     },
     { 
       icon: Award, 
       label: 'Badges Earned', 
-      value: userBadges?.length || 0,
+      value: userBadges.length || 0,
       color: PLPColors.primary.navy,
       background: PLPColors.getColorWithOpacity(PLPColors.primary.navy, 0.1)
     }
@@ -237,18 +245,33 @@ const MobileProfile = () => {
 
       <div style={{ padding: '0 1rem 5rem' }}>
         {/* Level Progress */}
+        <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
+          <LevelProgressBar
+            currentLevel={currentLevel}
+            progress={levelProgress.progress}
+            pointsNeeded={levelProgress.pointsNeeded}
+            nextLevel={levelProgress.nextLevel}
+            totalPoints={safeUserProfile.totalPoints}
+            showDetails={true}
+          />
+        </motion.div>
+
+        {/* Personal Impact Card */}
         {userProfile && (
-          <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
-            <LevelProgressBar
-              currentLevel={currentLevel}
-              progress={levelProgress.progress}
-              pointsNeeded={levelProgress.pointsNeeded}
-              nextLevel={levelProgress.nextLevel}
-              totalPoints={userProfile.totalPoints}
-              showDetails={true}
-            />
-          </motion.div>
+          <PersonalImpactCard
+            userProfile={userProfile}
+            dashboardStats={dashboardStats}
+            currentLevel={currentLevel}
+            itemVariants={itemVariants}
+          />
         )}
+
+        {/* Recent Activity Feed */}
+        <RecentActivityFeed
+          userProfile={userProfile}
+          recentAchievements={recentAchievements}
+          itemVariants={itemVariants}
+        />
 
         {/* Profile Stats */}
         <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
@@ -315,7 +338,7 @@ const MobileProfile = () => {
         </motion.div>
 
         {/* Recent Achievements */}
-        {userBadges && userBadges.length > 0 && (
+        {userBadges.length > 0 && (
           <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
             <h2 style={{
               fontSize: '1.125rem',
@@ -384,7 +407,7 @@ const MobileProfile = () => {
         )}
 
         {/* Recent Activity */}
-        {recentAchievements && recentAchievements.length > 0 && (
+        {safeRecentAchievements.length > 0 && (
           <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
             <h2 style={{
               fontSize: '1.125rem',
@@ -404,7 +427,7 @@ const MobileProfile = () => {
               flexDirection: 'column',
               gap: '0.5rem'
             }}>
-              {recentAchievements.slice(0, 3).map((achievement, index) => (
+              {safeRecentAchievements.slice(0, 3).map((achievement, index) => (
                 <div
                   key={achievement.id}
                   style={{
@@ -516,5 +539,11 @@ const MobileProfile = () => {
     </motion.div>
   );
 };
+
+const MobileProfile = () => (
+  <ScreenErrorBoundary screenName="Profile">
+    <MobileProfileContent />
+  </ScreenErrorBoundary>
+);
 
 export default MobileProfile;

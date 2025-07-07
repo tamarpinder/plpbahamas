@@ -53,11 +53,20 @@ const useGamificationStore = create(
       
       // Award points for user actions
       awardUserPoints: (action, multiplier = 1, metadata = {}) => {
-        const profile = get().userProfile;
-        if (!profile) return;
-        
-        const pointsEarned = awardPoints(action, multiplier);
-        const oldLevel = calculateLevel(profile.totalPoints);
+        try {
+          const profile = get().userProfile;
+          if (!profile) {
+            console.warn('No user profile found, cannot award points');
+            return;
+          }
+          
+          const pointsEarned = awardPoints(action, multiplier);
+          if (!pointsEarned) {
+            console.warn(`Invalid action: ${action}`);
+            return;
+          }
+          
+          const oldLevel = calculateLevel(profile.totalPoints);
         
         // Update profile
         const updatedProfile = {
@@ -82,18 +91,22 @@ const useGamificationStore = create(
         
         // Update challenge progress
         get().updateChallengeProgress(action);
-        
-        set({ userProfile: updatedProfile });
-        
-        // Show points notification
-        if (pointsEarned > 0) {
-          toast.success(`+${pointsEarned} points earned!`, {
-            icon: '⭐',
-            duration: 2000
-          });
+          
+          set({ userProfile: updatedProfile });
+          
+          // Show points notification
+          if (pointsEarned > 0) {
+            toast.success(`+${pointsEarned} points earned!`, {
+              icon: '⭐',
+              duration: 2000
+            });
+          }
+          
+          return pointsEarned;
+        } catch (error) {
+          console.error('Error awarding user points:', error);
+          return 0;
         }
-        
-        return pointsEarned;
       },
       
       // Handle level up

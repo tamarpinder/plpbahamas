@@ -24,7 +24,7 @@ const PLPHomeNew = ({ onNavigate }) => {
     getLevelProgress,
     activeChallenges,
     awardUserPoints,
-    updateLoginStreak 
+    updateLoginStreak
   } = useGamificationStore();
 
   useEffect(() => {
@@ -48,21 +48,33 @@ const PLPHomeNew = ({ onNavigate }) => {
     console.log('Joining live stream:', event.title);
   };
 
-  // Animation variants
+  // Enhanced animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: { duration: 0.6, staggerChildren: 0.1 }
+      transition: { 
+        duration: 0.8, 
+        staggerChildren: 0.08,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { 
+      y: 30, 
+      opacity: 0,
+      scale: 0.95
+    },
     visible: { 
       y: 0, 
       opacity: 1,
-      transition: { duration: 0.5 }
+      scale: 1,
+      transition: { 
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
     }
   };
 
@@ -72,21 +84,34 @@ const PLPHomeNew = ({ onNavigate }) => {
       initial="hidden"
       animate="visible"
       style={{
-        minHeight: '100vh',
+        height: '100%',
         background: PLPColors.gradients.hero,
-        position: 'relative'
+        overflow: 'auto'
       }}
     >
-      {/* Background Elements */}
+      {/* Enhanced Background Elements */}
       <div style={{
         position: 'absolute',
         top: '5%',
         right: '-5%',
-        width: '150px',
-        height: '150px',
-        background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+        width: '180px',
+        height: '180px',
+        background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.08),
+        borderRadius: '50%',
+        filter: 'blur(60px)',
+        zIndex: 0
+      }} />
+      
+      <div style={{
+        position: 'absolute',
+        bottom: '20%',
+        left: '-10%',
+        width: '120px',
+        height: '120px',
+        background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.06),
         borderRadius: '50%',
         filter: 'blur(40px)',
+        zIndex: 0
       }} />
 
       {/* Header Section */}
@@ -102,16 +127,27 @@ const PLPHomeNew = ({ onNavigate }) => {
       {/* Main Content */}
       <div style={{ padding: '0 1rem 2rem' }}>
         {/* Live Now Banner */}
-        <LiveNowBanner
-          liveEvent={currentLiveEvent}
-          onJoinStream={handleJoinStream}
-          itemVariants={itemVariants}
-        />
+        {currentLiveEvent && (
+          <LiveNowBanner
+            liveEvent={currentLiveEvent}
+            onJoinStream={handleJoinStream}
+            itemVariants={itemVariants}
+          />
+        )}
         
         {/* Upcoming Live Events */}
-        <UpcomingLiveEvents
-          upcomingEvents={upcomingLiveEvents}
+        {upcomingLiveEvents.length > 0 && (
+          <UpcomingLiveEvents
+            upcomingEvents={upcomingLiveEvents}
+            onNavigate={onNavigate}
+            itemVariants={itemVariants}
+          />
+        )}
+        
+        {/* Quick Actions - Priority placement */}
+        <QuickActionsGrid
           onNavigate={onNavigate}
+          awardUserPoints={awardUserPoints}
           itemVariants={itemVariants}
         />
         
@@ -124,13 +160,6 @@ const PLPHomeNew = ({ onNavigate }) => {
         {/* Daily Challenges */}
         <DailyChallenges
           activeChallenges={activeChallenges}
-          itemVariants={itemVariants}
-        />
-
-        {/* Quick Actions */}
-        <QuickActionsGrid
-          onNavigate={onNavigate}
-          awardUserPoints={awardUserPoints}
           itemVariants={itemVariants}
         />
 

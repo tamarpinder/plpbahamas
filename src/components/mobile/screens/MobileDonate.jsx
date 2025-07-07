@@ -6,9 +6,10 @@ import { Input } from '../../ui/input';
 import { PLPColors, PLPShadows } from '@/constants/brandColors';
 import { mockApi } from '../../../services/mockApi';
 import useGamificationStore from '@/stores/useGamificationStore';
+import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import { toast } from 'sonner';
 
-const MobileDonate = () => {
+const MobileDonateContent = () => {
   const { awardUserPoints } = useGamificationStore();
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
@@ -18,37 +19,50 @@ const MobileDonate = () => {
   const presetAmounts = [25, 50, 100, 250];
 
   const handleDonate = async () => {
-    const donationAmount = amount === 'custom' ? parseFloat(customAmount) : parseFloat(amount);
-    
-    if (!donationAmount || donationAmount <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-
-    setIsProcessing(true);
-    
     try {
-      const result = await mockApi.processDonation({
-        amount: donationAmount,
-        paymentMethod
-      });
+      const donationAmount = amount === 'custom' ? parseFloat(customAmount) : parseFloat(amount);
       
-      if (result.success) {
-        // Award points based on donation amount
-        const points = Math.min(Math.floor(donationAmount / 5) * 5, 100); // 5 points per $5, max 100
-        awardUserPoints('MAKE_DONATION', points);
-        
-        toast.success(`Thank you for your $${donationAmount} donation! +${points} points`, {
-          icon: '💝',
-          duration: 4000,
-          description: 'Your support makes a difference!'
+      if (!donationAmount || donationAmount <= 0) {
+        toast.error('Please enter a valid amount');
+        return;
+      }
+
+      setIsProcessing(true);
+      
+      try {
+        const result = await mockApi.processDonation({
+          amount: donationAmount,
+          paymentMethod
         });
-        setAmount('');
-        setCustomAmount('');
+        
+        if (result.success) {
+          // Award points for donation
+          awardUserPoints('FIRST_DONATION'); // Award standard first donation points
+          
+          // Award additional points based on donation amount
+          const bonusPoints = Math.min(Math.floor(donationAmount / 5) * 5, 100); // 5 points per $5, max 100
+          if (bonusPoints > 0) {
+            awardUserPoints('DONATION_MILESTONE', Math.floor(bonusPoints / 50)); // Use milestone for bonus points
+          }
+          
+          const totalPoints = 100 + bonusPoints; // First donation (100) + bonus
+          toast.success(`Thank you for your $${donationAmount} donation! +${totalPoints} points`, {
+            icon: '💝',
+            duration: 4000,
+            description: 'Your support makes a difference!'
+          });
+          setAmount('');
+          setCustomAmount('');
+        }
+      } catch (donationError) {
+        console.error('Donation error:', donationError);
+        toast.error('Donation failed. Please try again.');
+      } finally {
+        setIsProcessing(false);
       }
     } catch (error) {
-      toast.error('Donation failed. Please try again.');
-    } finally {
+      console.error('Critical donation error:', error);
+      toast.error('Something went wrong. Please refresh and try again.');
       setIsProcessing(false);
     }
   };
@@ -506,5 +520,11 @@ const MobileDonate = () => {
     </motion.div>
   );
 };
+
+const MobileDonate = () => (
+  <ScreenErrorBoundary screenName="Donate">
+    <MobileDonateContent />
+  </ScreenErrorBoundary>
+);
 
 export default MobileDonate;

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Users, Heart } from 'lucide-react';
 import { PLPColors } from '../../../../constants/brandColors';
 import StatCard from './shared/StatCard';
+import styles from './QuickStatsGrid.module.css';
 
 const QuickStatsGrid = ({ dashboardStats, itemVariants }) => {
   if (!dashboardStats) return null;
@@ -10,12 +11,7 @@ const QuickStatsGrid = ({ dashboardStats, itemVariants }) => {
   return (
     <motion.div 
       variants={itemVariants}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '0.75rem',
-        marginBottom: '1.5rem'
-      }}
+      className={styles.grid}
     >
       <StatCard
         icon={Users}

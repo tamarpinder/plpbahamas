@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, ArrowRight } from 'lucide-react';
 import { PLPColors } from '../../../../../constants/brandColors';
+import styles from './NewsCard.module.css';
 
 const NewsCard = ({ article, onClick }) => {
   const formatDate = (dateString) => {
@@ -28,76 +29,49 @@ const NewsCard = ({ article, onClick }) => {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
+      className={styles.card}
       style={{
-        background: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '1rem',
-        padding: '1rem',
-        border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
-        cursor: 'pointer',
-        marginBottom: '0.75rem'
+        border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`
       }}
     >
-      <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        marginBottom: '0.5rem'
-      }}>
-        <div style={{
-          padding: '0.25rem 0.5rem',
-          background: getCategoryColor(article.category),
-          borderRadius: '0.5rem',
-          fontSize: '0.7rem',
-          fontWeight: '600',
-          color: PLPColors.neutral.white
-        }}>
+      <div className={styles.header}>
+        <div 
+          className={styles.category}
+          style={{
+            background: getCategoryColor(article.category),
+            color: PLPColors.neutral.white
+          }}
+        >
           {article.category}
         </div>
         
         <ArrowRight size={16} color={PLPColors.neutral.gray400} />
       </div>
       
-      <h3 style={{
-        fontSize: '0.875rem',
-        fontWeight: '600',
-        color: PLPColors.primary.navy,
-        marginBottom: '0.5rem',
-        lineHeight: '1.3'
-      }}>
+      <h3 
+        className={styles.title}
+        style={{ color: PLPColors.primary.navy }}
+      >
         {article.title}
       </h3>
       
-      <p style={{
-        fontSize: '0.75rem',
-        color: PLPColors.neutral.gray600,
-        lineHeight: '1.4',
-        marginBottom: '0.75rem'
-      }}>
+      <p 
+        className={styles.content}
+        style={{ color: PLPColors.neutral.gray600 }}
+      >
         {article.content?.substring(0, 100)}...
       </p>
       
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        fontSize: '0.7rem',
-        color: PLPColors.neutral.gray500
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.25rem'
-        }}>
+      <div 
+        className={styles.footer}
+        style={{ color: PLPColors.neutral.gray500 }}
+      >
+        <div className={styles.dateSection}>
           <Clock size={12} />
           <span>{formatDate(article.date)}</span>
         </div>
         
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
-        }}>
+        <div className={styles.statsSection}>
           <span>👍 {article.likes}</span>
           <span>💬 {article.comments?.length || 0}</span>
         </div>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Bell, Star, User } from 'lucide-react';
 import { PLPColors } from '../../../../constants/brandColors';
 import LevelProgressBar from '../../../gamification/LevelProgressBar';
+import styles from './HomeHeader.module.css';
 
 const HomeHeader = ({ 
   user, 
@@ -22,48 +23,31 @@ const HomeHeader = ({
   return (
     <motion.div 
       variants={itemVariants}
-      style={{
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(20px)',
-        padding: '1rem',
-        borderBottomLeftRadius: '1.5rem',
-        borderBottomRightRadius: '1.5rem',
-        marginBottom: '1rem'
-      }}
+      className={styles.header}
     >
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '1rem'
-      }}>
+      <div className={styles.topRow}>
         <div>
-          <h1 style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            color: PLPColors.primary.navy,
-            marginBottom: '0.25rem'
-          }}>
+          <h1 
+            className={styles.greeting}
+            style={{ color: PLPColors.primary.navy }}
+          >
             {getGreeting()}, {user?.name?.split(' ')[0] || 'Supporter'}!
           </h1>
-          <p style={{
-            color: PLPColors.neutral.gray600,
-            fontSize: '0.875rem'
-          }}>
+          <p 
+            className={styles.subtitle}
+            style={{ color: PLPColors.neutral.gray600 }}
+          >
             Ready to make a difference today?
           </p>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div className={styles.actions}>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            className={styles.actionButton}
             style={{
-              padding: '0.75rem',
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
-              border: 'none',
-              borderRadius: '50%',
-              cursor: 'pointer'
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)
             }}
           >
             <Bell size={20} color={PLPColors.primary.navy} />
@@ -73,31 +57,23 @@ const HomeHeader = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onNavigate('profile')}
+            className={styles.actionButton}
             style={{
-              padding: '0.75rem',
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
-              border: 'none',
-              borderRadius: '50%',
-              cursor: 'pointer'
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)
             }}
           >
             <User size={20} color={PLPColors.primary.navy} />
           </motion.button>
           
-          <div style={{
-            padding: '0.5rem 0.75rem',
-            background: PLPColors.gradients.button,
-            borderRadius: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.25rem'
-          }}>
+          <div 
+            className={styles.pointsDisplay}
+            style={{ background: PLPColors.gradients.button }}
+          >
             <Star size={16} color={PLPColors.primary.navy} />
-            <span style={{
-              fontWeight: 'bold',
-              color: PLPColors.primary.navy,
-              fontSize: '0.875rem'
-            }}>
+            <span 
+              className={styles.pointsText}
+              style={{ color: PLPColors.primary.navy }}
+            >
               {userProfile?.totalPoints || 0}
             </span>
           </div>

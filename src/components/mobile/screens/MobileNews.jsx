@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { Search, Heart, MessageCircle, Share2, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Heart, MessageCircle, Share2, ArrowLeft, TrendingUp, Star, Clock } from 'lucide-react';
 import { Input } from '../../ui/input';
+import { PLPColors, PLPShadows } from '../../../constants/brandColors';
 import useAppStore from '../../../stores/useAppStore';
+import useGamificationStore from '../../../stores/useGamificationStore';
+import { toast } from 'sonner';
 
 const MobileNews = () => {
   const { news, selectedNewsCategory, setSelectedNewsCategory, likeNews } = useAppStore();
+  const { awardUserPoints } = useGamificationStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedArticle, setSelectedArticle] = useState(null);
 
@@ -17,165 +22,594 @@ const MobileNews = () => {
 
   const handleLike = async (articleId) => {
     await likeNews(articleId);
+    awardUserPoints('LIKE_NEWS');
+    toast.success('Article liked! +5 points', {
+      icon: '❤️',
+      duration: 2000
+    });
+  };
+
+  const handleShare = (article) => {
+    awardUserPoints('SHARE_CONTENT');
+    toast.success('Article shared! +10 points', {
+      icon: '📤',
+      duration: 2000
+    });
+  };
+
+  const handleReadArticle = (article) => {
+    setSelectedArticle(article);
+    awardUserPoints('READ_article');
+    toast.success('Reading article! +3 points', {
+      icon: '📖',
+      duration: 1500
+    });
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.6, staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
   };
 
   if (selectedArticle) {
     return (
-      <div className="h-full bg-white">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{
+          height: '100%',
+          background: PLPColors.gradients.hero
+        }}
+      >
         {/* Article Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center space-x-3">
-          <button 
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          style={{
+            position: 'sticky',
+            top: 0,
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
+            padding: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            zIndex: 10
+          }}
+        >
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setSelectedArticle(null)}
-            className="p-2 -m-2 hover:bg-gray-100 rounded-full"
+            style={{
+              padding: '0.5rem',
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+              border: 'none',
+              borderRadius: '50%',
+              cursor: 'pointer'
+            }}
           >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <h1 className="font-semibold">Article</h1>
-        </div>
+            <ArrowLeft size={20} color={PLPColors.primary.navy} />
+          </motion.button>
+          <h1 style={{
+            fontWeight: '700',
+            fontSize: '1.125rem',
+            color: PLPColors.primary.navy
+          }}>Article Details</h1>
+        </motion.div>
 
         {/* Article Content */}
-        <div className="p-4">
-          <div className="mb-4">
-            <span className="inline-block px-3 py-1 bg-[#FFC600]/10 text-[#FFC600] rounded-full text-sm font-medium mb-3">
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderTopLeftRadius: '2rem',
+            borderTopRightRadius: '2rem',
+            border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
+            boxShadow: PLPShadows.glass,
+            padding: '1.5rem',
+            margin: '1rem 1rem 0',
+            marginBottom: '2rem'
+          }}
+        >
+          <div style={{ marginBottom: '1.5rem' }}>
+            <motion.span 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              style={{
+                display: 'inline-block',
+                padding: '0.5rem 1rem',
+                background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                color: PLPColors.primary.navy,
+                borderRadius: '1rem',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                marginBottom: '1rem'
+              }}
+            >
               {selectedArticle.category}
-            </span>
-            <h1 className="text-xl font-bold text-gray-900 mb-2">
+            </motion.span>
+            <motion.h1 
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: PLPColors.primary.navy,
+                marginBottom: '0.75rem',
+                lineHeight: '1.3'
+              }}
+            >
               {selectedArticle.title}
-            </h1>
-            <div className="flex items-center text-sm text-gray-600 mb-4">
-              <span>By {selectedArticle.author}</span>
-              <span className="mx-2">•</span>
+            </motion.h1>
+            <motion.div 
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: '0.875rem',
+                color: PLPColors.neutral.gray600,
+                marginBottom: '1.5rem',
+                gap: '0.5rem'
+              }}
+            >
+              <span style={{ fontWeight: '500' }}>By {selectedArticle.author}</span>
+              <span style={{ color: PLPColors.neutral.gray400 }}>•</span>
               <span>{new Date(selectedArticle.date).toLocaleDateString()}</span>
-            </div>
+              <Clock size={14} color={PLPColors.neutral.gray400} style={{ marginLeft: '0.5rem' }} />
+              <span>{selectedArticle.readTime}</span>
+            </motion.div>
           </div>
 
-          <div className="prose prose-sm max-w-none">
-            <p className="text-gray-800 leading-relaxed mb-4">
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <p style={{
+              color: PLPColors.primary.navy,
+              lineHeight: '1.6',
+              marginBottom: '1.5rem',
+              fontSize: '1rem'
+            }}>
               {selectedArticle.summary}
             </p>
             
             {selectedArticle.keyPoints && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h3 className="font-semibold mb-2">Key Points:</h3>
-                <ul className="space-y-1">
+              <motion.div 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                style={{
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.05),
+                  borderRadius: '1rem',
+                  padding: '1.5rem',
+                  marginBottom: '1.5rem',
+                  border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.15)}`
+                }}
+              >
+                <h3 style={{
+                  fontWeight: '700',
+                  marginBottom: '1rem',
+                  color: PLPColors.primary.navy,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <Star size={18} color={PLPColors.primary.gold} />
+                  Key Points:
+                </h3>
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                   {selectedArticle.keyPoints.map((point, i) => (
-                    <li key={i} className="text-sm text-gray-700 flex items-start">
-                      <span className="w-2 h-2 bg-[#FFC600] rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                    <motion.li 
+                      key={i}
+                      initial={{ x: -10, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.7 + (i * 0.1) }}
+                      style={{
+                        fontSize: '0.875rem',
+                        color: PLPColors.neutral.gray700,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <span style={{
+                        width: '6px',
+                        height: '6px',
+                        background: PLPColors.primary.gold,
+                        borderRadius: '50%',
+                        marginTop: '0.5rem',
+                        flexShrink: 0
+                      }}></span>
                       {point}
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between py-4 border-t border-gray-200 mt-6">
-            <button
+          <motion.div 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: '1.5rem',
+              borderTop: `2px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)}`,
+              marginTop: '1.5rem',
+              gap: '0.75rem'
+            }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleLike(selectedArticle.id)}
-              className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-50 active:bg-gray-100"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '1rem',
+                background: PLPColors.getColorWithOpacity(PLPColors.status.error, 0.1),
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.status.error, 0.2)}`,
+                cursor: 'pointer'
+              }}
             >
-              <Heart className="h-5 w-5 text-red-500" />
-              <span className="text-sm font-medium">{selectedArticle.likes}</span>
-            </button>
+              <Heart size={18} color={PLPColors.status.error} />
+              <span style={{
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: PLPColors.primary.navy
+              }}>{selectedArticle.likes}</span>
+            </motion.button>
             
-            <button className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-50 active:bg-gray-100">
-              <MessageCircle className="h-5 w-5 text-blue-500" />
-              <span className="text-sm font-medium">{selectedArticle.comments.length}</span>
-            </button>
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '1rem',
+                background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)}`,
+                cursor: 'pointer'
+              }}
+            >
+              <MessageCircle size={18} color={PLPColors.primary.blue} />
+              <span style={{
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: PLPColors.primary.navy
+              }}>{selectedArticle.comments.length}</span>
+            </motion.button>
             
-            <button className="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-50 active:bg-gray-100">
-              <Share2 className="h-5 w-5 text-green-500" />
-              <span className="text-sm font-medium">Share</span>
-            </button>
-          </div>
-        </div>
-      </div>
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleShare(selectedArticle)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1rem',
+                borderRadius: '1rem',
+                background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.3)}`,
+                cursor: 'pointer'
+              }}
+            >
+              <Share2 size={18} color={PLPColors.primary.navy} />
+              <span style={{
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: PLPColors.primary.navy
+              }}>Share</span>
+            </motion.button>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="h-full bg-gray-50">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      style={{
+        height: '100%',
+        background: PLPColors.gradients.hero,
+        overflow: 'auto'
+      }}
+    >
       {/* Header */}
-      <div className="bg-white px-4 pt-4 pb-3 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-900 mb-3">News & Updates</h1>
+      <motion.div 
+        variants={itemVariants}
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          padding: '1.5rem 1rem 1rem',
+          borderBottomLeftRadius: '1.5rem',
+          borderBottomRightRadius: '1.5rem',
+          border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
+          boxShadow: PLPShadows.glass,
+          marginBottom: '1rem'
+        }}
+      >
+        <motion.h1 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          style={{
+            fontSize: '1.75rem',
+            fontWeight: 'bold',
+            color: PLPColors.primary.navy,
+            marginBottom: '0.5rem',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
+          }}
+        >
+          <TrendingUp size={24} color={PLPColors.primary.gold} />
+          News & Updates
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          style={{
+            color: PLPColors.neutral.gray600,
+            fontSize: '0.875rem',
+            textAlign: 'center',
+            marginBottom: '1rem'
+          }}
+        >
+          Stay informed with the latest PLP updates
+        </motion.p>
         
         {/* Search */}
-        <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        <motion.div 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          style={{ position: 'relative', marginBottom: '1rem' }}
+        >
+          <Search 
+            size={20}
+            style={{
+              position: 'absolute',
+              left: '1rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: PLPColors.neutral.gray400,
+              zIndex: 1
+            }} 
+          />
           <Input
             type="text"
-            placeholder="Search news..."
-            className="pl-10 h-10"
+            placeholder="Search news articles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              height: '3rem',
+              paddingLeft: '3rem',
+              border: `2px solid ${PLPColors.neutral.gray200}`,
+              borderRadius: '1rem',
+              fontSize: '1rem',
+              background: PLPColors.neutral.white,
+              transition: 'all 0.2s ease'
+            }}
+            onFocus={(e) => {
+              e.target.style.border = `2px solid ${PLPColors.primary.gold}`;
+            }}
+            onBlur={(e) => {
+              e.target.style.border = `2px solid ${PLPColors.neutral.gray200}`;
+            }}
           />
-        </div>
+        </motion.div>
         
         {/* Categories */}
-        <div className="flex space-x-2 overflow-x-auto pb-1">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedNewsCategory(category)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
-                selectedNewsCategory === category
-                  ? 'bg-[#FFC600] text-gray-900'
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
+        <motion.div 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            paddingBottom: '0.5rem'
+          }}
+        >
+          {categories.map((category, index) => {
+            const isActive = selectedNewsCategory === category;
+            return (
+              <motion.button
+                key={category}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.6 + (index * 0.1) }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedNewsCategory(category)}
+                style={{
+                  padding: '0.75rem 1rem',
+                  borderRadius: '1rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  whiteSpace: 'nowrap',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: isActive 
+                    ? PLPColors.primary.gold 
+                    : 'rgba(255, 255, 255, 0.7)',
+                  color: isActive 
+                    ? PLPColors.neutral.white 
+                    : PLPColors.primary.navy,
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                {category}
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </motion.div>
 
-      {/* News List */}
-      <div className="p-4 space-y-4">
-        {filteredNews.map((article) => (
-          <div 
-            key={article.id} 
-            className="bg-white rounded-2xl p-4 shadow-sm active:scale-98 transition-transform"
-            onClick={() => setSelectedArticle(article)}
-          >
-            <div className="flex items-start space-x-3">
-              <div className="w-12 h-12 bg-[#FFC600]/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-lg">📰</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-[#FFC600] font-medium">
-                    {article.category}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {new Date(article.date).toLocaleDateString()}
-                  </span>
+      <div style={{ padding: '0 1rem 5rem' }}>
+        {/* News List */}
+        <motion.div 
+          variants={itemVariants}
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        >
+          {filteredNews.map((article, index) => (
+            <motion.div 
+              key={article.id}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7 + (index * 0.1) }}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleReadArticle(article)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '1.5rem',
+                padding: '1rem',
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
+                boxShadow: PLPShadows.md,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+                <div style={{
+                  width: '3rem',
+                  height: '3rem',
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                  borderRadius: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <span style={{ fontSize: '1.25rem' }}>📰</span>
                 </div>
-                <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">
-                  {article.title}
-                </h3>
-                <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                  {article.summary}
-                </p>
-                
-                {/* Stats */}
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <Heart className="h-4 w-4 text-gray-400" />
-                    <span className="text-xs text-gray-600">{article.likes}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '0.5rem'
+                  }}>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      color: PLPColors.primary.navy,
+                      fontWeight: '600',
+                      background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2),
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '0.5rem'
+                    }}>
+                      {article.category}
+                    </span>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      color: PLPColors.neutral.gray500
+                    }}>
+                      {new Date(article.date).toLocaleDateString()}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <MessageCircle className="h-4 w-4 text-gray-400" />
-                    <span className="text-xs text-gray-600">{article.comments.length}</span>
+                  <h3 style={{
+                    fontWeight: '700',
+                    color: PLPColors.primary.navy,
+                    marginBottom: '0.5rem',
+                    fontSize: '1rem',
+                    lineHeight: '1.3',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {article.title}
+                  </h3>
+                  <p style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    lineHeight: '1.4',
+                    marginBottom: '0.75rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {article.summary}
+                  </p>
+                  
+                  {/* Stats */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Heart size={14} color={PLPColors.neutral.gray400} />
+                      <span style={{
+                        fontSize: '0.75rem',
+                        color: PLPColors.neutral.gray600,
+                        fontWeight: '500'
+                      }}>{article.likes}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <MessageCircle size={14} color={PLPColors.neutral.gray400} />
+                      <span style={{
+                        fontSize: '0.75rem',
+                        color: PLPColors.neutral.gray600,
+                        fontWeight: '500'
+                      }}>{article.comments.length}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Clock size={14} color={PLPColors.neutral.gray400} />
+                      <span style={{
+                        fontSize: '0.75rem',
+                        color: PLPColors.neutral.gray500
+                      }}>{article.readTime}</span>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-500">{article.readTime}</span>
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

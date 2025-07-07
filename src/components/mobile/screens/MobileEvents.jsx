@@ -1,71 +1,379 @@
-import React from 'react';
-import { Calendar, MapPin, Users, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, MapPin, Users, Clock, Star, TrendingUp, Filter, ChevronRight } from 'lucide-react';
+import { PLPColors, PLPShadows } from '../../../constants/brandColors';
 import useAppStore from '../../../stores/useAppStore';
+import useGamificationStore from '../../../stores/useGamificationStore';
+import { toast } from 'sonner';
 
 const MobileEvents = () => {
   const { events, rsvpEvent } = useAppStore();
+  const { awardUserPoints } = useGamificationStore();
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  
+  const eventTypes = [
+    { id: 'all', name: 'All Events', icon: Calendar },
+    { id: 'Town Hall', name: 'Town Halls', icon: Users },
+    { id: 'Rally', name: 'Rallies', icon: TrendingUp },
+    { id: 'Community', name: 'Community', icon: Star }
+  ];
 
-  const handleRSVP = async (eventId) => {
+  const handleRSVP = async (eventId, eventTitle) => {
     await rsvpEvent(eventId, 'rsvp');
+    awardUserPoints('RSVP_EVENT');
+    toast.success(`RSVP confirmed! +15 points`, {
+      icon: '🎉',
+      duration: 3000,
+      description: `See you at ${eventTitle}!`
+    });
+  };
+
+  const filteredEvents = selectedFilter === 'all' 
+    ? events 
+    : events.filter(event => event.event_type === selectedFilter);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.6, staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { duration: 0.5 }
+    }
   };
 
   return (
-    <div className="h-full bg-gray-50">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      style={{
+        height: '100%',
+        background: PLPColors.gradients.hero,
+        overflow: 'auto'
+      }}
+    >
       {/* Header */}
-      <div className="bg-white px-4 py-4 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-900">Events</h1>
-        <p className="text-gray-600 text-sm">Join us at upcoming events</p>
-      </div>
+      <motion.div 
+        variants={itemVariants}
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          padding: '1.5rem 1rem 1rem',
+          borderBottomLeftRadius: '1.5rem',
+          borderBottomRightRadius: '1.5rem',
+          border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
+          boxShadow: PLPShadows.glass,
+          marginBottom: '1rem'
+        }}
+      >
+        <motion.h1 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          style={{
+            fontSize: '1.75rem',
+            fontWeight: 'bold',
+            color: PLPColors.primary.navy,
+            marginBottom: '0.5rem',
+            textAlign: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem'
+          }}
+        >
+          <Calendar size={24} color={PLPColors.primary.gold} />
+          PLP Events
+        </motion.h1>
+        <motion.p 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          style={{
+            color: PLPColors.neutral.gray600,
+            fontSize: '0.875rem',
+            textAlign: 'center',
+            marginBottom: '1rem'
+          }}
+        >
+          Join us at upcoming community events
+        </motion.p>
 
-      {/* Events List */}
-      <div className="p-4 space-y-4">
-        {events.map((event) => (
-          <div key={event.id} className="bg-white rounded-2xl p-4 shadow-sm">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 mb-1">
-                  {event.title}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {event.description}
-                </p>
-              </div>
-              {event.is_live_streamed && (
-                <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full ml-2">
-                  Live
-                </span>
-              )}
-            </div>
-            
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center text-sm text-gray-600">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span>{new Date(event.date_time).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <Clock className="h-4 w-4 mr-2" />
-                <span>{new Date(event.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-              </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <MapPin className="h-4 w-4 mr-2" />
-                <span className="line-clamp-1">{event.location}</span>
-              </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <Users className="h-4 w-4 mr-2" />
-                <span>{event.attending_count} attending</span>
-              </div>
-            </div>
-            
-            <button
-              onClick={() => handleRSVP(event.id)}
-              className="w-full bg-[#FFC600] text-gray-900 font-semibold py-3 rounded-xl active:scale-95 transition-transform"
+        {/* Event Type Filter */}
+        <motion.div 
+          initial={{ y: -10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            overflowX: 'auto',
+            paddingBottom: '0.5rem'
+          }}
+        >
+          {eventTypes.map((type, index) => {
+            const Icon = type.icon;
+            const isActive = selectedFilter === type.id;
+            return (
+              <motion.button
+                key={type.id}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.5 + (index * 0.1) }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSelectedFilter(type.id)}
+                style={{
+                  padding: '0.75rem 1rem',
+                  borderRadius: '1rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  whiteSpace: 'nowrap',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: isActive 
+                    ? PLPColors.primary.gold 
+                    : 'rgba(255, 255, 255, 0.7)',
+                  color: isActive 
+                    ? PLPColors.neutral.white 
+                    : PLPColors.primary.navy,
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                <Icon size={16} />
+                {type.name}
+              </motion.button>
+            );
+          })}
+        </motion.div>
+      </motion.div>
+
+      <div style={{ padding: '0 1rem 5rem' }}>
+        {/* Events List */}
+        <motion.div 
+          variants={itemVariants}
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        >
+          {filteredEvents.map((event, index) => (
+            <motion.div 
+              key={event.id}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8 + (index * 0.15) }}
+              whileHover={{ scale: 1.01 }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '1.5rem',
+                padding: '1.25rem',
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
+                boxShadow: PLPShadows.md,
+                transition: 'all 0.2s ease'
+              }}
             >
-              RSVP Now
-            </button>
-          </div>
-        ))}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                marginBottom: '1rem'
+              }}>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{
+                    fontWeight: '700',
+                    color: PLPColors.primary.navy,
+                    marginBottom: '0.5rem',
+                    fontSize: '1.125rem',
+                    lineHeight: '1.3'
+                  }}>
+                    {event.title}
+                  </h3>
+                  <p style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    lineHeight: '1.4',
+                    marginBottom: '1rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {event.description}
+                  </p>
+                </div>
+                {event.is_live_streamed && (
+                  <motion.span 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1 + (index * 0.15) }}
+                    style={{
+                      background: PLPColors.status.error,
+                      color: PLPColors.neutral.white,
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      padding: '0.25rem 0.75rem',
+                      borderRadius: '1rem',
+                      marginLeft: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}
+                  >
+                    • Live
+                  </motion.span>
+                )}
+              </div>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '0.75rem',
+                marginBottom: '1rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{
+                    width: '2rem',
+                    height: '2rem',
+                    background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Calendar size={14} color={PLPColors.primary.navy} />
+                  </div>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    fontWeight: '500'
+                  }}>{new Date(event.date_time).toLocaleDateString()}</span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{
+                    width: '2rem',
+                    height: '2rem',
+                    background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.15),
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Clock size={14} color={PLPColors.primary.navy} />
+                  </div>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    fontWeight: '500'
+                  }}>{new Date(event.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{
+                    width: '2rem',
+                    height: '2rem',
+                    background: PLPColors.getColorWithOpacity(PLPColors.status.info, 0.15),
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <MapPin size={14} color={PLPColors.primary.navy} />
+                  </div>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    fontWeight: '500',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>{event.location}</span>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{
+                    width: '2rem',
+                    height: '2rem',
+                    background: PLPColors.getColorWithOpacity(PLPColors.status.success, 0.15),
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Users size={14} color={PLPColors.primary.navy} />
+                  </div>
+                  <span style={{
+                    fontSize: '0.875rem',
+                    color: PLPColors.neutral.gray600,
+                    fontWeight: '500'
+                  }}>{event.attending_count} attending</span>
+                </div>
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '1rem'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.5rem 0.75rem',
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+                  borderRadius: '0.75rem'
+                }}>
+                  <Star size={14} color={PLPColors.primary.gold} />
+                  <span style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: PLPColors.primary.navy
+                  }}>+15 points</span>
+                </div>
+                
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleRSVP(event.id, event.title)}
+                  style={{
+                    flex: 1,
+                    background: PLPColors.gradients.button,
+                    border: 'none',
+                    borderRadius: '1rem',
+                    color: PLPColors.primary.navy,
+                    fontSize: '1rem',
+                    fontWeight: '700',
+                    padding: '0.875rem 1.5rem',
+                    cursor: 'pointer',
+                    boxShadow: PLPShadows.md,
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
+                  RSVP Now
+                  <ChevronRight size={16} />
+                </motion.button>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

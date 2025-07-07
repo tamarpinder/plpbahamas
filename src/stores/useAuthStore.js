@@ -86,6 +86,30 @@ const useAuthStore = create(
         if (currentUser) {
           set({ user: currentUser, isAuthenticated: true });
         }
+      },
+
+      loginAsGuest: () => {
+        const guestUser = {
+          id: "guest",
+          name: "Guest User",
+          email: "guest@plp.bs",
+          isGuest: true,
+          memberSince: new Date().toISOString(),
+          verified: false,
+          volunteerStatus: 'Guest',
+          donationTotal: 0,
+          eventsAttended: 0,
+          badges: ['Guest Access']
+        };
+        
+        set({ 
+          user: guestUser, 
+          isAuthenticated: true, 
+          isLoading: false 
+        });
+        
+        // Don't store guest in localStorage - session only
+        return { success: true, user: guestUser };
       }
     }),
     {

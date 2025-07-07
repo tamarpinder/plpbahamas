@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { PLPColors, PLPShadows, PLPSpacing } from '../../constants/brandColors';
 
 const PLPLoginNew = ({ onLoginSuccess }) => {
-  const { login, register, isLoading } = useAuthStore();
+  const { login, register, loginAsGuest, isLoading } = useAuthStore();
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -37,18 +37,18 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
         break;
       case 'email':
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!value) {
+        if (isSignUp && !value) {
           errors.email = 'Email is required';
-        } else if (!emailRegex.test(value)) {
+        } else if (value && !emailRegex.test(value)) {
           errors.email = 'Please enter a valid email address';
         } else {
           delete errors.email;
         }
         break;
       case 'password':
-        if (!value) {
+        if (isSignUp && !value) {
           errors.password = 'Password is required';
-        } else if (value.length < 6) {
+        } else if (value && value.length < 6) {
           errors.password = 'Password must be at least 6 characters';
         } else {
           delete errors.password;
@@ -77,7 +77,17 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate all fields
+    // Check if both email and password are empty - sign in as guest
+    if (!isSignUp && !formData.email.trim() && !formData.password.trim()) {
+      const guestResult = loginAsGuest();
+      if (guestResult.success) {
+        toast.success('Welcome, Guest!');
+        onLoginSuccess();
+      }
+      return;
+    }
+    
+    // Validate all fields for normal login/signup
     let isValid = true;
     const fieldsToValidate = isSignUp 
       ? ['name', 'email', 'password', 'confirmPassword']
@@ -415,8 +425,10 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                 onFocus={() => setFocusedField('email')}
                 onBlur={() => setFocusedField(null)}
                 style={{
+                  width: '100%',
                   height: '3.5rem',
                   paddingLeft: '3rem',
+                  paddingRight: '3rem',
                   border: `2px solid ${validationErrors.email ? PLPColors.status.error : 
                     focusedField === 'email' ? PLPColors.primary.gold : PLPColors.neutral.gray200}`,
                   borderRadius: '1rem',
@@ -424,7 +436,6 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                   background: PLPColors.neutral.white,
                   transition: 'all 0.2s ease'
                 }}
-                required
               />
               {validationErrors.email && (
                 <motion.p
@@ -463,6 +474,7 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                 onFocus={() => setFocusedField('password')}
                 onBlur={() => setFocusedField(null)}
                 style={{
+                  width: '100%',
                   height: '3.5rem',
                   paddingLeft: '3rem',
                   paddingRight: '3rem',
@@ -473,7 +485,6 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                   background: PLPColors.neutral.white,
                   transition: 'all 0.2s ease'
                 }}
-                required
               />
               <button
                 type="button"
@@ -626,22 +637,22 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                 ) : (
                   <>
                     {isSignUp ? <UserPlus size={20} style={{ marginRight: '0.5rem' }} /> : <LogIn size={20} style={{ marginRight: '0.5rem' }} />}
-                    {isSignUp ? 'Join the Movement' : 'Sign In'}
+                    {isSignUp ? 'Join the Movement' : (!formData.email.trim() && !formData.password.trim() ? 'Continue as Guest' : 'Sign In')}
                   </>
                 )}
               </Button>
             </motion.div>
 
-            {/* Demo Credentials */}
+            {/* Guest Access Info */}
             {!isSignUp && (
               <motion.div 
                 variants={itemVariants}
                 style={{
                   marginTop: '1rem',
                   padding: '1rem',
-                  background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.05),
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.05),
                   borderRadius: '0.75rem',
-                  border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`
+                  border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)}`
                 }}
               >
                 <p style={{
@@ -651,7 +662,7 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                   margin: 0,
                   fontWeight: '500'
                 }}>
-                  🔒 Demo: Use any email with password "demo123"
+                  👋 Leave fields empty to explore as a guest
                 </p>
               </motion.div>
             )}

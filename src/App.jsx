@@ -4,7 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PhoneMockup from './components/PhoneMockup';
 import MobileLayout from './components/mobile/MobileLayout';
 import PLPLoginNew from './components/mobile/PLPLoginNew';
-import PLPHomeNew from './components/mobile/screens/PLPHomeNew';
+import PLPHomeNew from './components/mobile/screens/home/PLPHomeNew';
 import MobileNews from './components/mobile/screens/MobileNews';
 import MobileEvents from './components/mobile/screens/MobileEvents';
 import MobileDonate from './components/mobile/screens/MobileDonate';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { PLPColors } from '../../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import styles from './ActionButton.module.css';
 
 const ActionButton = ({ 

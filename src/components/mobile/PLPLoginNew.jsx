@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { LogIn, UserPlus, Eye, EyeOff, Mail, Lock, User, Loader2 } from 'lucide-react';
-import useAuthStore from '../../stores/useAuthStore';
+import useAuthStore from '@/stores/useAuthStore';
 import { toast } from 'sonner';
-import { PLPColors, PLPShadows, PLPSpacing } from '../../constants/brandColors';
+import { PLPColors, PLPShadows, PLPSpacing } from '@/constants/brandColors';
 
 const PLPLoginNew = ({ onLoginSuccess }) => {
   const { login, register, loginAsGuest, isLoading } = useAuthStore();

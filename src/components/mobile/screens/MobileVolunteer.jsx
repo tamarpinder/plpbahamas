@@ -12,8 +12,8 @@ import {
   Target,
   TrendingUp
 } from 'lucide-react';
-import { PLPColors } from '../../../constants/brandColors';
-import useGamificationStore from '../../../stores/useGamificationStore';
+import { PLPColors } from '@/constants/brandColors';
+import useGamificationStore from '@/stores/useGamificationStore';
 import { toast } from 'sonner';
 
 const MobileVolunteer = () => {

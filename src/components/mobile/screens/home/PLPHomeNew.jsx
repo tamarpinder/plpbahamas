@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import useAppStore from '../../../../stores/useAppStore';
-import useAuthStore from '../../../../stores/useAuthStore';
-import useGamificationStore from '../../../../stores/useGamificationStore';
-import { PLPColors } from '../../../../constants/brandColors';
+import useAppStore from '@/stores/useAppStore';
+import useAuthStore from '@/stores/useAuthStore';
+import useGamificationStore from '@/stores/useGamificationStore';
+import { PLPColors } from '@/constants/brandColors';
 
 // Import section components
 import HomeHeader from './HomeHeader';

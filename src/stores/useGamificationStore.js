@@ -11,7 +11,7 @@ import {
   checkBadgeEligibility,
   awardPoints,
   createUserGamificationProfile
-} from '../data/gamificationSystem';
+} from '@/data/gamificationSystem';
 import { toast } from 'sonner';
 
 const useGamificationStore = create(

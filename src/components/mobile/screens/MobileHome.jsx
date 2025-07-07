@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Heart, Users, Calendar, TrendingUp, ArrowRight, Bell } from 'lucide-react';
-import useAppStore from '../../../stores/useAppStore';
-import useAuthStore from '../../../stores/useAuthStore';
+import useAppStore from '@/stores/useAppStore';
+import useAuthStore from '@/stores/useAuthStore';
 
 const MobileHome = ({ onNavigate }) => {
   const { dashboardStats, news, events, initializeApp } = useAppStore();

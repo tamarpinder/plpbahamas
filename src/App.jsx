@@ -4,8 +4,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PhoneMockup from './components/PhoneMockup';
 import MobileLayout from './components/mobile/MobileLayout';
 import ScreenLoader from './components/shared/ScreenLoader';
-import useAuthStore from './stores/useAuthStore';
-import { preloadCoreScreens } from './utils/preloadComponents';
+import useAuthStore from '@/stores/useAuthStore';
+import { preloadCoreScreens } from '@/utils/preloadComponents';
 import './App.css';
 
 // Lazy load all screen components for code splitting

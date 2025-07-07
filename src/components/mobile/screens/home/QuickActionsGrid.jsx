@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Calendar, Target } from 'lucide-react';
-import { PLPColors } from '../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import ActionButton from './shared/ActionButton';
 
 const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {

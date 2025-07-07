@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, CreditCard, DollarSign, TrendingUp, Star, Gift, Users } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
-import { PLPColors, PLPShadows } from '../../../constants/brandColors';
+import { PLPColors, PLPShadows } from '@/constants/brandColors';
 import { mockApi } from '../../../services/mockApi';
-import useGamificationStore from '../../../stores/useGamificationStore';
+import useGamificationStore from '@/stores/useGamificationStore';
 import { toast } from 'sonner';
 
 const MobileDonate = () => {

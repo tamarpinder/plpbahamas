@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { mockApi } from '../services/mockApi';
+import { mockApi } from '@/services/mockApi';
 
 const useAppStore = create((set, get) => ({
   // Dashboard Stats

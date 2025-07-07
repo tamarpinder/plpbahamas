@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Users, Clock, Star, TrendingUp, Filter, ChevronRight } from 'lucide-react';
-import { PLPColors, PLPShadows } from '../../../constants/brandColors';
-import useAppStore from '../../../stores/useAppStore';
-import useGamificationStore from '../../../stores/useGamificationStore';
+import { PLPColors, PLPShadows } from '@/constants/brandColors';
+import useAppStore from '@/stores/useAppStore';
+import useGamificationStore from '@/stores/useGamificationStore';
 import { toast } from 'sonner';
 
 const MobileEvents = () => {

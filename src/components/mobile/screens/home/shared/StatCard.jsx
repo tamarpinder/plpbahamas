@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { PLPColors } from '../../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import styles from './StatCard.module.css';
 
 const StatCard = ({ 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Heart } from 'lucide-react';
-import { PLPColors } from '../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import StatCard from './shared/StatCard';
 import styles from './QuickStatsGrid.module.css';
 

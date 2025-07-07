@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, Newspaper, Calendar, Heart, User, LogIn, LogOut, Users, ChevronDown } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
-import useAuthStore from '../../stores/useAuthStore';
-import useAppStore from '../../stores/useAppStore';
+import useAuthStore from '@/stores/useAuthStore';
+import useAppStore from '@/stores/useAppStore';
 
 const Navigation = () => {
   const location = useLocation();

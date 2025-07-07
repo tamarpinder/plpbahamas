@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, ArrowRight } from 'lucide-react';
-import { PLPColors } from '../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import NewsCard from './shared/NewsCard';
 
 const LatestNews = ({ news, onNavigate, awardUserPoints, itemVariants }) => {

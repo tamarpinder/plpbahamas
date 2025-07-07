@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Zap } from 'lucide-react';
-import { PLPColors } from '../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 
 const ChallengeCard = ({ challenge }) => {
   return (

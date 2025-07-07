@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Bell, Star, User } from 'lucide-react';
-import { PLPColors } from '../../../../constants/brandColors';
+import { PLPColors } from '@/constants/brandColors';
 import LevelProgressBar from '../../../gamification/LevelProgressBar';
 import styles from './HomeHeader.module.css';
 

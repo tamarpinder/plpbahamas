@@ -1,119 +1,145 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import gamificationService from '../../services/gamificationService';
+import { PLPColors } from '../../constants/brandColors';
 
-const LevelProgressBar = ({ currentPoints, showDetails = true, className = "" }) => {
-  const levelInfo = gamificationService.getUserLevelInfo(currentPoints);
-  const progressInfo = gamificationService.getProgressToNextLevel(currentPoints);
-
-  const getLevelGradient = (levelName) => {
-    const gradients = {
-      'Supporter': 'from-blue-400 to-blue-600',
-      'Advocate': 'from-blue-400 to-indigo-600', 
-      'Champion': 'from-yellow-400 to-orange-500',
-      'Ambassador': 'from-yellow-400 to-yellow-600',
-      'Guardian': 'from-gray-400 to-gray-600',
-      'Legend': 'from-purple-400 via-pink-400 to-red-400'
+const LevelProgressBar = ({ 
+  currentLevel, 
+  progress, 
+  pointsNeeded, 
+  nextLevel, 
+  totalPoints,
+  showDetails = true 
+}) => {
+  const getRarityColor = (levelId) => {
+    const colors = {
+      1: PLPColors.neutral.gray500,
+      2: PLPColors.primary.blue,
+      3: PLPColors.primary.navy,
+      4: PLPColors.primary.gold,
+      5: '#FF6B35'
     };
-    return gradients[levelName] || gradients.Supporter;
-  };
-
-  const getLevelIcon = (levelName) => {
-    const icons = {
-      'Supporter': '🌱',
-      'Advocate': '⭐',
-      'Champion': '🏆', 
-      'Ambassador': '👑',
-      'Guardian': '🛡️',
-      'Legend': '🌟'
-    };
-    return icons[levelName] || '🌱';
+    return colors[levelId] || PLPColors.primary.navy;
   };
 
   return (
-    <div className={`level-progress-container ${className}`}>
-      {/* Current Level Display */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">{getLevelIcon(levelInfo.name)}</span>
+    <div style={{
+      background: PLPColors.neutral.white,
+      borderRadius: '1rem',
+      padding: '1rem',
+      border: `1px solid ${PLPColors.getColorWithOpacity(currentLevel.color || PLPColors.primary.navy, 0.2)}`
+    }}>
+      {/* Level Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '0.75rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{
+            width: '2.5rem',
+            height: '2.5rem',
+            background: `linear-gradient(135deg, ${getRarityColor(currentLevel.id)}, ${PLPColors.getColorWithOpacity(getRarityColor(currentLevel.id), 0.7)})`,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '1.25rem',
+            color: PLPColors.neutral.white,
+            fontWeight: 'bold',
+            boxShadow: `0 4px 12px ${PLPColors.getColorWithOpacity(getRarityColor(currentLevel.id), 0.3)}`
+          }}>
+            {currentLevel.icon}
+          </div>
           <div>
-            <div className="font-bold text-gray-800">{levelInfo.name}</div>
-            <div className="text-sm text-gray-600">Level {levelInfo.level}</div>
+            <div style={{
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              color: PLPColors.primary.navy
+            }}>
+              Level {currentLevel.id}: {currentLevel.name}
+            </div>
+            {showDetails && (
+              <div style={{
+                fontSize: '0.875rem',
+                color: PLPColors.neutral.gray600
+              }}>
+                {totalPoints.toLocaleString()} total points
+              </div>
+            )}
           </div>
         </div>
         
-        {!progressInfo.isMaxLevel && (
-          <div className="text-right">
-            <div className="text-sm font-medium text-gray-800">
-              {progressInfo.pointsToNext} to next level
-            </div>
-            <div className="text-xs text-gray-600">
-              {getLevelIcon(progressInfo.nextLevel.name)} {progressInfo.nextLevel.name}
+        {nextLevel && (
+          <div style={{
+            fontSize: '0.75rem',
+            color: PLPColors.neutral.gray500,
+            textAlign: 'right'
+          }}>
+            <div>{pointsNeeded} points to</div>
+            <div style={{ fontWeight: '600', color: PLPColors.primary.navy }}>
+              {nextLevel.name}
             </div>
           </div>
         )}
       </div>
 
       {/* Progress Bar */}
-      {!progressInfo.isMaxLevel ? (
-        <div className="progress-bar-container">
-          <div className="bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
+      {nextLevel && (
+        <div style={{
+          background: PLPColors.neutral.gray200,
+          borderRadius: '0.5rem',
+          height: '0.5rem',
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(progress, 100)}%` }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+            style={{
+              height: '100%',
+              background: `linear-gradient(90deg, ${getRarityColor(currentLevel.id)}, ${PLPColors.primary.gold})`,
+              borderRadius: '0.5rem',
+              position: 'relative'
+            }}
+          >
+            {/* Shimmer effect */}
             <motion.div
-              className={`h-full bg-gradient-to-r ${getLevelGradient(levelInfo.name)} rounded-full relative`}
-              initial={{ width: 0 }}
-              animate={{ width: `${progressInfo.progress}%` }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-            >
-              {/* Animated shine effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                animate={{ x: ['-100%', '100%'] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-              />
-            </motion.div>
-          </div>
-          
-          {showDetails && (
-            <div className="flex justify-between text-xs text-gray-600">
-              <span>{levelInfo.minPoints} pts</span>
-              <span>{Math.round(progressInfo.progress)}%</span>
-              <span>{progressInfo.nextLevel.minPoints} pts</span>
-            </div>
-          )}
+              animate={{
+                x: ['-100%', '100%']
+              }}
+              transition={{
+                repeat: Infinity,
+                duration: 2,
+                ease: 'linear'
+              }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
+                transform: 'skewX(-45deg)'
+              }}
+            />
+          </motion.div>
         </div>
-      ) : (
-        <motion.div
-          className="max-level-indicator p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-300/30"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-center">
-            <div className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Maximum Level Reached!
-            </div>
-            <div className="text-sm text-gray-600 mt-1">
-              You are a true PLP Legend! 🌟
-            </div>
-          </div>
-        </motion.div>
       )}
 
-      {/* Points Display */}
-      {showDetails && (
-        <motion.div
-          className="points-summary text-center mt-3 p-2 bg-blue-50 rounded-lg"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          <div className="text-lg font-bold text-blue-600">
-            {currentPoints?.toLocaleString() || 0} Total Points
-          </div>
-          <div className="text-xs text-gray-600">
-            Keep engaging to earn more!
-          </div>
-        </motion.div>
+      {/* Progress Text */}
+      {showDetails && nextLevel && (
+        <div style={{
+          marginTop: '0.5rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '0.75rem',
+          color: PLPColors.neutral.gray600
+        }}>
+          <span>{Math.round(progress)}% Complete</span>
+          <span>{pointsNeeded} points needed</span>
+        </div>
       )}
     </div>
   );

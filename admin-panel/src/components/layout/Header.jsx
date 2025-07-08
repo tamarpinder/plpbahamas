@@ -1,10 +1,12 @@
 import React from 'react';
-import { Menu, Bell, Search, User, Settings, LogOut, Command, Keyboard } from 'lucide-react';
+import { Menu, Bell, Search, User, Settings, LogOut, Command, Keyboard, Moon, Sun } from 'lucide-react';
 import { PLPColors } from '../../constants/colors';
 import { GlobalSearch, useGlobalSearch } from '../GlobalSearch';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export function Header({ onMenuClick }) {
   const { isSearchOpen, openSearch, closeSearch } = useGlobalSearch();
+  const { isDarkMode, toggleDarkMode } = useTheme();
 
   return (
     <>
@@ -45,6 +47,15 @@ export function Header({ onMenuClick }) {
               className="sm:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
             >
               <Search size={20} />
+            </button>
+            
+            {/* Dark mode toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md"
+              title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             
             {/* Keyboard shortcuts */}

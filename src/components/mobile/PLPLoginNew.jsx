@@ -195,31 +195,48 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
             flex: '0 0 auto'
           }}
         >
-          {/* Main PLP Logo */}
+          {/* Main PLP Gold Logo - Premium Welcome */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ scale: 0.8, opacity: 0, rotateY: 180 }}
+            animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, type: "spring" }}
             style={{
               width: '120px',
               height: '120px',
               margin: '0 auto 1.5rem',
-              background: PLPColors.neutral.white,
+              background: `linear-gradient(135deg, ${PLPColors.neutral.white} 0%, ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)} 100%)`,
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: PLPShadows.xl,
-              border: `3px solid ${PLPColors.primary.gold}`
+              boxShadow: `${PLPShadows.xl}, 0 0 20px ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.3)}`,
+              border: `3px solid ${PLPColors.primary.gold}`,
+              position: 'relative',
+              overflow: 'hidden'
             }}
           >
+            {/* Subtle golden glow effect */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `conic-gradient(from 0deg, transparent, ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)}, transparent)`,
+              borderRadius: '50%',
+              animation: 'rotate 10s linear infinite'
+            }} />
+            
             <img 
-              src="/assets/logo/Main logo - PLP blue.png"
+              src="/assets/logo/PLP LOGO - HAND RAYS GOLD.png"
               alt="PLP Logo"
               style={{
-                width: '80px',
-                height: '80px',
-                objectFit: 'contain'
+                width: '85px',
+                height: 'auto',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3))',
+                position: 'relative',
+                zIndex: 2
               }}
               onError={(e) => {
                 // Fallback if logo doesn't load
@@ -235,11 +252,21 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
               justifyContent: 'center',
               fontSize: '2rem',
               fontWeight: 'bold',
-              color: PLPColors.primary.navy
+              color: PLPColors.primary.navy,
+              position: 'relative',
+              zIndex: 2
             }}>
               PLP
             </div>
           </motion.div>
+          
+          {/* CSS Animation for rotating glow */}
+          <style jsx>{`
+            @keyframes rotate {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
 
           <motion.h1 
             variants={itemVariants}

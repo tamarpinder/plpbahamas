@@ -24,12 +24,29 @@ import useGamificationStore from '@/stores/useGamificationStore';
 
 const MobileLiveStreamContent = ({ onNavigate }) => {
   const { awardUserPoints } = useGamificationStore();
+  const [isLoading, setIsLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [watchTime, setWatchTime] = useState(0);
   const [viewerCount, setViewerCount] = useState(1247);
   const [hasJoined, setHasJoined] = useState(false);
+
+  // Initialize component safely
+  useEffect(() => {
+    const initializeStream = () => {
+      try {
+        setIsLoading(false);
+        setHasJoined(true);
+      } catch (error) {
+        console.error('Error initializing live stream:', error);
+        setIsLoading(false);
+      }
+    };
+    
+    const timer = setTimeout(initializeStream, 100);
+    return () => clearTimeout(timer);
+  }, []);
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
@@ -156,6 +173,32 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
     // Update reaction count (mock)
     console.log(`Reacted with ${reaction.emoji}`);
   };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div style={{
+        height: '100%',
+        background: PLPColors.gradients.hero,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center', color: PLPColors.neutral.white }}>
+          <div style={{ 
+            width: '3rem', 
+            height: '3rem', 
+            border: `3px solid ${PLPColors.neutral.white}`,
+            borderTop: `3px solid transparent`,
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 1rem'
+          }} />
+          <p>Joining live stream...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{

@@ -4,6 +4,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import PhoneMockup from './components/PhoneMockup';
 import MobileLayout from './components/mobile/MobileLayout';
 import ScreenLoader from './components/shared/ScreenLoader';
+import SplashScreen from './components/SplashScreen';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { ModalPortalProvider } from '@/contexts/ModalPortalContext';
 import useAuthStore from '@/stores/useAuthStore';
@@ -25,16 +26,26 @@ const MobileLiveStream = React.lazy(() => import('./components/mobile/screens/Mo
 function App() {
   const { isAuthenticated, checkAuth } = useAuthStore();
   const [activeScreen, setActiveScreen] = useState('home');
+  const [showSplash, setShowSplash] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    checkAuth();
-    
-    // Preload core screens after initial load
-    preloadCoreScreens();
-  }, [checkAuth]);
+    // Check auth status after splash screen completes
+    if (!showSplash && !authChecked) {
+      checkAuth();
+      setAuthChecked(true);
+      
+      // Preload core screens after initial load
+      preloadCoreScreens();
+    }
+  }, [showSplash, authChecked, checkAuth]);
 
   const handleLoginSuccess = () => {
     setActiveScreen('home');
+  };
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
   };
 
   const handleNavigation = (screen) => {
@@ -88,21 +99,27 @@ function App() {
       <ModalPortalProvider>
         <ErrorBoundary>
           <div className="min-h-screen bg-gray-100">
-            <PhoneMockup>
-              {!isAuthenticated ? (
-                <Suspense fallback={<ScreenLoader screenName="Login" />}>
-                  <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
-                </Suspense>
-              ) : (
-                <MobileLayout 
-                  activeTab={activeScreen} 
-                  onTabChange={handleNavigation}
-                  showTabBar={true}
-                >
-                  {renderCurrentScreen()}
-                </MobileLayout>
-              )}
-            </PhoneMockup>
+            {showSplash ? (
+              <PhoneMockup>
+                <SplashScreen onComplete={handleSplashComplete} />
+              </PhoneMockup>
+            ) : (
+              <PhoneMockup>
+                {!isAuthenticated ? (
+                  <Suspense fallback={<ScreenLoader screenName="Login" />}>
+                    <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
+                  </Suspense>
+                ) : (
+                  <MobileLayout 
+                    activeTab={activeScreen} 
+                    onTabChange={handleNavigation}
+                    showTabBar={true}
+                  >
+                    {renderCurrentScreen()}
+                  </MobileLayout>
+                )}
+              </PhoneMockup>
+            )}
             <Toaster position="top-center" richColors />
           </div>
         </ErrorBoundary>

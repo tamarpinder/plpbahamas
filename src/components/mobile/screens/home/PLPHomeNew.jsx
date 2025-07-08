@@ -42,10 +42,26 @@ const PLPHomeNew = ({ onNavigate }) => {
   const currentLiveEvent = liveEvents.length > 0 ? liveEvents[0] : null;
   
   const handleJoinStream = async (event) => {
-    await joinLiveStream(event.id);
-    awardUserPoints('LIVESTREAM_JOIN');
-    // Navigate to live stream page
-    onNavigate('livestream');
+    // Defensive checks
+    if (!event || !event.id) {
+      console.error('Invalid event data for live stream join');
+      return;
+    }
+
+    try {
+      // Join live stream
+      const result = await joinLiveStream(event.id);
+      
+      if (result && result.success) {
+        // Navigate to live stream page (removed points award to prevent crashes)
+        onNavigate('livestream');
+      } else {
+        console.error('Failed to join live stream:', result?.error);
+      }
+    } catch (error) {
+      console.error('Error joining live stream:', error);
+      // Could add toast notification here for user feedback
+    }
   };
 
   // Enhanced animation variants

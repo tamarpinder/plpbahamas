@@ -193,6 +193,29 @@ const MobileProfileContent = () => {
           position: 'relative'
         }}
       >
+        {/* PLP Gold Logo - Premium Profile Badge */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            zIndex: 10
+          }}
+        >
+          <img 
+            src="/assets/logo/PLP LOGO - HAND RAYS GOLD.png" 
+            alt="PLP Premium"
+            style={{
+              height: '28px',
+              width: 'auto',
+              filter: 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3))'
+            }}
+          />
+        </motion.div>
+        
         {/* Background Pattern */}
         <div style={{
           position: 'absolute',

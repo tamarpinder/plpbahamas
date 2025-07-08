@@ -113,7 +113,8 @@ const MobileDonateContent = () => {
           border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
           boxShadow: PLPShadows.glass,
           marginBottom: '1rem',
-          textAlign: 'center'
+          textAlign: 'center',
+          position: 'relative'
         }}
       >
         <motion.div

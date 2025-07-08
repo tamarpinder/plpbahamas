@@ -38,96 +38,122 @@ const HomeHeader = ({
         paddingRight: '1rem'
       }}
     >
-      {/* Compact Action Buttons Row - Just below status bar */}
+      {/* Header Top Row: Logo + Action Buttons */}
       <div style={{
         display: 'flex',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        gap: '0.375rem',
         marginBottom: '1rem',
         paddingTop: '0.5rem' // Additional spacing from status bar
       }}>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        {/* PLP Blue Logo - Left Side */}
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
           style={{
-            padding: '0.5rem',
-            border: 'none',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            flexShrink: 0
           }}
         >
-          <Bell size={16} color={PLPColors.primary.navy} />
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={toggleTheme}
-          style={{
-            padding: '0.5rem',
-            border: 'none',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            background: PLPColors.getColorWithOpacity(isDark ? PLPColors.primary.gold : PLPColors.primary.blue, 0.1),
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          {isDark ? <Sun size={16} color={PLPColors.primary.navy} /> : <Moon size={16} color={PLPColors.primary.navy} />}
-        </motion.button>
-        
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onNavigate('profile')}
-          style={{
-            padding: '0.5rem',
-            border: 'none',
-            borderRadius: '50%',
-            cursor: 'pointer',
-            background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <User size={16} color={PLPColors.primary.navy} />
-        </motion.button>
-        
+          <img 
+            src="/assets/logo/PLP LOGO - HAND RAYS BLUE.png" 
+            alt="PLP"
+            style={{
+              height: '32px',
+              width: 'auto',
+              filter: 'drop-shadow(0 2px 4px rgba(0, 51, 102, 0.2))'
+            }}
+          />
+        </motion.div>
+
+        {/* Action Buttons - Right Side */}
         <div style={{
-          background: PLPColors.gradients.button,
-          padding: '0.375rem 0.625rem',
-          borderRadius: '0.875rem',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.25rem',
-          minWidth: 'fit-content'
+          gap: '0.375rem'
         }}>
-          <Star size={14} color={PLPColors.primary.navy} />
-          <span style={{
-            fontWeight: 'bold',
-            fontSize: '0.8rem',
-            color: PLPColors.primary.navy,
-            lineHeight: '1'
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              padding: '0.5rem',
+              border: 'none',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Bell size={16} color={PLPColors.primary.navy} />
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleTheme}
+            style={{
+              padding: '0.5rem',
+              border: 'none',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              background: PLPColors.getColorWithOpacity(isDark ? PLPColors.primary.gold : PLPColors.primary.blue, 0.1),
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {isDark ? <Sun size={16} color={PLPColors.primary.navy} /> : <Moon size={16} color={PLPColors.primary.navy} />}
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => onNavigate('profile')}
+            style={{
+              padding: '0.5rem',
+              border: 'none',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <User size={16} color={PLPColors.primary.navy} />
+          </motion.button>
+          
+          <div style={{
+            background: PLPColors.gradients.button,
+            padding: '0.375rem 0.625rem',
+            borderRadius: '0.875rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            minWidth: 'fit-content'
           }}>
-            {userProfile?.totalPoints?.toLocaleString() || '0'}
-          </span>
+            <Star size={14} color={PLPColors.primary.navy} />
+            <span style={{
+              fontWeight: 'bold',
+              fontSize: '0.8rem',
+              color: PLPColors.primary.navy,
+              lineHeight: '1'
+            }}>
+              {userProfile?.totalPoints?.toLocaleString() || '0'}
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Enhanced Greeting Section */}
+      {/* Greeting Section */}
       <div style={{
         marginBottom: userProfile ? '1rem' : '0'
       }}>

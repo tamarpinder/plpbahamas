@@ -142,8 +142,11 @@ function SidebarContent({ onClose, currentPath }) {
                 <div className={`font-medium ${isActive ? 'text-blue-700' : 'text-gray-900'}`}>
                   {item.name}
                 </div>
-                <div className="text-xs text-gray-500 mt-0.5">
-                  {item.description}
+                <div className="text-xs text-gray-500 mt-0.5 flex items-center justify-between">
+                  <span>{item.description}</span>
+                  <kbd className="hidden lg:inline-block px-1.5 py-0.5 bg-gray-200 text-gray-600 text-xs rounded border">
+                    ⌘{navigation.indexOf(item) + 1}
+                  </kbd>
                 </div>
               </div>
               {isActive && (

@@ -14,13 +14,18 @@ import {
   Users as UsersIcon,
   CheckCircle,
   XCircle,
-  Eye
+  Eye,
+  SlidersHorizontal,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { generateMockUsers, userStats } from '../data/mockUsers';
+import { FilterPanel } from '../components/FilterPanel';
+import { BulkActions } from '../components/BulkActions';
 
 const allUsers = generateMockUsers(50);
 
-function UserRow({ user, onViewDetails }) {
+function UserRow({ user, onViewDetails, isSelected, onSelect }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800';
@@ -36,9 +41,19 @@ function UserRow({ user, onViewDetails }) {
   };
 
   return (
-    <tr className="hover:bg-gray-50 border-b border-gray-200">
+    <tr className={`hover:bg-gray-50 border-b border-gray-200 ${isSelected ? 'bg-blue-50' : ''}`}>
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => onSelect(user.id)}
+            className="p-1 hover:bg-gray-200 rounded transition-colors"
+          >
+            {isSelected ? (
+              <CheckSquare className="w-4 h-4 text-blue-600" />
+            ) : (
+              <Square className="w-4 h-4 text-gray-400" />
+            )}
+          </button>
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
             {user.name.split(' ').map(n => n[0]).join('')}
           </div>
@@ -244,6 +259,10 @@ export function Users() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [districtFilter, setDistrictFilter] = useState('all');
   const [selectedUser, setSelectedUser] = useState(null);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [allSelected, setAllSelected] = useState(false);
 
   const filteredUsers = useMemo(() => {
     return allUsers.filter(user => {
@@ -252,11 +271,112 @@ export function Users() {
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
       const matchesDistrict = districtFilter === 'all' || user.votingDistrict === districtFilter;
       
-      return matchesSearch && matchesStatus && matchesDistrict;
+      // Apply advanced filters
+      const matchesAdvancedFilters = Object.entries(activeFilters).every(([key, value]) => {
+        if (!value || (Array.isArray(value) && value.length === 0)) return true;
+        
+        switch (key) {
+          case 'search':
+            return user.name.toLowerCase().includes(value.toLowerCase()) ||
+                   user.email.toLowerCase().includes(value.toLowerCase());
+          case 'status':
+            return user.status === value;
+          case 'location':
+            return user.votingDistrict === value;
+          case 'engagement':
+            const score = user.engagementScore;
+            return (value === 'high' && score >= 70) ||
+                   (value === 'medium' && score >= 40 && score < 70) ||
+                   (value === 'low' && score < 40);
+          case 'tags':
+            return value.some(tag => user.badges.includes(tag));
+          case 'donated':
+            return user.donationTotal > 0;
+          case 'recurring':
+            return user.donationTotal > 100; // Mock recurring logic
+          case 'attended':
+            return user.eventsAttended > 0;
+          case 'volunteer':
+            return user.volunteerStatus !== 'None';
+          case 'dateRange':
+            const now = new Date();
+            const userDate = new Date(user.lastActive);
+            const daysDiff = Math.floor((now - userDate) / (1000 * 60 * 60 * 24));
+            return (value === '7d' && daysDiff <= 7) ||
+                   (value === '30d' && daysDiff <= 30) ||
+                   (value === '90d' && daysDiff <= 90) ||
+                   (value === '1y' && daysDiff <= 365);
+          default:
+            return true;
+        }
+      });
+      
+      return matchesSearch && matchesStatus && matchesDistrict && matchesAdvancedFilters;
     });
-  }, [searchTerm, statusFilter, districtFilter]);
+  }, [searchTerm, statusFilter, districtFilter, activeFilters]);
 
   const districts = [...new Set(allUsers.map(user => user.votingDistrict))];
+
+  const handleSelectUser = (userId) => {
+    setSelectedUsers(prev => {
+      if (prev.includes(userId)) {
+        const newSelected = prev.filter(id => id !== userId);
+        setAllSelected(newSelected.length === filteredUsers.length);
+        return newSelected;
+      } else {
+        const newSelected = [...prev, userId];
+        setAllSelected(newSelected.length === filteredUsers.length);
+        return newSelected;
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedUsers([]);
+      setAllSelected(false);
+    } else {
+      setSelectedUsers(filteredUsers.map(user => user.id));
+      setAllSelected(true);
+    }
+  };
+
+  const handleBulkAction = (action, selectedIds) => {
+    console.log('Bulk action:', action, 'on users:', selectedIds);
+    // Handle different bulk actions
+    switch (action.id) {
+      case 'email':
+        alert(`Sending email to ${selectedIds.length} users`);
+        break;
+      case 'sms':
+        alert(`Sending SMS to ${selectedIds.length} users`);
+        break;
+      case 'export':
+        alert(`Exporting ${selectedIds.length} users`);
+        break;
+      case 'delete':
+        alert(`Deleting ${selectedIds.length} users`);
+        break;
+      default:
+        alert(`Action ${action.label} on ${selectedIds.length} users`);
+    }
+    setSelectedUsers([]);
+    setAllSelected(false);
+  };
+
+  const handleApplyFilters = (filters) => {
+    setActiveFilters(filters);
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters({});
+  };
+
+  const getActiveFilterCount = () => {
+    return Object.entries(activeFilters).filter(([key, value]) => 
+      value && (Array.isArray(value) ? value.length > 0 : true)
+    ).length;
+  };
 
   return (
     <div className="space-y-6">
@@ -349,6 +469,22 @@ export function Users() {
           </div>
           
           <div className="flex gap-2">
+            <button 
+              onClick={() => setShowFilterPanel(true)}
+              className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition-colors ${
+                getActiveFilterCount() > 0 
+                  ? 'bg-blue-50 border-blue-300 text-blue-700' 
+                  : 'text-gray-700 border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <SlidersHorizontal size={18} />
+              Advanced Filters
+              {getActiveFilterCount() > 0 && (
+                <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                  {getActiveFilterCount()}
+                </span>
+              )}
+            </button>
             <button className="flex items-center gap-2 px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">
               <Download size={18} />
               Export
@@ -368,7 +504,19 @@ export function Users() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Supporter
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleSelectAll}
+                      className="p-1 hover:bg-gray-200 rounded transition-colors"
+                    >
+                      {allSelected ? (
+                        <CheckSquare className="w-4 h-4 text-blue-600" />
+                      ) : (
+                        <Square className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
+                    Supporter
+                  </div>
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Location
@@ -396,6 +544,8 @@ export function Users() {
                   key={user.id}
                   user={user}
                   onViewDetails={setSelectedUser}
+                  isSelected={selectedUsers.includes(user.id)}
+                  onSelect={handleSelectUser}
                 />
               ))}
             </tbody>
@@ -408,6 +558,26 @@ export function Users() {
           </div>
         )}
       </div>
+
+      {/* Filter Panel */}
+      <FilterPanel
+        isOpen={showFilterPanel}
+        onClose={() => setShowFilterPanel(false)}
+        onApplyFilters={handleApplyFilters}
+        onClearFilters={handleClearFilters}
+        activeFilters={activeFilters}
+      />
+
+      {/* Bulk Actions */}
+      <BulkActions
+        selectedItems={selectedUsers}
+        onClearSelection={() => {
+          setSelectedUsers([]);
+          setAllSelected(false);
+        }}
+        onBulkAction={handleBulkAction}
+        actionType="users"
+      />
 
       {/* User detail modal */}
       {selectedUser && (

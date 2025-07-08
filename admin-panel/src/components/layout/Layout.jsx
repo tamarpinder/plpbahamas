@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { PLPColors } from '../../constants/colors';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { KeyboardShortcutsHelp } from '../KeyboardShortcutsHelp';
+import { QuickCreateMenu } from '../QuickCreateMenu';
 
 export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Initialize keyboard shortcuts
+  useKeyboardShortcuts();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -36,6 +42,10 @@ export function Layout({ children }) {
           </div>
         </main>
       </div>
+      
+      {/* Global components */}
+      <KeyboardShortcutsHelp />
+      <QuickCreateMenu />
     </div>
   );
 }

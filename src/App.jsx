@@ -19,6 +19,7 @@ const MobileEvents = React.lazy(() => import('./components/mobile/screens/Mobile
 const MobileDonate = React.lazy(() => import('./components/mobile/screens/MobileDonate'));
 const MobileProfile = React.lazy(() => import('./components/mobile/screens/MobileProfile'));
 const MobileVolunteer = React.lazy(() => import('./components/mobile/screens/MobileVolunteer'));
+const MobileLiveStream = React.lazy(() => import('./components/mobile/screens/MobileLiveStream'));
 
 function App() {
   const { isAuthenticated, checkAuth } = useAuthStore();
@@ -46,7 +47,8 @@ function App() {
       'events': 'Events', 
       'donate': 'Donate',
       'volunteer': 'Volunteer',
-      'profile': 'Profile'
+      'profile': 'Profile',
+      'livestream': 'Live Stream'
     };
     return screenNames[screen] || 'Screen';
   };
@@ -66,6 +68,8 @@ function App() {
           return <MobileVolunteer />;
         case 'profile':
           return <MobileProfile />;
+        case 'livestream':
+          return <MobileLiveStream onNavigate={handleNavigation} />;
         default:
           return <PLPHomeNew onNavigate={handleNavigation} />;
       }

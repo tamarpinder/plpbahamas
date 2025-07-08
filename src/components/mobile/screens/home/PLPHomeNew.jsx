@@ -44,8 +44,8 @@ const PLPHomeNew = ({ onNavigate }) => {
   const handleJoinStream = async (event) => {
     await joinLiveStream(event.id);
     awardUserPoints('LIVESTREAM_JOIN');
-    // In a real app, this would navigate to the live stream player
-    console.log('Joining live stream:', event.title);
+    // Navigate to live stream page
+    onNavigate('livestream');
   };
 
   // Enhanced animation variants

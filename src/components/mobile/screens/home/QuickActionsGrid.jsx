@@ -1,60 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Calendar, Target, Play, Users, TrendingUp } from 'lucide-react';
-import { PLPColors, PLPShadows } from '@/constants/brandColors';
+import { Heart, Calendar, Target, Users, TrendingUp } from 'lucide-react';
+import { PLPColors } from '@/constants/brandColors';
 import ActionButton from './shared/ActionButton';
 import useAppStore from '@/stores/useAppStore';
 
 const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
-  const { getLiveEvents, getUpcomingLiveEvents, joinLiveStream, dashboardStats } = useAppStore();
+  const { dashboardStats, getUpcomingLiveEvents } = useAppStore();
   
   const handleQuickAction = (action, route, points = 'DAILY_LOGIN') => {
     awardUserPoints(points); // Award for engagement
     onNavigate(route);
   };
-  
-  const handleLiveStreamAction = async () => {
-    const liveEvents = getLiveEvents();
-    const upcomingEvents = getUpcomingLiveEvents();
-    
-    if (liveEvents.length > 0) {
-      // Join active live stream
-      await joinLiveStream(liveEvents[0].id);
-      awardUserPoints('LIVESTREAM_JOIN');
-      console.log('Joining live stream:', liveEvents[0].title);
-    } else if (upcomingEvents.length > 0) {
-      // Navigate to upcoming live events
-      onNavigate('events');
-    } else {
-      // Navigate to general events
-      onNavigate('events');
-    }
-  };
-  
-  const liveEvents = getLiveEvents();
-  const upcomingEvents = getUpcomingLiveEvents();
-  const hasLiveContent = liveEvents.length > 0 || upcomingEvents.length > 0;
 
-  // Get contextual information for each action
+  // Get contextual information for events
   const getEventsInfo = () => {
+    const upcomingEvents = getUpcomingLiveEvents();
     const totalEvents = dashboardStats?.totalEvents || 0;
     const upcomingCount = upcomingEvents.length;
     return upcomingCount > 0 
       ? `${upcomingCount} upcoming events`
       : `${totalEvents} events available`;
-  };
-
-  const getLiveStreamInfo = () => {
-    if (liveEvents.length > 0) {
-      return `${liveEvents[0].participants || 0} watching`;
-    }
-    if (upcomingEvents.length > 0) {
-      const nextEvent = upcomingEvents[0];
-      const timeUntil = new Date(nextEvent.date_time) - new Date();
-      const hoursUntil = Math.ceil(timeUntil / (1000 * 60 * 60));
-      return `Starting in ${hoursUntil}h`;
-    }
-    return 'No upcoming streams';
   };
 
   return (
@@ -78,11 +44,12 @@ const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
         </h2>
       </div>
       
+      {/* Main Actions Grid - 2x2 Layout */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: hasLiveContent ? '1fr 1fr' : '1fr 1fr',
+        gridTemplateColumns: '1fr 1fr',
         gap: '1rem',
-        marginBottom: hasLiveContent ? '1rem' : '0'
+        marginBottom: '1rem'
       }}>
         <ActionButton
           icon={Heart}
@@ -106,33 +73,11 @@ const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
         />
       </div>
 
-      {/* Live Streaming Section - Full Width */}
-      {hasLiveContent && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gap: '1rem'
-        }}>
-          <ActionButton
-            icon={Play}
-            label={liveEvents.length > 0 ? "Join Live Stream" : "Upcoming Live Event"}
-            subtitle={getLiveStreamInfo()}
-            onClick={handleLiveStreamAction}
-            backgroundColor={liveEvents.length > 0 ? '#DC2626' : PLPColors.primary.orange}
-            textColor={PLPColors.neutral.white}
-            pointsReward={liveEvents.length > 0 ? 75 : 25}
-            status={liveEvents.length > 0 ? 'live' : 'soon'}
-            isLive={liveEvents.length > 0}
-          />
-        </div>
-      )}
-
       {/* Secondary Actions Row */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
-        gap: '1rem',
-        marginTop: '1rem'
+        gap: '1rem'
       }}>
         <ActionButton
           icon={Users}

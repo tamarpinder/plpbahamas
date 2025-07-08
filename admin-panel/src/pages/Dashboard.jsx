@@ -25,6 +25,7 @@ import {
 import { PLPColors } from '../constants/colors';
 import { DashboardCustomizer } from '../components/DashboardCustomizer';
 import { LiveNotificationsWidget } from '../components/LiveNotificationsWidget';
+import { LiveStreamingWidget } from '../components/LiveStreamingWidget';
 import { AddSupporterModal } from '../components/modals/AddSupporterModal';
 import { CreateEventModal } from '../components/modals/CreateEventModal';
 import { CreateCampaignModal } from '../components/modals/CreateCampaignModal';
@@ -254,6 +255,7 @@ export function Dashboard() {
     { id: 'stats', name: 'Key Statistics', enabled: true, size: 'full', component: StatsWidget },
     { id: 'recent', name: 'Recent Activity', enabled: true, size: 'half', component: RecentActivityWidget },
     { id: 'upcoming', name: 'Upcoming Events', enabled: true, size: 'half', component: UpcomingEventsWidget },
+    { id: 'live-streaming', name: 'Live Streaming', enabled: true, size: 'third', component: LiveStreamingWidget },
     { id: 'notifications', name: 'Live Notifications', enabled: false, size: 'third', component: LiveNotificationsWidget },
     { id: 'map', name: 'Geographic Distribution', enabled: false, size: 'half', component: GeographicMapWidget },
     { id: 'engagement', name: 'Engagement Trends', enabled: false, size: 'full', component: EngagementTrendsWidget },

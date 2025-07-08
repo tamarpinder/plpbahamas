@@ -30,7 +30,7 @@ import RecentActivityFeed from './home/RecentActivityFeed';
 import { PLPColors } from '../../../constants/brandColors';
 
 const MobileProfileContent = () => {
-  const { user, logout } = useAuthStore();
+  const { user, logout, isLoading } = useAuthStore();
   const { dashboardStats } = useAppStore();
   const { 
     userProfile, 
@@ -42,6 +42,34 @@ const MobileProfileContent = () => {
   
   const [editMode, setEditMode] = useState(false);
   
+  // Early return if user is null (during logout process)
+  if (!user || isLoading) {
+    return (
+      <motion.div
+        style={{
+          height: '100%',
+          background: PLPColors.gradients.hero,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div style={{ textAlign: 'center', color: PLPColors.neutral.white }}>
+          <div style={{ 
+            width: '3rem', 
+            height: '3rem', 
+            border: `3px solid ${PLPColors.neutral.white}`,
+            borderTop: `3px solid transparent`,
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 1rem'
+          }} />
+          <p>Loading profile...</p>
+        </div>
+      </motion.div>
+    );
+  }
+  
   // Safe data access with fallbacks
   const currentLevel = getUserLevel() || { id: 1, name: 'Supporter', icon: '🤝', color: '#6B7280' };
   const levelProgress = getLevelProgress() || { progress: 0, pointsNeeded: 0, nextLevel: null };
@@ -50,7 +78,28 @@ const MobileProfileContent = () => {
   const safeRecentAchievements = recentAchievements || [];
 
   const handleLogout = async () => {
-    await logout();
+    // Show confirmation dialog
+    if (!window.confirm('Are you sure you want to sign out?')) {
+      return;
+    }
+
+    try {
+      const result = await logout();
+      if (result && result.success) {
+        toast.success('Successfully logged out', {
+          icon: '👋',
+          duration: 2000
+        });
+      } else {
+        throw new Error(result?.error || 'Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error(`Logout failed: ${error.message}`, {
+        icon: '❌',
+        duration: 3000
+      });
+    }
   };
 
   const profileStats = [

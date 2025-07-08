@@ -53,17 +53,43 @@ const useAuthStore = create(
       },
 
       logout: async () => {
-        set({ isLoading: true });
+        set({ isLoading: true, error: null });
         try {
           await mockApi.logout();
+          
+          // Clear all localStorage items that might be used by other stores
+          const keysToRemove = [
+            'currentUser',
+            'userProfile', 
+            'gamificationStore',
+            'appStore',
+            'authStore'
+          ];
+          
+          keysToRemove.forEach(key => {
+            try {
+              localStorage.removeItem(key);
+            } catch (e) {
+              console.warn(`Failed to remove localStorage key: ${key}`, e);
+            }
+          });
+          
+          // Reset auth state
           set({ 
             user: null, 
             isAuthenticated: false, 
             isLoading: false,
             error: null 
           });
+          
+          return { success: true };
         } catch (error) {
-          set({ error: error.message, isLoading: false });
+          console.error('Logout error:', error);
+          set({ 
+            error: error.message || 'Logout failed', 
+            isLoading: false 
+          });
+          return { success: false, error: error.message };
         }
       },
 

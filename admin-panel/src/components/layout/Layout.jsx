@@ -23,25 +23,28 @@ export function Layout({ children }) {
         />
       )}
       
-      {/* Sidebar */}
-      <Sidebar 
-        open={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
-      />
+      {/* Header - Full width */}
+      <Header onMenuClick={() => setSidebarOpen(true)} />
       
-      {/* Main content */}
-      <div className="flex flex-col lg:pl-64 main-content">
-        {/* Header */}
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+      {/* Content wrapper with sidebar */}
+      <div className="flex">
+        {/* Sidebar */}
+        <Sidebar 
+          open={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
+        />
         
-        {/* Page content */}
-        <main className="flex-1">
-          <div className="py-6">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {children}
+        {/* Main content */}
+        <div className="flex-1 lg:pl-64 main-content">
+          {/* Page content */}
+          <main className="flex-1">
+            <div className="py-6">
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
       
       {/* Global components */}

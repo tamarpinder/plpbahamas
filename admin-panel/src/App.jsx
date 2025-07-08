@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { Layout } from './components/layout/Layout';
+import { SplashScreen } from './components/SplashScreen';
 import { Dashboard } from './pages/Dashboard';
 import { Users } from './pages/Users';
 import { Events } from './pages/Events';
@@ -15,9 +16,14 @@ import { Tasks } from './pages/Tasks';
 import { Workflows } from './pages/Workflows';
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   return (
     <ThemeProvider>
       <NotificationProvider>
+        {showSplash && (
+          <SplashScreen onLoadingComplete={() => setShowSplash(false)} />
+        )}
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />

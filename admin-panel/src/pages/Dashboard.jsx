@@ -295,17 +295,17 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="border-b border-gray-200 pb-6">
+      <div className="border-b border-blue-200 pb-6 bg-gradient-to-r from-blue-50 to-blue-100 -mx-8 px-8 py-6 rounded-lg mb-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="heading-xl">Dashboard</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="heading-xl text-blue-900">Dashboard</h1>
+            <p className="text-blue-700 mt-2 font-medium">
               Welcome back! Here's what's happening with your supporter community.
             </p>
           </div>
           <button
             onClick={() => setShowCustomizer(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+            className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm text-blue-800 rounded-lg hover:bg-white/80 border border-blue-200 shadow-sm transition-all"
           >
             <Settings size={18} />
             Customize Dashboard
@@ -326,8 +326,17 @@ export function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="admin-card p-6">
-        <h2 className="heading-md mb-6">Quick Actions</h2>
+      <div className="admin-card p-6 bg-gradient-to-br from-white to-blue-50 border-blue-200">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-md border border-blue-300/30">
+            <img 
+              src="/assets/images/logos/Main Logo - PLP Blue.png" 
+              alt="PLP Logo" 
+              className="w-6 h-6 object-contain"
+            />
+          </div>
+          <h2 className="heading-md text-blue-900">Quick Actions</h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button 
             onClick={() => { setShowAddSupporterModal(true); openDrawer(); }}

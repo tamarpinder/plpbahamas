@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Heart, MessageCircle, Share2, ArrowLeft, TrendingUp, Star, Clock } from 'lucide-react';
+import { Search, Heart, MessageCircle, Share2, ArrowLeft, TrendingUp, Star, Clock, Send, ThumbsUp, Crown, Award } from 'lucide-react';
 import { Input } from '../../ui/input';
 import { PLPColors, PLPShadows } from '../../../constants/brandColors';
 import useAppStore from '../../../stores/useAppStore';
@@ -12,6 +12,9 @@ const MobileNews = () => {
   const { awardUserPoints } = useGamificationStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  const [articleLikes, setArticleLikes] = useState({});
+  const [commentLikes, setCommentLikes] = useState({});
 
   const categories = ['ALL', 'Policy', 'Community', 'Campaign', 'Healthcare'];
 
@@ -22,11 +25,41 @@ const MobileNews = () => {
 
   const handleLike = async (articleId) => {
     await likeNews(articleId);
+    setArticleLikes(prev => ({
+      ...prev,
+      [articleId]: (prev[articleId] || 0) + 1
+    }));
     awardUserPoints('LIKE_NEWS');
     toast.success('Article liked! +5 points', {
       icon: '❤️',
       duration: 2000
     });
+  };
+
+  const handleCommentLike = (commentId) => {
+    setCommentLikes(prev => ({
+      ...prev,
+      [commentId]: (prev[commentId] || 0) + 1
+    }));
+    awardUserPoints('LIKE_NEWS');
+    toast.success('Comment liked! +2 points', {
+      icon: '👍',
+      duration: 1500
+    });
+  };
+
+  const handleAddComment = () => {
+    if (newComment.trim()) {
+      // In a real app, this would update the backend
+      // For demo purposes, we'll show success feedback
+      awardUserPoints('SHARE_CONTENT');
+      toast.success('Comment added! +10 points', {
+        icon: '💬',
+        duration: 2000,
+        description: 'Thank you for engaging with the community!'
+      });
+      setNewComment('');
+    }
   };
 
   const handleShare = (article) => {
@@ -279,12 +312,21 @@ const MobileNews = () => {
                 cursor: 'pointer'
               }}
             >
-              <Heart size={18} color={PLPColors.status.error} />
+              <motion.div
+                animate={articleLikes[selectedArticle.id] ? { scale: [1, 1.3, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                <Heart 
+                  size={18} 
+                  color={PLPColors.status.error}
+                  fill={articleLikes[selectedArticle.id] ? PLPColors.status.error : 'none'}
+                />
+              </motion.div>
               <span style={{
                 fontSize: '0.875rem',
                 fontWeight: '600',
                 color: PLPColors.primary.navy
-              }}>{selectedArticle.likes}</span>
+              }}>{selectedArticle.likes + (articleLikes[selectedArticle.id] || 0)}</span>
             </motion.button>
             
             <motion.button 
@@ -332,7 +374,259 @@ const MobileNews = () => {
               }}>Share</span>
             </motion.button>
           </motion.div>
+
+          {/* Comments Section */}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.0 }}
+            style={{
+              marginTop: '2rem',
+              paddingTop: '1.5rem',
+              borderTop: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`
+            }}
+          >
+            <h3 style={{
+              fontSize: '1.125rem',
+              fontWeight: '700',
+              color: PLPColors.primary.navy,
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              <MessageCircle size={20} color={PLPColors.primary.blue} />
+              Comments ({selectedArticle.comments.length})
+            </h3>
+
+            {/* Add Comment Form */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.1 }}
+              style={{
+                background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.02),
+                borderRadius: '1rem',
+                padding: '1rem',
+                marginBottom: '1.5rem',
+                border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem'
+              }}>
+                <div style={{
+                  width: '2.5rem',
+                  height: '2.5rem',
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  <span style={{ fontSize: '1rem' }}>🤝</span>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Share your thoughts on this article..."
+                    style={{
+                      width: '100%',
+                      minHeight: '4rem',
+                      padding: '0.75rem',
+                      border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)}`,
+                      borderRadius: '0.75rem',
+                      fontSize: '0.875rem',
+                      background: PLPColors.neutral.white,
+                      resize: 'vertical',
+                      outline: 'none',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = `1px solid ${PLPColors.primary.gold}`;
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)}`;
+                    }}
+                  />
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: '0.75rem'
+                  }}>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      color: PLPColors.neutral.gray500
+                    }}>
+                      🤝 Commenting as Supporter • +10 points
+                    </span>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleAddComment}
+                      disabled={!newComment.trim()}
+                      style={{
+                        background: newComment.trim() 
+                          ? PLPColors.gradients.button 
+                          : PLPColors.neutral.gray300,
+                        border: 'none',
+                        borderRadius: '0.75rem',
+                        padding: '0.5rem 1rem',
+                        cursor: newComment.trim() ? 'pointer' : 'not-allowed',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        color: PLPColors.primary.navy,
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <Send size={14} />
+                      Post Comment
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Comments List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {selectedArticle.comments.map((comment, index) => (
+                <motion.div
+                  key={comment.id}
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 1.2 + (index * 0.1) }}
+                  style={{
+                    background: PLPColors.neutral.white,
+                    borderRadius: '1rem',
+                    padding: '1rem',
+                    border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
+                    boxShadow: PLPShadows.sm
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.75rem'
+                  }}>
+                    <div style={{
+                      width: '2.5rem',
+                      height: '2.5rem',
+                      background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <span style={{ fontSize: '1rem' }}>{comment.levelIcon}</span>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        marginBottom: '0.5rem'
+                      }}>
+                        <span style={{
+                          fontSize: '0.875rem',
+                          fontWeight: '600',
+                          color: PLPColors.primary.navy
+                        }}>
+                          {comment.author}
+                        </span>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          background: comment.level === 'Champion' 
+                            ? PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)
+                            : comment.level === 'Activist'
+                            ? PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)
+                            : PLPColors.getColorWithOpacity(PLPColors.status.success, 0.2),
+                          color: PLPColors.primary.navy,
+                          padding: '0.125rem 0.5rem',
+                          borderRadius: '0.5rem',
+                          fontWeight: '500'
+                        }}>
+                          {comment.level}
+                        </span>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          color: PLPColors.neutral.gray500
+                        }}>
+                          {new Date(comment.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p style={{
+                        fontSize: '0.875rem',
+                        color: PLPColors.primary.navy,
+                        lineHeight: '1.5',
+                        marginBottom: '0.75rem'
+                      }}>
+                        {comment.text}
+                      </p>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.75rem'
+                      }}>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleCommentLike(comment.id)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.25rem',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '0.25rem 0.5rem',
+                            borderRadius: '0.5rem',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseOver={(e) => {
+                            e.target.style.background = PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1);
+                          }}
+                          onMouseOut={(e) => {
+                            e.target.style.background = 'none';
+                          }}
+                        >
+                          <motion.div
+                            animate={commentLikes[comment.id] ? { scale: [1, 1.3, 1] } : {}}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <ThumbsUp 
+                              size={14} 
+                              color={commentLikes[comment.id] ? PLPColors.primary.blue : PLPColors.neutral.gray400}
+                              fill={commentLikes[comment.id] ? PLPColors.primary.blue : 'none'}
+                            />
+                          </motion.div>
+                          <span style={{
+                            fontSize: '0.75rem',
+                            color: PLPColors.neutral.gray600,
+                            fontWeight: '500'
+                          }}>
+                            {comment.likes + (commentLikes[comment.id] || 0)}
+                          </span>
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
+        
+        {/* Bottom Spacing for Comments */}
+        <div style={{ height: '2rem' }} />
       </motion.div>
     );
   }
@@ -577,30 +871,89 @@ const MobileNews = () => {
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '1rem'
+                    justifyContent: 'space-between'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <Heart size={14} color={PLPColors.neutral.gray400} />
-                      <span style={{
-                        fontSize: '0.75rem',
-                        color: PLPColors.neutral.gray600,
-                        fontWeight: '500'
-                      }}>{article.likes}</span>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '1rem'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Heart size={14} color={PLPColors.status.error} />
+                        <span style={{
+                          fontSize: '0.75rem',
+                          color: PLPColors.neutral.gray600,
+                          fontWeight: '500'
+                        }}>{article.likes + (articleLikes[article.id] || 0)}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <MessageCircle size={14} color={PLPColors.primary.blue} />
+                        <span style={{
+                          fontSize: '0.75rem',
+                          color: PLPColors.neutral.gray600,
+                          fontWeight: '500'
+                        }}>{article.comments.length}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <Clock size={14} color={PLPColors.neutral.gray400} />
+                        <span style={{
+                          fontSize: '0.75rem',
+                          color: PLPColors.neutral.gray500
+                        }}>{article.readTime}</span>
+                      </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <MessageCircle size={14} color={PLPColors.neutral.gray400} />
-                      <span style={{
-                        fontSize: '0.75rem',
-                        color: PLPColors.neutral.gray600,
-                        fontWeight: '500'
-                      }}>{article.comments.length}</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <Clock size={14} color={PLPColors.neutral.gray400} />
-                      <span style={{
-                        fontSize: '0.75rem',
-                        color: PLPColors.neutral.gray500
-                      }}>{article.readTime}</span>
+                    
+                    {/* Quick Actions */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(article.id);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '0.25rem',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Heart 
+                          size={16} 
+                          color={PLPColors.status.error}
+                          fill={articleLikes[article.id] ? PLPColors.status.error : 'none'}
+                        />
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleShare(article);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '0.25rem',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Share2 size={16} color={PLPColors.primary.gold} />
+                      </motion.button>
                     </div>
                   </div>
                 </div>

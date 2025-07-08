@@ -10,42 +10,84 @@ import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import { toast } from 'sonner';
 
 const MobileDonateContent = () => {
-  const { awardUserPoints } = useGamificationStore();
+  console.log('MobileDonate: Component rendering');
+  
+  let awardUserPoints;
+  try {
+    const gamificationStore = useGamificationStore();
+    awardUserPoints = gamificationStore.awardUserPoints;
+    console.log('MobileDonate: Gamification store loaded successfully');
+  } catch (gamificationError) {
+    console.error('MobileDonate: Error loading gamification store:', gamificationError);
+    // Fallback function if gamification fails
+    awardUserPoints = (action, multiplier) => {
+      console.log('MobileDonate: Fallback points function called with:', action, multiplier);
+    };
+  }
   const [amount, setAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Component lifecycle logging
+  React.useEffect(() => {
+    console.log('MobileDonate: Component mounted');
+    return () => {
+      console.log('MobileDonate: Component unmounting');
+    };
+  }, []);
 
   const presetAmounts = [25, 50, 100, 250];
 
   const handleDonate = async () => {
+    console.log('MobileDonate: handleDonate called with amount:', amount, 'customAmount:', customAmount);
+    
     try {
       const donationAmount = amount === 'custom' ? parseFloat(customAmount) : parseFloat(amount);
+      console.log('MobileDonate: Calculated donation amount:', donationAmount);
       
       if (!donationAmount || donationAmount <= 0) {
+        console.log('MobileDonate: Invalid amount, showing error');
         toast.error('Please enter a valid amount');
         return;
       }
 
+      console.log('MobileDonate: Setting processing state');
       setIsProcessing(true);
       
       try {
+        console.log('MobileDonate: Calling mockApi.processDonation');
         const result = await mockApi.processDonation({
           amount: donationAmount,
           paymentMethod
         });
+        console.log('MobileDonate: API result:', result);
         
         if (result.success) {
-          // Award points for donation
-          awardUserPoints('FIRST_DONATION'); // Award standard first donation points
+          console.log('MobileDonate: Donation successful, awarding points');
+          
+          // Award points for donation with error handling
+          try {
+            awardUserPoints('FIRST_DONATION'); // Award standard first donation points
+            console.log('MobileDonate: First donation points awarded');
+          } catch (pointsError) {
+            console.error('MobileDonate: Error awarding first donation points:', pointsError);
+          }
           
           // Award additional points based on donation amount
           const bonusPoints = Math.min(Math.floor(donationAmount / 5) * 5, 100); // 5 points per $5, max 100
           if (bonusPoints > 0) {
-            awardUserPoints('DONATION_MILESTONE', Math.floor(bonusPoints / 50)); // Use milestone for bonus points
+            try {
+              awardUserPoints('DONATION_MILESTONE', Math.floor(bonusPoints / 50)); // Use milestone for bonus points
+              console.log('MobileDonate: Bonus points awarded:', bonusPoints);
+            } catch (bonusError) {
+              console.error('MobileDonate: Error awarding bonus points:', bonusError);
+            }
           }
           
           const totalPoints = 100 + bonusPoints; // First donation (100) + bonus
+          console.log('MobileDonate: Total points calculated:', totalPoints);
+          
           toast.success(`Thank you for your $${donationAmount} donation! +${totalPoints} points`, {
             icon: '💝',
             duration: 4000,
@@ -55,13 +97,15 @@ const MobileDonateContent = () => {
           setCustomAmount('');
         }
       } catch (donationError) {
-        console.error('Donation error:', donationError);
+        console.error('MobileDonate: Donation API error:', donationError);
         toast.error('Donation failed. Please try again.');
       } finally {
+        console.log('MobileDonate: Resetting processing state');
         setIsProcessing(false);
       }
     } catch (error) {
-      console.error('Critical donation error:', error);
+      console.error('MobileDonate: Critical donation error:', error);
+      console.error('MobileDonate: Error stack:', error.stack);
       toast.error('Something went wrong. Please refresh and try again.');
       setIsProcessing(false);
     }
@@ -90,17 +134,20 @@ const MobileDonateContent = () => {
     }
   };
 
-  return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      style={{
-        height: '100%',
-        background: PLPColors.gradients.hero,
-        overflow: 'auto'
-      }}
-    >
+  console.log('MobileDonate: About to render component');
+  
+  try {
+    return (
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{
+          height: '100%',
+          background: PLPColors.gradients.hero,
+          overflow: 'auto'
+        }}
+      >
       {/* Header */}
       <motion.div 
         variants={itemVariants}
@@ -518,14 +565,100 @@ const MobileDonateContent = () => {
           </p>
         </motion.div>
       </div>
-    </motion.div>
-  );
+      </motion.div>
+    );
+  } catch (renderError) {
+    console.error('MobileDonate: Render error:', renderError);
+    console.error('MobileDonate: Render error stack:', renderError.stack);
+    
+    // Fallback UI
+    return (
+      <div style={{
+        height: '100%',
+        background: PLPColors.gradients.hero,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '1rem',
+          padding: '2rem',
+          textAlign: 'center',
+          maxWidth: '300px'
+        }}>
+          <h2 style={{ color: PLPColors.primary.navy, marginBottom: '1rem' }}>Donation Unavailable</h2>
+          <p style={{ color: PLPColors.neutral.gray600, marginBottom: '1rem' }}>The donation feature is temporarily unavailable. Please try again later.</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: PLPColors.primary.gold,
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1.5rem',
+              cursor: 'pointer'
+            }}
+          >
+            Refresh Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 };
 
-const MobileDonate = () => (
-  <ScreenErrorBoundary screenName="Donate">
-    <MobileDonateContent />
-  </ScreenErrorBoundary>
-);
+const MobileDonate = () => {
+  console.log('MobileDonate: Main component wrapper rendering');
+  
+  try {
+    return (
+      <ScreenErrorBoundary screenName="Donate">
+        <MobileDonateContent />
+      </ScreenErrorBoundary>
+    );
+  } catch (wrapperError) {
+    console.error('MobileDonate: Wrapper error:', wrapperError);
+    console.error('MobileDonate: Wrapper error stack:', wrapperError.stack);
+    
+    // Ultra-safe fallback
+    return (
+      <div style={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+        background: 'linear-gradient(135deg, #0066CC 0%, #003d7a 100%)'
+      }}>
+        <div style={{
+          background: 'white',
+          borderRadius: '1rem',
+          padding: '2rem',
+          textAlign: 'center',
+          maxWidth: '300px'
+        }}>
+          <h2 style={{ color: '#003d7a', marginBottom: '1rem' }}>Service Unavailable</h2>
+          <p style={{ color: '#666', marginBottom: '1rem' }}>The donation service is currently unavailable.</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: '#FFD700',
+              color: '#003d7a',
+              border: 'none',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1.5rem',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Refresh
+          </button>
+        </div>
+      </div>
+    );
+  }
+};
 
 export default MobileDonate;

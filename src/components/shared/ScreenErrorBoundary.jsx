@@ -13,6 +13,16 @@ class ScreenErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error(`Screen Error in ${this.props.screenName}:`, error, errorInfo);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
+    
+    // Log error details for debugging
+    console.log('Error details:', {
+      screenName: this.props.screenName,
+      errorMessage: error.message,
+      errorName: error.name,
+      timestamp: new Date().toISOString()
+    });
   }
 
   render() {

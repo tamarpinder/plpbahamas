@@ -154,6 +154,10 @@ const SplashScreen = ({ onComplete }) => {
                   width: 'auto',
                   filter: 'drop-shadow(0 4px 20px rgba(255, 215, 0, 0.3))'
                 }}
+                onError={(e) => {
+                  console.warn('Gold logo failed to load in splash screen');
+                  e.target.style.display = 'none';
+                }}
               />
             </motion.div>
 

@@ -14,9 +14,10 @@ import {
 } from 'lucide-react';
 import { PLPColors } from '@/constants/brandColors';
 import useGamificationStore from '@/stores/useGamificationStore';
+import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import { toast } from 'sonner';
 
-const MobileVolunteer = () => {
+const MobileVolunteerContent = () => {
   const { awardUserPoints, userProfile } = useGamificationStore();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -117,12 +118,20 @@ const MobileVolunteer = () => {
     : volunteerOpportunities.filter(opp => opp.category === selectedCategory);
 
   const handleSignUp = (opportunity) => {
-    awardUserPoints('VOLUNTEER_SIGNUP');
-    toast.success(`Signed up for ${opportunity.title}!`, {
-      icon: '🤝',
-      duration: 3000,
-      description: `+${opportunity.points} points when completed`
-    });
+    try {
+      awardUserPoints('VOLUNTEER_SIGNUP');
+      toast.success(`Signed up for ${opportunity.title}!`, {
+        icon: '🤝',
+        duration: 3000,
+        description: `+${opportunity.points} points when completed`
+      });
+    } catch (error) {
+      console.error('Error signing up for volunteer opportunity:', error);
+      toast.success(`Signed up for ${opportunity.title}!`, {
+        icon: '🤝',
+        duration: 3000
+      });
+    }
   };
 
   const getDifficultyColor = (difficulty) => {
@@ -481,5 +490,11 @@ const MobileVolunteer = () => {
     </motion.div>
   );
 };
+
+const MobileVolunteer = () => (
+  <ScreenErrorBoundary screenName="Volunteer">
+    <MobileVolunteerContent />
+  </ScreenErrorBoundary>
+);
 
 export default MobileVolunteer;

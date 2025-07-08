@@ -63,6 +63,10 @@ const HomeHeader = ({
               width: 'auto',
               filter: 'drop-shadow(0 2px 4px rgba(0, 51, 102, 0.2))'
             }}
+            onError={(e) => {
+              console.warn('Blue logo failed to load in header');
+              e.target.style.display = 'none';
+            }}
           />
         </motion.div>
 

@@ -30,8 +30,13 @@ const PLPHomeNew = ({ onNavigate }) => {
   useEffect(() => {
     initializeApp();
     if (user) {
-      initializeGamification(user.id);
-      updateLoginStreak();
+      try {
+        initializeGamification(user.id);
+        updateLoginStreak();
+      } catch (error) {
+        console.error('Error initializing gamification:', error);
+        // Continue without gamification if it fails
+      }
     }
   }, [user]);
 

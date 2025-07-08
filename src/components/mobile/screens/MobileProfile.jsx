@@ -213,6 +213,10 @@ const MobileProfileContent = () => {
               width: 'auto',
               filter: 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3))'
             }}
+            onError={(e) => {
+              console.warn('Gold logo failed to load in profile');
+              e.target.style.display = 'none';
+            }}
           />
         </motion.div>
         

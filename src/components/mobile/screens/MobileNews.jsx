@@ -5,9 +5,10 @@ import { Input } from '../../ui/input';
 import { PLPColors, PLPShadows } from '../../../constants/brandColors';
 import useAppStore from '../../../stores/useAppStore';
 import useGamificationStore from '../../../stores/useGamificationStore';
+import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import { toast } from 'sonner';
 
-const MobileNews = () => {
+const MobileNewsContent = () => {
   const { news, selectedNewsCategory, setSelectedNewsCategory, likeNews } = useAppStore();
   const { awardUserPoints } = useGamificationStore();
   const [searchTerm, setSearchTerm] = useState('');
@@ -1011,5 +1012,11 @@ const MobileNews = () => {
     </motion.div>
   );
 };
+
+const MobileNews = () => (
+  <ScreenErrorBoundary screenName="News">
+    <MobileNewsContent />
+  </ScreenErrorBoundary>
+);
 
 export default MobileNews;

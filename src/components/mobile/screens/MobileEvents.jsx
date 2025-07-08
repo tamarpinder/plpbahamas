@@ -4,9 +4,10 @@ import { Calendar, MapPin, Users, Clock, Star, TrendingUp, Filter, ChevronRight,
 import { PLPColors, PLPShadows } from '@/constants/brandColors';
 import useAppStore from '@/stores/useAppStore';
 import useGamificationStore from '@/stores/useGamificationStore';
+import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import { toast } from 'sonner';
 
-const MobileEvents = () => {
+const MobileEventsContent = () => {
   const { events, rsvpEvent } = useAppStore();
   const { awardUserPoints } = useGamificationStore();
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -572,5 +573,11 @@ const MobileEvents = () => {
     </motion.div>
   );
 };
+
+const MobileEvents = () => (
+  <ScreenErrorBoundary screenName="Events">
+    <MobileEventsContent />
+  </ScreenErrorBoundary>
+);
 
 export default MobileEvents;

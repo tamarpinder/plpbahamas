@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { 
   ENGAGEMENT_ACTIONS, 
   USER_LEVELS, 
@@ -14,9 +13,7 @@ import {
 } from '@/data/gamificationSystem';
 import { toast } from 'sonner';
 
-const useGamificationStore = create(
-  persist(
-    (set, get) => ({
+const useGamificationStore = create((set, get) => ({
       // User gamification profile
       userProfile: null,
       
@@ -57,40 +54,36 @@ const useGamificationStore = create(
           const profile = get().userProfile;
           if (!profile) {
             console.warn('No user profile found, cannot award points');
-            return;
+            return { success: false, error: 'No user profile' };
           }
           
-          const pointsEarned = awardPoints(action, multiplier);
+          // Simplified points system for prototype
+          const pointsMap = {
+            'FIRST_DONATION': 100,
+            'DONATION_MILESTONE': 50,
+            'DAILY_LOGIN': 5,
+            'NEWS_READ': 3,
+            'EVENT_RSVP': 10
+          };
+          
+          const pointsEarned = pointsMap[action] || 0;
           if (!pointsEarned) {
             console.warn(`Invalid action: ${action}`);
-            return;
+            return { success: false, error: 'Invalid action' };
           }
           
-          const oldLevel = calculateLevel(profile.totalPoints);
+          const oldLevel = profile.currentLevel || 1;
         
-        // Update profile
+        // Update profile safely
         const updatedProfile = {
           ...profile,
-          totalPoints: profile.totalPoints + pointsEarned,
+          totalPoints: (profile.totalPoints || 0) + pointsEarned,
           actions: {
-            ...profile.actions,
-            [action]: (profile.actions[action] || 0) + 1
+            ...(profile.actions || {}),
+            [action]: ((profile.actions && profile.actions[action]) || 0) + 1
           },
           lastActive: new Date().toISOString()
         };
-        
-        const newLevel = calculateLevel(updatedProfile.totalPoints);
-        
-        // Check for level up
-        if (newLevel.id > oldLevel.id) {
-          get().handleLevelUp(oldLevel, newLevel);
-        }
-        
-        // Check for new badges
-        get().checkForNewBadges(updatedProfile);
-        
-        // Update challenge progress
-        get().updateChallengeProgress(action);
           
           set({ userProfile: updatedProfile });
           
@@ -102,10 +95,10 @@ const useGamificationStore = create(
             });
           }
           
-          return pointsEarned;
+          return { success: true, pointsEarned };
         } catch (error) {
           console.error('Error awarding user points:', error);
-          return 0;
+          return { success: false, error: error.message };
         }
       },
       
@@ -396,6 +389,23 @@ const useGamificationStore = create(
         
         return getProgressToNextLevel(profile.totalPoints);
       },
+
+      // Clear all user data (for logout)
+      clearUserData: () => {
+        set({
+          userProfile: null,
+          activeChallenges: {
+            daily: [],
+            weekly: []
+          },
+          recentAchievements: [],
+          leaderboards: {
+            national: [],
+            constituency: [],
+            weekly: []
+          }
+        });
+      },
       
       // Get user badges
       getUserBadges: () => {
@@ -407,18 +417,7 @@ const useGamificationStore = create(
       clearRecentAchievements: () => {
         set({ recentAchievements: [] });
       }
-    }),
-    {
-      name: 'gamification-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        userProfile: state.userProfile,
-        activeChallenges: state.activeChallenges,
-        recentAchievements: state.recentAchievements
-      })
-    }
-  )
-);
+    }));
 
 // Helper function to get week string
 const getWeekString = (date) => {

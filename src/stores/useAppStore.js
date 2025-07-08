@@ -174,6 +174,19 @@ const useAppStore = create((set, get) => ({
       get().fetchNews(),
       get().fetchEvents()
     ]);
+  },
+
+  // Clear all user-specific data (for logout)
+  clearUserData: () => {
+    set({
+      dashboardStats: null,
+      news: [],
+      events: [],
+      selectedNewsCategory: 'ALL',
+      selectedEventType: 'ALL',
+      activeSection: 'home',
+      sidebarOpen: false
+    });
   }
 }));
 

@@ -1,6 +1,6 @@
 # PLP Mobile Application
 
-A modern mobile application for the Progressive Liberal Party (PLP) of the Bahamas, built with React + Vite frontend and Flask backend.
+A modern mobile application prototype for the Progressive Liberal Party (PLP) of the Bahamas, built with React + Vite frontend and mock data services.
 
 ## Project Structure
 
@@ -10,14 +10,13 @@ A modern mobile application for the Progressive Liberal Party (PLP) of the Baham
 │   │   └── ui/            # Reusable UI components
 │   ├── hooks/             # Custom React hooks
 │   ├── lib/               # Utility libraries
+│   ├── services/          # Mock API services
+│   ├── data/              # Mock data files
 │   └── assets/            # Frontend-specific assets
-├── backend/               # Flask backend API
-│   ├── src/              # Backend source code
-│   │   ├── models/       # Database models
-│   │   ├── routes/       # API routes
-│   │   └── database/     # Database files
-│   ├── requirements.txt   # Python dependencies
-│   └── *.py              # Backend scripts
+├── admin-panel/           # Admin dashboard interface
+│   ├── src/              # Admin panel source code
+│   ├── package.json      # Admin panel dependencies
+│   └── vite.config.js    # Admin panel Vite config
 ├── assets/               # Consolidated project assets
 │   └── images/          # Organized image assets
 │       ├── logos/       # Logo files
@@ -45,24 +44,24 @@ A modern mobile application for the Progressive Liberal Party (PLP) of the Baham
 - **React Router** - Client-side routing
 - **Framer Motion** - Animation library
 
-### Backend
-- **Flask** - Python web framework
-- **SQLAlchemy** - Database ORM
-- **Flask-CORS** - Cross-origin resource sharing
+### Data Layer
+- **Mock API Service** - Simulated backend functionality
+- **LocalStorage** - Client-side data persistence
+- **Mock Data Files** - Comprehensive test data
 
 ## Getting Started
 
-### Frontend Development
+### Mobile App Development
 ```bash
 npm install
 npm run dev
 ```
 
-### Backend Development
+### Admin Panel Development
 ```bash
-cd backend
-pip install -r requirements.txt
-python src/main.py
+cd admin-panel
+npm install
+npm run dev
 ```
 
 ## Documentation

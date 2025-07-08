@@ -22,6 +22,64 @@ export class MockApiService {
     this.users = [...mockUserProfiles];
     this.currentUser = null;
     this.guestUser = { ...mockGuestUser };
+    this.paymentMethods = new Map(); // Store payment methods per user
+    this.donationHistory = new Map(); // Store donation history per user
+    this.initializeMockData();
+  }
+
+  // Initialize mock data for payment methods and donations
+  initializeMockData() {
+    // Add some sample payment methods for the first user
+    const sampleUserId = 1;
+    this.paymentMethods.set(sampleUserId, [
+      {
+        id: 1,
+        type: 'card',
+        displayName: 'Visa ending in 4242',
+        lastFour: '4242',
+        expiryMonth: '12',
+        expiryYear: '2025',
+        cardType: 'visa',
+        isDefault: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        type: 'paypal',
+        displayName: 'PayPal Account',
+        email: 'user@example.com',
+        isDefault: false,
+        createdAt: new Date().toISOString()
+      }
+    ]);
+
+    // Add some sample donation history
+    this.donationHistory.set(sampleUserId, [
+      {
+        id: 1,
+        amount: 100,
+        currency: 'USD',
+        category: 'education',
+        paymentMethod: 'card',
+        paymentMethodId: 1,
+        status: 'completed',
+        date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+        confirmationNumber: 'PLP' + (Date.now() - 24 * 60 * 60 * 1000),
+        recurring: false
+      },
+      {
+        id: 2,
+        amount: 50,
+        currency: 'USD',
+        category: 'healthcare',
+        paymentMethod: 'paypal',
+        paymentMethodId: 2,
+        status: 'completed',
+        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        confirmationNumber: 'PLP' + (Date.now() - 7 * 24 * 60 * 60 * 1000),
+        recurring: false
+      }
+    ]);
   }
 
   // Authentication
@@ -32,7 +90,6 @@ export class MockApiService {
     const user = this.users.find(u => u.email === email);
     if (user && password === 'demo123') {
       this.currentUser = user;
-      localStorage.setItem('currentUser', JSON.stringify(user));
       return { success: true, user };
     }
     return { success: false, error: 'Invalid credentials' };
@@ -66,14 +123,12 @@ export class MockApiService {
 
     this.users.push(newUser);
     this.currentUser = newUser;
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
     return { success: true, user: newUser };
   }
 
   async logout() {
     await simulateNetworkDelay(100, 300);
     this.currentUser = null;
-    localStorage.removeItem('currentUser');
     return { success: true };
   }
 
@@ -193,7 +248,6 @@ export class MockApiService {
     await simulateNetworkDelay(500, 1200);
     if (this.currentUser) {
       this.currentUser = { ...this.currentUser, ...profileData };
-      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
       return { success: true, user: this.currentUser };
     }
     throw new Error('User not logged in');
@@ -208,17 +262,169 @@ export class MockApiService {
       id: Date.now(),
       amount: donationData.amount,
       paymentMethod: donationData.paymentMethod,
+      paymentMethodId: donationData.paymentMethodId,
+      category: donationData.category || 'general',
+      recurring: donationData.recurring || false,
       date: new Date().toISOString(),
       status: 'completed',
-      confirmationNumber: `PLP${Date.now()}`
+      confirmationNumber: `PLP${Date.now()}`,
+      currency: 'USD'
     };
 
     if (this.currentUser) {
       this.currentUser.donationTotal += donationData.amount;
-      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+      
+      // Add to donation history
+      const userId = this.currentUser.id;
+      const userDonations = this.donationHistory.get(userId) || [];
+      userDonations.unshift(donation);
+      this.donationHistory.set(userId, userDonations);
     }
 
     return { success: true, donation };
+  }
+
+  // Payment Methods Management
+  async getPaymentMethods() {
+    await simulateNetworkDelay(300, 800);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userPaymentMethods = this.paymentMethods.get(userId) || [];
+    const defaultPaymentMethod = userPaymentMethods.find(pm => pm.isDefault) || null;
+
+    return { 
+      success: true, 
+      paymentMethods: userPaymentMethods,
+      defaultPaymentMethod 
+    };
+  }
+
+  async addPaymentMethod(paymentMethodData) {
+    await simulateNetworkDelay(800, 1500);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userPaymentMethods = this.paymentMethods.get(userId) || [];
+    
+    const newPaymentMethod = {
+      id: Date.now(),
+      ...paymentMethodData,
+      createdAt: new Date().toISOString(),
+      isDefault: userPaymentMethods.length === 0 // First payment method becomes default
+    };
+
+    userPaymentMethods.push(newPaymentMethod);
+    this.paymentMethods.set(userId, userPaymentMethods);
+
+    return { success: true, paymentMethod: newPaymentMethod };
+  }
+
+  async updatePaymentMethod(paymentMethodId, updates) {
+    await simulateNetworkDelay(600, 1200);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userPaymentMethods = this.paymentMethods.get(userId) || [];
+    const methodIndex = userPaymentMethods.findIndex(pm => pm.id === paymentMethodId);
+
+    if (methodIndex === -1) {
+      throw new Error('Payment method not found');
+    }
+
+    userPaymentMethods[methodIndex] = {
+      ...userPaymentMethods[methodIndex],
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.paymentMethods.set(userId, userPaymentMethods);
+
+    return { success: true, paymentMethod: userPaymentMethods[methodIndex] };
+  }
+
+  async deletePaymentMethod(paymentMethodId) {
+    await simulateNetworkDelay(400, 900);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userPaymentMethods = this.paymentMethods.get(userId) || [];
+    const methodIndex = userPaymentMethods.findIndex(pm => pm.id === paymentMethodId);
+
+    if (methodIndex === -1) {
+      throw new Error('Payment method not found');
+    }
+
+    const deletedMethod = userPaymentMethods[methodIndex];
+    userPaymentMethods.splice(methodIndex, 1);
+
+    // If deleted method was default, make the first remaining method default
+    if (deletedMethod.isDefault && userPaymentMethods.length > 0) {
+      userPaymentMethods[0].isDefault = true;
+    }
+
+    this.paymentMethods.set(userId, userPaymentMethods);
+
+    return { success: true, message: 'Payment method deleted successfully' };
+  }
+
+  async setDefaultPaymentMethod(paymentMethodId) {
+    await simulateNetworkDelay(300, 700);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userPaymentMethods = this.paymentMethods.get(userId) || [];
+    
+    // Reset all methods to non-default
+    userPaymentMethods.forEach(pm => pm.isDefault = false);
+    
+    // Set new default
+    const targetMethod = userPaymentMethods.find(pm => pm.id === paymentMethodId);
+    if (!targetMethod) {
+      throw new Error('Payment method not found');
+    }
+
+    targetMethod.isDefault = true;
+    this.paymentMethods.set(userId, userPaymentMethods);
+
+    return { success: true, message: 'Default payment method updated' };
+  }
+
+  async getDonationHistory() {
+    await simulateNetworkDelay(400, 900);
+    simulateError();
+
+    if (!this.currentUser) {
+      throw new Error('User not logged in');
+    }
+
+    const userId = this.currentUser.id;
+    const userDonations = this.donationHistory.get(userId) || [];
+
+    return { 
+      success: true, 
+      donations: userDonations.sort((a, b) => new Date(b.date) - new Date(a.date))
+    };
   }
 
   // Volunteer Management
@@ -338,12 +544,6 @@ export class MockApiService {
 
   // Utility methods
   getCurrentUser() {
-    if (!this.currentUser) {
-      const savedUser = localStorage.getItem('currentUser');
-      if (savedUser) {
-        this.currentUser = JSON.parse(savedUser);
-      }
-    }
     return this.currentUser;
   }
 

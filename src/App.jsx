@@ -24,21 +24,16 @@ const MobileVolunteer = React.lazy(() => import('./components/mobile/screens/Mob
 const MobileLiveStream = React.lazy(() => import('./components/mobile/screens/MobileLiveStream'));
 
 function App() {
-  const { isAuthenticated, checkAuth } = useAuthStore();
+  const { isAuthenticated, isLoading } = useAuthStore();
   const [activeScreen, setActiveScreen] = useState('home');
   const [showSplash, setShowSplash] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    // Check auth status after splash screen completes
-    if (!showSplash && !authChecked) {
-      checkAuth();
-      setAuthChecked(true);
-      
-      // Preload core screens after initial load
+    // Preload core screens after splash screen completes
+    if (!showSplash) {
       preloadCoreScreens();
     }
-  }, [showSplash, authChecked, checkAuth]);
+  }, [showSplash]);
 
   const handleLoginSuccess = () => {
     setActiveScreen('home');
@@ -105,7 +100,7 @@ function App() {
               </PhoneMockup>
             ) : (
               <PhoneMockup>
-                {!isAuthenticated ? (
+                {!isAuthenticated || isLoading ? (
                   <Suspense fallback={<ScreenLoader screenName="Login" />}>
                     <PLPLoginNew onLoginSuccess={handleLoginSuccess} />
                   </Suspense>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { SafeMotionButton } from '@/components/SafeMotion';
 import { ArrowRight, Star } from 'lucide-react';
 import { PLPColors, PLPShadows } from '@/constants/brandColors';
 
@@ -18,33 +18,41 @@ const ActionButton = ({
   const getStatusColor = () => {
     switch (status) {
       case 'live': return '#DC2626';
-      case 'soon': return PLPColors.primary.orange;
+      case 'soon': return PLPColors.primary.orange || PLPColors.primary.gold;
       case 'new': return PLPColors.status.success;
       default: return null;
     }
   };
 
+  const handleClick = () => {
+    if (onClick && typeof onClick === 'function') {
+      try {
+        onClick();
+      } catch (error) {
+        console.error('ActionButton click error:', error);
+      }
+    }
+  };
+
   return (
-    <motion.button
+    <SafeMotionButton
       whileHover={{ 
         scale: 1.02,
         y: -2,
         boxShadow: PLPShadows.lg
       }}
       whileTap={{ scale: 0.98 }}
-      onClick={onClick}
+      onClick={handleClick}
       className={className}
       style={{
         background: backgroundColor,
         border: 'none',
         borderRadius: '1.25rem',
         padding: '1.25rem',
-        cursor: 'pointer',
         width: '100%',
         position: 'relative',
         overflow: 'hidden',
         boxShadow: PLPShadows.md,
-        transition: 'all 0.2s ease',
         minHeight: '120px'
       }}
     >
@@ -118,7 +126,7 @@ const ActionButton = ({
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Icon size={24} color={textColor} />
+            {Icon && <Icon size={24} color={textColor} />}
           </div>
           
           <ArrowRight size={20} color={textColor} style={{ opacity: 0.7 }} />
@@ -169,7 +177,7 @@ const ActionButton = ({
           )}
         </div>
       </div>
-    </motion.button>
+    </SafeMotionButton>
   );
 };
 

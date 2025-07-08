@@ -1,30 +1,50 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { SafeMotionDiv } from '@/components/SafeMotion';
 import { Heart, Calendar, Target, Users, TrendingUp } from 'lucide-react';
 import { PLPColors } from '@/constants/brandColors';
 import ActionButton from './shared/ActionButton';
-import useAppStore from '@/stores/useAppStore';
+import { useSafeAppStore } from '@/hooks/useSafeStore';
 
 const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
-  const { dashboardStats, getUpcomingLiveEvents } = useAppStore();
+  const { dashboardStats, getUpcomingLiveEvents } = useSafeAppStore();
   
   const handleQuickAction = (action, route, points = 'DAILY_LOGIN') => {
-    awardUserPoints(points); // Award for engagement
-    onNavigate(route);
+    // Safe award points
+    if (awardUserPoints && typeof awardUserPoints === 'function') {
+      try {
+        awardUserPoints(points);
+      } catch (error) {
+        console.error('Error awarding points:', error);
+      }
+    }
+    
+    // Safe navigation
+    if (onNavigate && typeof onNavigate === 'function') {
+      try {
+        onNavigate(route);
+      } catch (error) {
+        console.error('Navigation error:', error);
+      }
+    }
   };
 
-  // Get contextual information for events
+  // Get contextual information for events safely
   const getEventsInfo = () => {
-    const upcomingEvents = getUpcomingLiveEvents();
-    const totalEvents = dashboardStats?.totalEvents || 0;
-    const upcomingCount = upcomingEvents.length;
-    return upcomingCount > 0 
-      ? `${upcomingCount} upcoming events`
-      : `${totalEvents} events available`;
+    try {
+      const upcomingEvents = getUpcomingLiveEvents ? getUpcomingLiveEvents() : [];
+      const totalEvents = dashboardStats?.totalEvents || 0;
+      const upcomingCount = Array.isArray(upcomingEvents) ? upcomingEvents.length : 0;
+      return upcomingCount > 0 
+        ? `${upcomingCount} upcoming events`
+        : `${totalEvents} events available`;
+    } catch (error) {
+      console.error('Error getting events info:', error);
+      return 'View events';
+    }
   };
 
   return (
-    <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
+    <SafeMotionDiv variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -81,25 +101,27 @@ const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
       }}>
         <ActionButton
           icon={Users}
-          label="Community"
-          subtitle="Connect with members"
-          onClick={() => handleQuickAction('community', 'profile')}
-          backgroundColor={PLPColors.getColorWithOpacity(PLPColors.primary.navy, 0.9)}
+          label="Volunteer"
+          subtitle="Join our team"
+          onClick={() => handleQuickAction('volunteer', 'volunteer', 'DAILY_LOGIN')}
+          backgroundColor={PLPColors.primary.navy}
           textColor={PLPColors.neutral.white}
-          pointsReward={25}
+          pointsReward={75}
         />
         
         <ActionButton
           icon={TrendingUp}
-          label="Impact"
-          subtitle="View your progress"
-          onClick={() => handleQuickAction('impact', 'profile')}
-          backgroundColor={PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.9)}
+          label="Live Stream"
+          subtitle="Watch now"
+          onClick={() => handleQuickAction('livestream', 'livestream', 'LIVESTREAM_JOIN')}
+          backgroundColor="#DC2626"
           textColor={PLPColors.neutral.white}
-          pointsReward={10}
+          status="live"
+          isLive={true}
+          pointsReward={25}
         />
       </div>
-    </motion.div>
+    </SafeMotionDiv>
   );
 };
 

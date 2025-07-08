@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { SafeMotionDiv, SafeMotionButton } from '@/components/SafeMotion';
 import { 
   ArrowLeft, 
   Share, 
@@ -20,10 +20,12 @@ import {
 } from 'lucide-react';
 import { PLPColors, PLPShadows } from '@/constants/brandColors';
 import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
-import useGamificationStore from '@/stores/useGamificationStore';
+import { useSafeGamificationStore } from '@/hooks/useSafeStore';
 
 const MobileLiveStreamContent = ({ onNavigate }) => {
-  const { awardUserPoints } = useGamificationStore();
+  // Use safe store hook
+  const { awardUserPoints } = useSafeGamificationStore();
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -31,22 +33,17 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
   const [watchTime, setWatchTime] = useState(0);
   const [viewerCount, setViewerCount] = useState(1247);
   const [hasJoined, setHasJoined] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
 
   // Initialize component safely
   useEffect(() => {
-    const initializeStream = () => {
-      try {
-        setIsLoading(false);
-        setHasJoined(true);
-      } catch (error) {
-        console.error('Error initializing live stream:', error);
-        setIsLoading(false);
-      }
-    };
-    
-    const timer = setTimeout(initializeStream, 100);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setHasJoined(true);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
+
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
@@ -97,10 +94,12 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
 
   const chatContainerRef = useRef(null);
 
-  // Simulate live updates
+  // Simulate live updates safely
   useEffect(() => {
-    if (!hasJoined) {
-      setHasJoined(true);
+    if (!hasJoined || isLoading) return;
+
+    // Award points for joining stream
+    if (hasJoined && awardUserPoints) {
       awardUserPoints('LIVESTREAM_JOIN');
     }
 
@@ -109,13 +108,13 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
       setViewerCount(prev => prev + Math.floor(Math.random() * 3) - 1);
       
       // Award points every 5 minutes
-      if (watchTime > 0 && watchTime % 300 === 0) {
+      if (watchTime > 0 && watchTime % 300 === 0 && awardUserPoints) {
         awardUserPoints('DAILY_LOGIN');
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [watchTime, hasJoined, awardUserPoints]);
+  }, [watchTime, hasJoined, isLoading, awardUserPoints]);
 
   // Mock stream info
   const streamInfo = {
@@ -157,7 +156,10 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
       
       setChatMessages(prev => [...prev, newMessage]);
       setChatMessage('');
-      awardUserPoints('DAILY_LOGIN');
+      
+      if (awardUserPoints) {
+        awardUserPoints('DAILY_LOGIN');
+      }
       
       // Scroll to bottom
       setTimeout(() => {
@@ -169,8 +171,9 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
   };
 
   const handleReaction = (reaction) => {
-    awardUserPoints('DAILY_LOGIN');
-    // Update reaction count (mock)
+    if (awardUserPoints) {
+      awardUserPoints('DAILY_LOGIN');
+    }
     console.log(`Reacted with ${reaction.emoji}`);
   };
 
@@ -217,23 +220,22 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
         position: 'relative',
         zIndex: 10
       }}>
-        <motion.button
+        <SafeMotionButton
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => onNavigate('home')}
+          onClick={() => onNavigate && onNavigate('home')}
           style={{
             background: 'rgba(255, 255, 255, 0.2)',
             border: 'none',
             borderRadius: '50%',
             padding: '0.5rem',
-            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}
         >
           <ArrowLeft size={20} color={PLPColors.neutral.white} />
-        </motion.button>
+        </SafeMotionButton>
         
         <div style={{ textAlign: 'center' }}>
           <h2 style={{
@@ -246,7 +248,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
           </h2>
         </div>
         
-        <motion.button
+        <SafeMotionButton
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           style={{
@@ -254,14 +256,13 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
             border: 'none',
             borderRadius: '50%',
             padding: '0.5rem',
-            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}
         >
           <Share size={20} color={PLPColors.neutral.white} />
-        </motion.button>
+        </SafeMotionButton>
       </div>
 
       {/* Video Player Area */}
@@ -361,7 +362,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
           justifyContent: 'space-between'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <motion.button
+            <SafeMotionButton
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsPlaying(!isPlaying)}
@@ -370,7 +371,6 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 border: 'none',
                 borderRadius: '50%',
                 padding: '0.75rem',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -380,9 +380,9 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 <Pause size={20} color={PLPColors.neutral.white} /> : 
                 <Play size={20} color={PLPColors.neutral.white} />
               }
-            </motion.button>
+            </SafeMotionButton>
             
-            <motion.button
+            <SafeMotionButton
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsMuted(!isMuted)}
@@ -391,7 +391,6 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 border: 'none',
                 borderRadius: '50%',
                 padding: '0.75rem',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -401,7 +400,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 <VolumeX size={20} color={PLPColors.neutral.white} /> : 
                 <Volume2 size={20} color={PLPColors.neutral.white} />
               }
-            </motion.button>
+            </SafeMotionButton>
             
             <span style={{
               color: PLPColors.neutral.white,
@@ -412,7 +411,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
             </span>
           </div>
           
-          <motion.button
+          <SafeMotionButton
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             style={{
@@ -420,14 +419,13 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
               border: 'none',
               borderRadius: '50%',
               padding: '0.75rem',
-              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}
           >
             <Maximize size={20} color={PLPColors.neutral.white} />
-          </motion.button>
+          </SafeMotionButton>
         </div>
       </div>
 
@@ -551,7 +549,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
           overflowX: 'auto'
         }}>
           {reactions.map((reaction, index) => (
-            <motion.button
+            <SafeMotionButton
               key={index}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -561,7 +559,6 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)}`,
                 borderRadius: '1.5rem',
                 padding: '0.5rem 0.75rem',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem',
@@ -573,7 +570,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
             >
               <span style={{ fontSize: '1rem' }}>{reaction.emoji}</span>
               {reaction.count}
-            </motion.button>
+            </SafeMotionButton>
           ))}
         </div>
 
@@ -587,10 +584,8 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
           }}
         >
           {chatMessages.map((message) => (
-            <motion.div
+            <SafeMotionDiv
               key={message.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
               style={{
                 marginBottom: '1rem',
                 padding: '0.75rem',
@@ -658,7 +653,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
               }}>
                 {message.message}
               </p>
-            </motion.div>
+            </SafeMotionDiv>
           ))}
         </div>
 
@@ -678,25 +673,22 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
               value={chatMessage}
               onChange={(e) => setChatMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
               placeholder="Ask a question or share your thoughts..."
               style={{
                 flex: 1,
                 padding: '0.75rem 1rem',
-                border: `1px solid ${PLPColors.neutral.gray300}`,
+                border: `1px solid ${inputFocused ? PLPColors.primary.gold : PLPColors.neutral.gray300}`,
                 borderRadius: '1.5rem',
                 fontSize: '0.875rem',
                 outline: 'none',
-                background: PLPColors.neutral.white
-              }}
-              onFocus={(e) => {
-                e.target.style.border = `1px solid ${PLPColors.primary.gold}`;
-              }}
-              onBlur={(e) => {
-                e.target.style.border = `1px solid ${PLPColors.neutral.gray300}`;
+                background: PLPColors.neutral.white,
+                transition: 'border-color 0.2s ease'
               }}
             />
             
-            <motion.button
+            <SafeMotionButton
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleSendMessage}
@@ -708,11 +700,9 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                 border: 'none',
                 borderRadius: '50%',
                 padding: '0.75rem',
-                cursor: chatMessage.trim() ? 'pointer' : 'not-allowed',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease'
+                justifyContent: 'center'
               }}
             >
               <Send size={18} color={
@@ -720,7 +710,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
                   ? PLPColors.primary.navy 
                   : PLPColors.neutral.gray500
               } />
-            </motion.button>
+            </SafeMotionButton>
           </div>
         </div>
       </div>

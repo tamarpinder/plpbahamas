@@ -18,11 +18,20 @@ import {
   MapPin,
   Phone,
   Mail,
-  Zap
+  Zap,
+  CreditCard,
+  History,
+  Plus,
+  MoreVertical,
+  Check,
+  Trash2,
+  Edit,
+  AlertCircle
 } from 'lucide-react';
 import useAuthStore from '../../../stores/useAuthStore';
 import useGamificationStore from '../../../stores/useGamificationStore';
 import useAppStore from '../../../stores/useAppStore';
+import usePaymentStore from '../../../stores/usePaymentStore';
 import LevelProgressBar from '../../gamification/LevelProgressBar';
 import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import PersonalImpactCard from './home/PersonalImpactCard';
@@ -30,6 +39,455 @@ import RecentActivityFeed from './home/RecentActivityFeed';
 import { PLPColors } from '../../../constants/brandColors';
 import { toast } from 'sonner';
 import ConfirmationModal from '../../ui/ConfirmationModal';
+
+// Payment Methods Management View
+const PaymentMethodsView = ({ onBack, user }) => {
+  const { 
+    paymentMethods, 
+    defaultPaymentMethod, 
+    isLoading, 
+    error,
+    loadPaymentMethods,
+    deletePaymentMethod,
+    setDefaultPaymentMethod
+  } = usePaymentStore();
+
+  const [showAddMethod, setShowAddMethod] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+
+  React.useEffect(() => {
+    loadPaymentMethods();
+  }, []);
+
+  const handleDeletePaymentMethod = async (paymentMethodId) => {
+    const result = await deletePaymentMethod(paymentMethodId);
+    if (result.success) {
+      toast.success('Payment method deleted successfully');
+      setShowDeleteConfirm(null);
+    } else {
+      toast.error('Failed to delete payment method');
+    }
+  };
+
+  const handleSetDefault = async (paymentMethodId) => {
+    const result = await setDefaultPaymentMethod(paymentMethodId);
+    if (result.success) {
+      toast.success('Default payment method updated');
+    } else {
+      toast.error('Failed to update default payment method');
+    }
+  };
+
+  const getPaymentMethodIcon = (type) => {
+    switch (type) {
+      case 'card':
+        return <CreditCard size={20} />;
+      case 'paypal':
+        return <span style={{ fontSize: '1.2rem' }}>💰</span>;
+      case 'bank':
+        return <span style={{ fontSize: '1.2rem' }}>🏦</span>;
+      default:
+        return <CreditCard size={20} />;
+    }
+  };
+
+  const formatPaymentMethod = (method) => {
+    switch (method.type) {
+      case 'card':
+        return `•••• •••• •••• ${method.lastFour}`;
+      case 'paypal':
+        return method.email;
+      case 'bank':
+        return `${method.bankName} •••${method.lastFour}`;
+      default:
+        return method.displayName || 'Unknown';
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      style={{
+        height: '100%',
+        background: PLPColors.gradients.hero,
+        overflow: 'auto'
+      }}
+    >
+      <div style={{ padding: '1rem' }}>
+        {/* Header */}
+        <motion.div 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '1rem'
+          }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onBack}
+            style={{
+              background: 'rgba(255, 255, 255, 0.9)',
+              border: 'none',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: PLPColors.primary.navy,
+              fontWeight: '600'
+            }}
+          >
+            <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
+            Back
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowAddMethod(true)}
+            style={{
+              background: PLPColors.primary.blue,
+              border: 'none',
+              borderRadius: '0.5rem',
+              padding: '0.75rem 1rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: 'white',
+              fontWeight: '600'
+            }}
+          >
+            <Plus size={16} />
+            Add Method
+          </motion.button>
+        </motion.div>
+
+        {/* Title */}
+        <motion.div
+          style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '1rem',
+            padding: '1.5rem',
+            marginBottom: '1rem'
+          }}
+        >
+          <h1 style={{ 
+            color: PLPColors.primary.navy, 
+            marginBottom: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            <CreditCard size={24} />
+            Payment Methods
+          </h1>
+          <p style={{ color: PLPColors.neutral.gray600, margin: 0 }}>
+            Manage your payment methods for quick donations
+          </p>
+        </motion.div>
+
+        {/* Payment Methods List */}
+        {isLoading ? (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: `3px solid ${PLPColors.primary.blue}`,
+              borderTop: '3px solid transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 1rem'
+            }} />
+            <p style={{ color: PLPColors.neutral.gray600 }}>Loading payment methods...</p>
+          </div>
+        ) : paymentMethods.length === 0 ? (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '1rem',
+            padding: '2rem',
+            textAlign: 'center'
+          }}>
+            <CreditCard size={48} color={PLPColors.neutral.gray400} style={{ marginBottom: '1rem' }} />
+            <h3 style={{ color: PLPColors.primary.navy, marginBottom: '0.5rem' }}>No Payment Methods</h3>
+            <p style={{ color: PLPColors.neutral.gray600, marginBottom: '1rem' }}>
+              Add a payment method to enable quick donations
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddMethod(true)}
+              style={{
+                background: PLPColors.primary.blue,
+                border: 'none',
+                borderRadius: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                cursor: 'pointer',
+                color: 'white',
+                fontWeight: '600'
+              }}
+            >
+              Add Your First Payment Method
+            </motion.button>
+          </div>
+        ) : (
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '1rem',
+            padding: '1rem'
+          }}>
+            {paymentMethods.map((method) => (
+              <motion.div
+                key={method.id}
+                whileHover={{ scale: 1.02 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  marginBottom: '0.5rem',
+                  background: method.isDefault 
+                    ? PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)
+                    : PLPColors.getColorWithOpacity(PLPColors.neutral.gray100, 0.5),
+                  border: method.isDefault 
+                    ? `2px solid ${PLPColors.primary.blue}` 
+                    : '1px solid transparent',
+                  borderRadius: '0.75rem',
+                  position: 'relative'
+                }}
+              >
+                <div style={{ marginRight: '1rem' }}>
+                  {getPaymentMethodIcon(method.type)}
+                </div>
+                
+                <div style={{ flex: 1 }}>
+                  <div style={{ 
+                    fontSize: '0.875rem', 
+                    fontWeight: '600',
+                    color: PLPColors.primary.navy,
+                    marginBottom: '0.25rem'
+                  }}>
+                    {method.displayName}
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.75rem', 
+                    color: PLPColors.neutral.gray600 
+                  }}>
+                    {formatPaymentMethod(method)}
+                  </div>
+                </div>
+
+                {method.isDefault && (
+                  <div style={{
+                    background: PLPColors.status.success,
+                    color: 'white',
+                    padding: '0.25rem 0.5rem',
+                    borderRadius: '0.25rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    marginRight: '0.5rem'
+                  }}>
+                    Default
+                  </div>
+                )}
+
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowDeleteConfirm(method.id)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '0.5rem',
+                    color: PLPColors.neutral.gray500
+                  }}
+                >
+                  <MoreVertical size={16} />
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* Add Method Placeholder */}
+        {showAddMethod && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '1rem',
+              padding: '2rem',
+              textAlign: 'center',
+              marginTop: '1rem'
+            }}
+          >
+            <Plus size={48} color={PLPColors.primary.blue} style={{ marginBottom: '1rem' }} />
+            <h3 style={{ color: PLPColors.primary.navy, marginBottom: '0.5rem' }}>Add Payment Method</h3>
+            <p style={{ color: PLPColors.neutral.gray600, marginBottom: '1rem' }}>
+              Payment method form will be implemented soon
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddMethod(false)}
+              style={{
+                background: PLPColors.neutral.gray200,
+                border: 'none',
+                borderRadius: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                cursor: 'pointer',
+                color: PLPColors.primary.navy,
+                fontWeight: '600'
+              }}
+            >
+              Close
+            </motion.button>
+          </motion.div>
+        )}
+
+        {/* Delete Confirmation */}
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              style={{
+                background: 'white',
+                borderRadius: '1rem',
+                padding: '2rem',
+                margin: '1rem',
+                maxWidth: '300px',
+                textAlign: 'center'
+              }}
+            >
+              <AlertCircle size={48} color={PLPColors.status.error} style={{ marginBottom: '1rem' }} />
+              <h3 style={{ color: PLPColors.primary.navy, marginBottom: '0.5rem' }}>Delete Payment Method</h3>
+              <p style={{ color: PLPColors.neutral.gray600, marginBottom: '1.5rem' }}>
+                Are you sure you want to delete this payment method?
+              </p>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowDeleteConfirm(null)}
+                  style={{
+                    flex: 1,
+                    background: PLPColors.neutral.gray200,
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem',
+                    cursor: 'pointer',
+                    color: PLPColors.primary.navy,
+                    fontWeight: '600'
+                  }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleDeletePaymentMethod(showDeleteConfirm)}
+                  style={{
+                    flex: 1,
+                    background: PLPColors.status.error,
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    padding: '0.75rem',
+                    cursor: 'pointer',
+                    color: 'white',
+                    fontWeight: '600'
+                  }}
+                >
+                  Delete
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+const DonationHistoryView = ({ onBack, user }) => (
+  <motion.div
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    style={{
+      height: '100%',
+      background: PLPColors.gradients.hero,
+      overflow: 'auto'
+    }}
+  >
+    <div style={{ padding: '1rem' }}>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onBack}
+        style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          border: 'none',
+          borderRadius: '0.5rem',
+          padding: '0.75rem 1rem',
+          marginBottom: '1rem',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          color: PLPColors.primary.navy,
+          fontWeight: '600'
+        }}
+      >
+        <ChevronRight size={16} style={{ transform: 'rotate(180deg)' }} />
+        Back to Profile
+      </motion.button>
+      
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '1rem',
+        padding: '2rem',
+        textAlign: 'center'
+      }}>
+        <History size={48} color={PLPColors.primary.blue} style={{ marginBottom: '1rem' }} />
+        <h1 style={{ color: PLPColors.primary.navy, marginBottom: '1rem' }}>Donation History</h1>
+        <p style={{ color: PLPColors.neutral.gray600 }}>
+          Donation history will be implemented soon.
+        </p>
+      </div>
+    </div>
+  </motion.div>
+);
 
 const MobileProfileContent = () => {
   const { user, logout, isLoading } = useAuthStore();
@@ -45,9 +503,10 @@ const MobileProfileContent = () => {
   const [editMode, setEditMode] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [activeView, setActiveView] = useState('profile'); // 'profile', 'payment-methods', 'donation-history'
   
   // Early return if user is null (during logout process)
-  if (!user || isLoading) {
+  if (!user || isLoading || isLoggingOut) {
     return (
       <motion.div
         style={{
@@ -95,6 +554,7 @@ const MobileProfileContent = () => {
           duration: 2000
         });
         setShowLogoutModal(false);
+        // Don't reset loading state here - let the redirect handle it
       } else {
         throw new Error(result?.error || 'Logout failed');
       }
@@ -104,13 +564,16 @@ const MobileProfileContent = () => {
         icon: '❌',
         duration: 3000
       });
-    } finally {
-      setIsLoggingOut(false);
+      setIsLoggingOut(false); // Only reset on error
     }
   };
 
   const handleCancelLogout = () => {
     setShowLogoutModal(false);
+  };
+
+  const handleBackToProfile = () => {
+    setActiveView('profile');
   };
 
   const profileStats = [
@@ -146,6 +609,8 @@ const MobileProfileContent = () => {
 
   const menuItems = [
     { icon: Edit3, label: 'Edit Profile', action: () => setEditMode(!editMode) },
+    { icon: CreditCard, label: 'Payment Methods', action: () => setActiveView('payment-methods') },
+    { icon: History, label: 'Donation History', action: () => setActiveView('donation-history') },
     { icon: Bell, label: 'Notifications', action: () => {}, badge: '3' },
     { icon: Settings, label: 'Account Settings', action: () => {} },
     { icon: Shield, label: 'Privacy & Security', action: () => {} },
@@ -169,7 +634,29 @@ const MobileProfileContent = () => {
     }
   };
 
-  return (
+  // Render different views based on activeView
+  const renderView = () => {
+    switch (activeView) {
+      case 'payment-methods':
+        return (
+          <PaymentMethodsView 
+            onBack={handleBackToProfile} 
+            user={user}
+          />
+        );
+      case 'donation-history':
+        return (
+          <DonationHistoryView 
+            onBack={handleBackToProfile} 
+            user={user}
+          />
+        );
+      default:
+        return renderProfileView();
+    }
+  };
+
+  const renderProfileView = () => (
     <motion.div
       variants={containerVariants}
       initial="hidden"
@@ -639,6 +1126,8 @@ const MobileProfileContent = () => {
       />
     </motion.div>
   );
+
+  return renderView();
 };
 
 const MobileProfile = () => (

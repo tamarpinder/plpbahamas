@@ -1,10 +1,9 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 import { mockApi } from '@/services/mockApi';
+import useGamificationStore from './useGamificationStore';
+import useAppStore from './useAppStore';
 
-const useAuthStore = create(
-  persist(
-    (set, get) => ({
+const useAuthStore = create((set, get) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
@@ -57,24 +56,11 @@ const useAuthStore = create(
         try {
           await mockApi.logout();
           
-          // Clear all localStorage items that might be used by other stores
-          const keysToRemove = [
-            'currentUser',
-            'userProfile', 
-            'gamificationStore',
-            'appStore',
-            'authStore'
-          ];
+          // Clear all other stores first (before clearing auth)
+          useGamificationStore.getState().clearUserData();
+          useAppStore.getState().clearUserData();
           
-          keysToRemove.forEach(key => {
-            try {
-              localStorage.removeItem(key);
-            } catch (e) {
-              console.warn(`Failed to remove localStorage key: ${key}`, e);
-            }
-          });
-          
-          // Reset auth state
+          // Reset auth state - no localStorage needed
           set({ 
             user: null, 
             isAuthenticated: false, 
@@ -107,13 +93,6 @@ const useAuthStore = create(
         }
       },
 
-      checkAuth: () => {
-        const currentUser = mockApi.getCurrentUser();
-        if (currentUser) {
-          set({ user: currentUser, isAuthenticated: true });
-        }
-      },
-
       loginAsGuest: () => {
         const guestUser = {
           id: 'guest',
@@ -134,16 +113,8 @@ const useAuthStore = create(
           isLoading: false 
         });
         
-        // Don't store guest in localStorage - session only
         return { success: true, user: guestUser };
       }
-    }),
-    {
-      name: 'auth-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated })
-    }
-  )
-);
+    }));
 
 export default useAuthStore;

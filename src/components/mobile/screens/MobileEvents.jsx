@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Users, Clock, Star, TrendingUp, Filter, ChevronRight } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Star, TrendingUp, Filter, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { PLPColors, PLPShadows } from '@/constants/brandColors';
 import useAppStore from '@/stores/useAppStore';
 import useGamificationStore from '@/stores/useGamificationStore';
@@ -10,6 +10,7 @@ const MobileEvents = () => {
   const { events, rsvpEvent } = useAppStore();
   const { awardUserPoints } = useGamificationStore();
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [expandedEvents, setExpandedEvents] = useState(new Set());
   
   const eventTypes = [
     { id: 'all', name: 'All Events', icon: Calendar },
@@ -25,6 +26,18 @@ const MobileEvents = () => {
       icon: '🎉',
       duration: 3000,
       description: `See you at ${eventTitle}!`
+    });
+  };
+
+  const toggleEventExpansion = (eventId) => {
+    setExpandedEvents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(eventId)) {
+        newSet.delete(eventId);
+      } else {
+        newSet.add(eventId);
+      }
+      return newSet;
     });
   };
 
@@ -166,11 +179,13 @@ const MobileEvents = () => {
           variants={itemVariants}
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
-          {filteredEvents.map((event, index) => (
+          {filteredEvents.map((event, index) => {
+            const isExpanded = expandedEvents.has(event.id);
+            return (
             <motion.div 
               key={event.id}
               initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+              animate={{ y: 0, opacity: 1, height: 'auto' }}
               transition={{ delay: 0.8 + (index * 0.15) }}
               whileHover={{ scale: 1.01 }}
               style={{
@@ -180,9 +195,11 @@ const MobileEvents = () => {
                 padding: '1.25rem',
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
                 boxShadow: PLPShadows.md,
-                transition: 'all 0.2s ease'
+                transition: 'all 0.3s ease',
+                overflow: 'hidden'
               }}
             >
+              {/* Header Section - Always Visible */}
               <div style={{
                 display: 'flex',
                 alignItems: 'flex-start',
@@ -204,8 +221,8 @@ const MobileEvents = () => {
                     color: PLPColors.neutral.gray600,
                     lineHeight: '1.4',
                     marginBottom: '1rem',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
+                    display: isExpanded ? 'block' : '-webkit-box',
+                    WebkitLineClamp: isExpanded ? 'unset' : 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden'
                   }}>
@@ -235,6 +252,7 @@ const MobileEvents = () => {
                 )}
               </div>
               
+              {/* Essential Info Grid - Always Visible */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
@@ -279,7 +297,7 @@ const MobileEvents = () => {
                   }}>{new Date(event.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', gridColumn: '1 / -1' }}>
                   <div style={{
                     width: '2rem',
                     height: '2rem',
@@ -295,32 +313,209 @@ const MobileEvents = () => {
                     fontSize: '0.875rem',
                     color: PLPColors.neutral.gray600,
                     fontWeight: '500',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    lineHeight: '1.4',
+                    wordBreak: 'break-word'
                   }}>{event.location}</span>
-                </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{
-                    width: '2rem',
-                    height: '2rem',
-                    background: PLPColors.getColorWithOpacity(PLPColors.status.success, 0.15),
-                    borderRadius: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Users size={14} color={PLPColors.primary.navy} />
-                  </div>
-                  <span style={{
-                    fontSize: '0.875rem',
-                    color: PLPColors.neutral.gray600,
-                    fontWeight: '500'
-                  }}>{event.attending_count} attending</span>
                 </div>
               </div>
               
+              {/* View Details Button */}
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => toggleEventExpansion(event.id)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.7)',
+                  border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)}`,
+                  borderRadius: '0.75rem',
+                  padding: '0.75rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: PLPColors.primary.navy,
+                  transition: 'all 0.2s ease',
+                  marginBottom: '1rem'
+                }}
+              >
+                {isExpanded ? 'Hide Details' : 'View Details'}
+                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </motion.button>
+
+              {/* Expanded Content */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    {/* Additional Event Details */}
+                    <div style={{
+                      background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.02),
+                      borderRadius: '1rem',
+                      padding: '1rem',
+                      marginBottom: '1rem'
+                    }}>
+                      {/* Agenda Section */}
+                      {event.agenda && event.agenda.length > 0 && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            color: PLPColors.primary.navy,
+                            marginBottom: '0.75rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <Clock size={16} color={PLPColors.primary.gold} />
+                            Agenda
+                          </h4>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {event.agenda.map((item, agendaIndex) => (
+                              <div key={agendaIndex} style={{
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: '0.75rem',
+                                padding: '0.5rem',
+                                background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.05),
+                                borderRadius: '0.5rem'
+                              }}>
+                                <span style={{
+                                  fontSize: '0.75rem',
+                                  fontWeight: '600',
+                                  color: PLPColors.primary.gold,
+                                  minWidth: '3rem'
+                                }}>
+                                  {item.time}
+                                </span>
+                                <span style={{
+                                  fontSize: '0.875rem',
+                                  color: PLPColors.primary.navy,
+                                  lineHeight: '1.4'
+                                }}>
+                                  {item.item}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Speakers Section */}
+                      {event.speakers && event.speakers.length > 0 && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            color: PLPColors.primary.navy,
+                            marginBottom: '0.75rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.5rem'
+                          }}>
+                            <Users size={16} color={PLPColors.primary.gold} />
+                            Speakers
+                          </h4>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                            {event.speakers.map((speaker, speakerIndex) => (
+                              <span key={speakerIndex} style={{
+                                background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+                                color: PLPColors.primary.navy,
+                                padding: '0.25rem 0.75rem',
+                                borderRadius: '1rem',
+                                fontSize: '0.75rem',
+                                fontWeight: '500'
+                              }}>
+                                {speaker}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Contact Info */}
+                      {event.contact_email && (
+                        <div style={{ marginBottom: '1rem' }}>
+                          <h4 style={{
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                            color: PLPColors.primary.navy,
+                            marginBottom: '0.5rem'
+                          }}>
+                            Contact
+                          </h4>
+                          <p style={{
+                            fontSize: '0.875rem',
+                            color: PLPColors.neutral.gray600,
+                            lineHeight: '1.4'
+                          }}>
+                            {event.organizer && `${event.organizer} • `}
+                            {event.contact_email}
+                            {event.contact_phone && ` • ${event.contact_phone}`}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Additional Stats */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '0.75rem'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{
+                            width: '2rem',
+                            height: '2rem',
+                            background: PLPColors.getColorWithOpacity(PLPColors.status.success, 0.15),
+                            borderRadius: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}>
+                            <Users size={14} color={PLPColors.primary.navy} />
+                          </div>
+                          <span style={{
+                            fontSize: '0.875rem',
+                            color: PLPColors.neutral.gray600,
+                            fontWeight: '500'
+                          }}>{event.attending_count} attending</span>
+                        </div>
+                        
+                        {event.max_capacity && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{
+                              width: '2rem',
+                              height: '2rem',
+                              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                              borderRadius: '0.5rem',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
+                              <Star size={14} color={PLPColors.primary.navy} />
+                            </div>
+                            <span style={{
+                              fontSize: '0.875rem',
+                              color: PLPColors.neutral.gray600,
+                              fontWeight: '500'
+                            }}>Max {event.max_capacity}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Action Buttons */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -370,7 +565,8 @@ const MobileEvents = () => {
                 </motion.button>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </motion.div>
       </div>
     </motion.div>

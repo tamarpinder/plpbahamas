@@ -11,6 +11,8 @@ import { Content } from './pages/Content';
 import { Communications } from './pages/Communications';
 import { Analytics } from './pages/Analytics';
 import { Settings } from './pages/Settings';
+import { Tasks } from './pages/Tasks';
+import { Workflows } from './pages/Workflows';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
             <Route path="/communications" element={<Communications />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/workflows" element={<Workflows />} />
           </Routes>
         </Layout>
       </NotificationProvider>

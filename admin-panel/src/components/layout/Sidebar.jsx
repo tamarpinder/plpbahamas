@@ -13,7 +13,9 @@ import {
   Crown,
   TrendingUp,
   MapPin,
-  Megaphone
+  Megaphone,
+  CheckSquare,
+  Workflow
 } from 'lucide-react';
 import { PLPColors } from '../../constants/colors';
 
@@ -59,6 +61,18 @@ const navigation = [
     href: '/analytics', 
     icon: BarChart3,
     description: 'Reports & insights'
+  },
+  { 
+    name: 'Tasks', 
+    href: '/tasks', 
+    icon: CheckSquare,
+    description: 'Task management & assignment'
+  },
+  { 
+    name: 'Workflows', 
+    href: '/workflows', 
+    icon: Workflow,
+    description: 'Process automation & templates'
   },
   { 
     name: 'Settings', 

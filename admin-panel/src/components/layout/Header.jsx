@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menu, Bell, Search, User, Settings, LogOut, Command, Keyboard, Moon, Sun } from 'lucide-react';
 import { PLPColors } from '../../constants/colors';
 import { GlobalSearch, useGlobalSearch } from '../GlobalSearch';
 import { useTheme } from '../../contexts/ThemeContext';
+import { NotificationBadge } from '../NotificationBadge';
+import { NotificationPanel } from '../NotificationPanel';
 
 export function Header({ onMenuClick }) {
   const { isSearchOpen, openSearch, closeSearch } = useGlobalSearch();
   const { isDarkMode, toggleDarkMode } = useTheme();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <>
@@ -68,10 +71,7 @@ export function Header({ onMenuClick }) {
             </button>
             
             {/* Notifications */}
-            <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+            <NotificationBadge onClick={() => setShowNotifications(true)} />
             
             {/* User menu */}
             <div className="relative">
@@ -91,6 +91,12 @@ export function Header({ onMenuClick }) {
       
       {/* Global Search Modal */}
       <GlobalSearch isOpen={isSearchOpen} onClose={closeSearch} />
+      
+      {/* Notification Panel */}
+      <NotificationPanel 
+        isOpen={showNotifications} 
+        onClose={() => setShowNotifications(false)} 
+      />
     </>
   );
 }

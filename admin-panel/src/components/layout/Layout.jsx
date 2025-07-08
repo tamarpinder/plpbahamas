@@ -5,6 +5,7 @@ import { PLPColors } from '../../constants/colors';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 import { KeyboardShortcutsHelp } from '../KeyboardShortcutsHelp';
 import { QuickCreateMenu } from '../QuickCreateMenu';
+import { NotificationToastContainer } from '../NotificationToast';
 
 export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,6 +47,7 @@ export function Layout({ children }) {
       {/* Global components */}
       <KeyboardShortcutsHelp />
       <QuickCreateMenu />
+      <NotificationToastContainer />
     </div>
   );
 }

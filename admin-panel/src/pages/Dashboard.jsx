@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PLPColors } from '../constants/colors';
 import { DashboardCustomizer } from '../components/DashboardCustomizer';
+import { LiveNotificationsWidget } from '../components/LiveNotificationsWidget';
 
 // Mock data for the dashboard
 const stats = [
@@ -239,6 +240,7 @@ export function Dashboard() {
     { id: 'stats', name: 'Key Statistics', enabled: true, size: 'full', component: StatsWidget },
     { id: 'recent', name: 'Recent Activity', enabled: true, size: 'half', component: RecentActivityWidget },
     { id: 'upcoming', name: 'Upcoming Events', enabled: true, size: 'half', component: UpcomingEventsWidget },
+    { id: 'notifications', name: 'Live Notifications', enabled: false, size: 'third', component: LiveNotificationsWidget },
     { id: 'map', name: 'Geographic Distribution', enabled: false, size: 'half', component: GeographicMapWidget },
     { id: 'engagement', name: 'Engagement Trends', enabled: false, size: 'full', component: EngagementTrendsWidget },
     { id: 'todos', name: 'Task List', enabled: false, size: 'third', component: TaskListWidget }

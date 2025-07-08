@@ -156,42 +156,52 @@ const MobileNews = () => {
             borderTopRightRadius: '2rem',
             border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.neutral.white, 0.2)}`,
             boxShadow: PLPShadows.glass,
-            padding: '1.5rem',
-            margin: '1rem 1rem 0',
-            marginBottom: '2rem'
+            padding: '1.25rem',
+            margin: '0.75rem 0.75rem 0',
+            marginBottom: '1.25rem'
           }}
         >
           <div style={{ marginBottom: '1.5rem' }}>
-            <motion.span 
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              style={{
-                display: 'inline-block',
-                padding: '0.5rem 1rem',
-                background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
-                color: PLPColors.primary.navy,
-                borderRadius: '1rem',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                marginBottom: '1rem'
-              }}
-            >
-              {selectedArticle.category}
-            </motion.span>
-            <motion.h1 
+            <motion.div
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
               style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: PLPColors.primary.navy,
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
                 marginBottom: '0.75rem',
-                lineHeight: '1.3'
+                gap: '1rem'
               }}
             >
-              {selectedArticle.title}
-            </motion.h1>
+              <motion.h1 
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  color: PLPColors.primary.navy,
+                  lineHeight: '1.3',
+                  flex: 1
+                }}
+              >
+                {selectedArticle.title}
+              </motion.h1>
+              <motion.span 
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                style={{
+                  padding: '0.5rem 1rem',
+                  background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
+                  color: PLPColors.primary.navy,
+                  borderRadius: '1rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  flexShrink: 0,
+                  height: 'fit-content'
+                }}
+              >
+                {selectedArticle.category}
+              </motion.span>
+            </motion.div>
             <motion.div 
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -202,14 +212,18 @@ const MobileNews = () => {
                 fontSize: '0.875rem',
                 color: PLPColors.neutral.gray600,
                 marginBottom: '1.5rem',
-                gap: '0.5rem'
+                gap: '0.5rem',
+                flexWrap: 'wrap'
               }}
             >
               <span style={{ fontWeight: '500' }}>By {selectedArticle.author}</span>
               <span style={{ color: PLPColors.neutral.gray400 }}>•</span>
               <span>{new Date(selectedArticle.date).toLocaleDateString()}</span>
-              <Clock size={14} color={PLPColors.neutral.gray400} style={{ marginLeft: '0.5rem' }} />
-              <span>{selectedArticle.readTime}</span>
+              <span style={{ color: PLPColors.neutral.gray400 }}>•</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <Clock size={14} color={PLPColors.neutral.gray400} />
+                <span>{selectedArticle.readTime}</span>
+              </div>
             </motion.div>
           </div>
 
@@ -291,10 +305,10 @@ const MobileNews = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingTop: '1.5rem',
+              paddingTop: '1rem',
               borderTop: `2px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)}`,
-              marginTop: '1.5rem',
-              gap: '0.75rem'
+              marginTop: '1rem',
+              gap: '0.5rem'
             }}
           >
             <motion.button
@@ -305,7 +319,7 @@ const MobileNews = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1rem',
+                padding: '0.625rem 0.875rem',
                 borderRadius: '1rem',
                 background: PLPColors.getColorWithOpacity(PLPColors.status.error, 0.1),
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.status.error, 0.2)}`,
@@ -336,7 +350,7 @@ const MobileNews = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1rem',
+                padding: '0.625rem 0.875rem',
                 borderRadius: '1rem',
                 background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)}`,
@@ -359,7 +373,7 @@ const MobileNews = () => {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.75rem 1rem',
+                padding: '0.625rem 0.875rem',
                 borderRadius: '1rem',
                 background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.3)}`,
@@ -406,9 +420,9 @@ const MobileNews = () => {
               transition={{ delay: 1.1 }}
               style={{
                 background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.02),
-                borderRadius: '1rem',
-                padding: '1rem',
-                marginBottom: '1.5rem',
+                borderRadius: '0.75rem',
+                padding: '0.875rem',
+                marginBottom: '1rem',
                 border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`
               }}
             >
@@ -496,7 +510,7 @@ const MobileNews = () => {
             </motion.div>
 
             {/* Comments List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {selectedArticle.comments.map((comment, index) => (
                 <motion.div
                   key={comment.id}
@@ -505,8 +519,8 @@ const MobileNews = () => {
                   transition={{ delay: 1.2 + (index * 0.1) }}
                   style={{
                     background: PLPColors.neutral.white,
-                    borderRadius: '1rem',
-                    padding: '1rem',
+                    borderRadius: '0.75rem',
+                    padding: '0.875rem',
                     border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)}`,
                     boxShadow: PLPShadows.sm
                   }}
@@ -514,68 +528,129 @@ const MobileNews = () => {
                   <div style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '0.75rem'
+                    gap: '0.625rem'
                   }}>
                     <div style={{
-                      width: '2.5rem',
-                      height: '2.5rem',
+                      width: comment.level === 'Champion' ? '3rem' : '2.5rem',
+                      height: comment.level === 'Champion' ? '3rem' : '2.5rem',
                       background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.15),
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      flexShrink: 0
+                      flexShrink: 0,
+                      border: `3px solid ${
+                        comment.level === 'Champion' 
+                          ? PLPColors.primary.gold
+                          : comment.level === 'Activist'
+                          ? PLPColors.primary.blue
+                          : PLPColors.status.success
+                      }`,
+                      boxShadow: comment.level === 'Champion' 
+                        ? '0 0 12px rgba(255, 215, 0, 0.4), 0 0 24px rgba(255, 215, 0, 0.2)'
+                        : '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease',
+                      position: 'relative'
                     }}>
-                      <span style={{ fontSize: '1rem' }}>{comment.levelIcon}</span>
+                      <span style={{ 
+                        fontSize: comment.level === 'Champion' ? '1.125rem' : '1rem'
+                      }}>{comment.levelIcon}</span>
+                      {comment.level === 'Champion' && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-2px',
+                          right: '-2px',
+                          width: '1rem',
+                          height: '1rem',
+                          background: 'linear-gradient(135deg, #FFD700 0%, #FFC700 100%)',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: `2px solid ${PLPColors.neutral.white}`,
+                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                        }}>
+                          <Crown size={8} color={PLPColors.primary.navy} />
+                        </div>
+                      )}
                     </div>
                     <div style={{ flex: 1 }}>
+                      {/* Name - Full Width */}
                       <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
                         marginBottom: '0.5rem'
                       }}>
                         <span style={{
-                          fontSize: '0.875rem',
-                          fontWeight: '600',
-                          color: PLPColors.primary.navy
+                          fontSize: '1rem',
+                          fontWeight: '700',
+                          color: comment.level === 'Champion' 
+                            ? PLPColors.primary.gold
+                            : comment.level === 'Activist'
+                            ? PLPColors.primary.blue
+                            : PLPColors.status.success,
+                          textShadow: comment.level === 'Champion' ? '0 0 8px rgba(255, 215, 0, 0.3)' : 'none'
                         }}>
                           {comment.author}
                         </span>
+                      </div>
+
+                      {/* Level Badge */}
+                      <div style={{
+                        marginBottom: '0.75rem'
+                      }}>
                         <span style={{
                           fontSize: '0.75rem',
                           background: comment.level === 'Champion' 
-                            ? PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.2)
+                            ? 'linear-gradient(135deg, #FFD700 0%, #FFC700 100%)'
                             : comment.level === 'Activist'
-                            ? PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.2)
-                            : PLPColors.getColorWithOpacity(PLPColors.status.success, 0.2),
-                          color: PLPColors.primary.navy,
-                          padding: '0.125rem 0.5rem',
-                          borderRadius: '0.5rem',
-                          fontWeight: '500'
+                            ? 'linear-gradient(135deg, #0066CC 0%, #4A90E2 100%)'
+                            : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+                          color: comment.level === 'Champion' ? PLPColors.primary.navy : PLPColors.neutral.white,
+                          padding: '0.25rem 0.75rem',
+                          borderRadius: '1rem',
+                          fontWeight: '600',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.25rem',
+                          boxShadow: comment.level === 'Champion' 
+                            ? '0 2px 8px rgba(255, 215, 0, 0.3)'
+                            : '0 2px 6px rgba(0, 0, 0, 0.1)'
                         }}>
+                          {comment.level === 'Champion' && <Crown size={12} />}
+                          {comment.level === 'Activist' && <Star size={12} />}
+                          {comment.level === 'Supporter' && '💚'}
                           {comment.level}
                         </span>
+                      </div>
+
+                      {/* Comment Text */}
+                      <p style={{
+                        fontSize: '0.875rem',
+                        color: PLPColors.primary.navy,
+                        lineHeight: '1.5',
+                        marginBottom: '0.875rem'
+                      }}>
+                        {comment.text}
+                      </p>
+
+                      {/* Separator */}
+                      <div style={{
+                        height: '1px',
+                        background: PLPColors.getColorWithOpacity(PLPColors.neutral.gray300, 0.5),
+                        marginBottom: '0.625rem'
+                      }} />
+
+                      {/* Actions Footer */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
                         <span style={{
                           fontSize: '0.75rem',
                           color: PLPColors.neutral.gray500
                         }}>
                           {new Date(comment.timestamp).toLocaleDateString()}
                         </span>
-                      </div>
-                      <p style={{
-                        fontSize: '0.875rem',
-                        color: PLPColors.primary.navy,
-                        lineHeight: '1.5',
-                        marginBottom: '0.75rem'
-                      }}>
-                        {comment.text}
-                      </p>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem'
-                      }}>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -584,18 +659,20 @@ const MobileNews = () => {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.25rem',
-                            background: 'none',
+                            background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.08),
                             border: 'none',
                             cursor: 'pointer',
-                            padding: '0.25rem 0.5rem',
-                            borderRadius: '0.5rem',
+                            padding: '0.375rem 0.625rem',
+                            borderRadius: '0.75rem',
                             transition: 'all 0.2s ease'
                           }}
                           onMouseOver={(e) => {
-                            e.target.style.background = PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1);
+                            e.target.style.background = PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.15);
+                            e.target.style.transform = 'translateY(-1px)';
                           }}
                           onMouseOut={(e) => {
-                            e.target.style.background = 'none';
+                            e.target.style.background = PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.08);
+                            e.target.style.transform = 'translateY(0)';
                           }}
                         >
                           <motion.div
@@ -611,7 +688,7 @@ const MobileNews = () => {
                           <span style={{
                             fontSize: '0.75rem',
                             color: PLPColors.neutral.gray600,
-                            fontWeight: '500'
+                            fontWeight: '600'
                           }}>
                             {comment.likes + (commentLikes[comment.id] || 0)}
                           </span>
@@ -754,7 +831,7 @@ const MobileNews = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedNewsCategory(category)}
                 style={{
-                  padding: '0.75rem 1rem',
+                  padding: '0.625rem 0.875rem',
                   borderRadius: '1rem',
                   fontSize: '0.875rem',
                   fontWeight: '600',
@@ -903,58 +980,27 @@ const MobileNews = () => {
                       </div>
                     </div>
                     
-                    {/* Quick Actions */}
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem'
-                    }}>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLike(article.id);
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '0.25rem',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        <Heart 
-                          size={16} 
-                          color={PLPColors.status.error}
-                          fill={articleLikes[article.id] ? PLPColors.status.error : 'none'}
-                        />
-                      </motion.button>
-                      
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleShare(article);
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '0.25rem',
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                      >
-                        <Share2 size={16} color={PLPColors.primary.gold} />
-                      </motion.button>
-                    </div>
+                    {/* Quick Actions - Share Only */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShare(article);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '0.25rem',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Share2 size={16} color={PLPColors.primary.gold} />
+                    </motion.button>
                   </div>
                 </div>
               </div>

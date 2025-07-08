@@ -379,10 +379,10 @@ const MobileDonateContent = () => {
         <motion.div 
           variants={itemVariants}
           style={{
-            background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.05),
+            background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.12),
             borderRadius: '1.5rem',
             padding: '1.5rem',
-            border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.15)}`,
+            border: `1px solid ${PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.25)}`,
             marginBottom: '1rem'
           }}
         >
@@ -419,7 +419,7 @@ const MobileDonateContent = () => {
             gap: '0.75rem'
           }}>
             <div style={{
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1),
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.18),
               borderRadius: '0.75rem',
               padding: '0.75rem',
               textAlign: 'center'
@@ -434,7 +434,7 @@ const MobileDonateContent = () => {
             </div>
             
             <div style={{
-              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+              background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.18),
               borderRadius: '0.75rem',
               padding: '0.75rem',
               textAlign: 'center'

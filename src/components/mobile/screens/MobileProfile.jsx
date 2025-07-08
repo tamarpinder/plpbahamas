@@ -28,6 +28,8 @@ import ScreenErrorBoundary from '../../shared/ScreenErrorBoundary';
 import PersonalImpactCard from './home/PersonalImpactCard';
 import RecentActivityFeed from './home/RecentActivityFeed';
 import { PLPColors } from '../../../constants/brandColors';
+import { toast } from 'sonner';
+import ConfirmationModal from '../../ui/ConfirmationModal';
 
 const MobileProfileContent = () => {
   const { user, logout, isLoading } = useAuthStore();
@@ -41,6 +43,8 @@ const MobileProfileContent = () => {
   } = useGamificationStore();
   
   const [editMode, setEditMode] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   
   // Early return if user is null (during logout process)
   if (!user || isLoading) {
@@ -77,12 +81,12 @@ const MobileProfileContent = () => {
   const safeUserProfile = userProfile || { totalPoints: 0, actions: {} };
   const safeRecentAchievements = recentAchievements || [];
 
-  const handleLogout = async () => {
-    // Show confirmation dialog
-    if (!window.confirm('Are you sure you want to sign out?')) {
-      return;
-    }
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
 
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true);
     try {
       const result = await logout();
       if (result && result.success) {
@@ -90,6 +94,7 @@ const MobileProfileContent = () => {
           icon: '👋',
           duration: 2000
         });
+        setShowLogoutModal(false);
       } else {
         throw new Error(result?.error || 'Logout failed');
       }
@@ -99,7 +104,13 @@ const MobileProfileContent = () => {
         icon: '❌',
         duration: 3000
       });
+    } finally {
+      setIsLoggingOut(false);
     }
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   const profileStats = [
@@ -138,7 +149,7 @@ const MobileProfileContent = () => {
     { icon: Bell, label: 'Notifications', action: () => {}, badge: '3' },
     { icon: Settings, label: 'Account Settings', action: () => {} },
     { icon: Shield, label: 'Privacy & Security', action: () => {} },
-    { icon: LogOut, label: 'Sign Out', action: handleLogout, danger: true }
+    { icon: LogOut, label: 'Sign Out', action: handleLogoutClick, danger: true }
   ];
 
   const containerVariants = {
@@ -585,6 +596,20 @@ const MobileProfileContent = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={handleCancelLogout}
+        onConfirm={handleConfirmLogout}
+        title="Confirm Sign Out"
+        message="Are you sure you want to sign out? You'll need to log in again to access your account."
+        confirmText="Sign Out"
+        cancelText="Cancel"
+        variant="danger"
+        icon={LogOut}
+        isLoading={isLoggingOut}
+      />
     </motion.div>
   );
 };

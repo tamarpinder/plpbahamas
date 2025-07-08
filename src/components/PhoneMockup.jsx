@@ -75,9 +75,23 @@ const PhoneMockup = ({ children }) => {
             </div>
             
             {/* App Content */}
-            <div style={{ paddingTop: '44px', height: '100%', overflow: 'hidden' }}>
+            <div style={{ paddingTop: '44px', height: '100%', overflow: 'hidden', position: 'relative' }}>
               {children}
             </div>
+
+            {/* Modal Root Container */}
+            <div 
+              id="phone-modal-root" 
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                pointerEvents: 'none',
+                zIndex: 1000
+              }}
+            />
             
             {/* Home Indicator */}
             <div style={{

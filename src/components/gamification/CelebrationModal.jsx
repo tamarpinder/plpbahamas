@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
 import BadgeDisplay from './BadgeDisplay';
+import { usePhonePortal } from '../../contexts/ModalPortalContext';
 
 const CelebrationModal = ({ 
   isOpen, 
@@ -103,17 +104,37 @@ const CelebrationModal = ({
     return null;
   }
 
-  return (
+  const modal = (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          pointerEvents: 'auto'
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* Backdrop */}
         <motion.div
-          className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(8px)'
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -268,6 +289,8 @@ const CelebrationModal = ({
       </motion.div>
     </AnimatePresence>
   );
+
+  return usePhonePortal(modal);
 };
 
 export default CelebrationModal;

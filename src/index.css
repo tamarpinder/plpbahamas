@@ -29,6 +29,15 @@
   }
 }
 
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Smooth scrolling for the entire app */
 html {
   scroll-behavior: smooth;

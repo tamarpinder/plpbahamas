@@ -94,17 +94,30 @@ const useAuthStore = create((set, get) => ({
       },
 
       loginAsGuest: () => {
+        // Set user in MockApi first
+        const response = mockApi.loginAsGuest();
+        
         const guestUser = {
           id: 'guest',
-          name: 'Guest User',
-          email: 'guest@plp.bs',
+          name: 'Demo User',
+          email: 'demo@plp.bs',
           isGuest: true,
           memberSince: new Date().toISOString(),
           verified: false,
           volunteerStatus: 'Guest',
-          donationTotal: 0,
+          donationTotal: 175.00, // Show demo donation history
           eventsAttended: 0,
-          badges: ['Guest Access']
+          badges: ['Demo Access'],
+          permissions: {
+            viewNews: true,
+            viewEvents: true,
+            likeContent: true,
+            comment: true,
+            rsvp: false,
+            donate: true, // Enable donations for demo
+            volunteer: false,
+            privateMessages: false
+          }
         };
         
         set({ 

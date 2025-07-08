@@ -101,16 +101,17 @@ export const mockUserProfiles = [
 
 export const mockGuestUser = {
   id: 'guest',
-  name: 'Guest User',
-  email: null,
+  name: 'Demo User',
+  email: 'demo@plp.bs',
   isGuest: true,
+  donationTotal: 175.00, // Show some demo donation history
   permissions: {
     viewNews: true,
     viewEvents: true,
     likeContent: true,
     comment: true,
     rsvp: false,
-    donate: false,
+    donate: true, // Enable donations for demo purposes
     volunteer: false,
     privateMessages: false
   },

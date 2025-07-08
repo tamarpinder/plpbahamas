@@ -53,6 +53,23 @@ export class MockApiService {
       }
     ]);
 
+    // Add demo payment method for guest user
+    const guestUserId = 'guest';
+    this.paymentMethods.set(guestUserId, [
+      {
+        id: 'guest-card-1',
+        type: 'card',
+        displayName: 'Visa ending in 4242',
+        lastFour: '4242',
+        expiryMonth: '12',
+        expiryYear: '2028',
+        cardType: 'visa',
+        nameOnCard: 'Demo User',
+        isDefault: true,
+        createdAt: new Date().toISOString()
+      }
+    ]);
+
     // Add some sample donation history
     this.donationHistory.set(sampleUserId, [
       {
@@ -77,6 +94,46 @@ export class MockApiService {
         status: 'completed',
         date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
         confirmationNumber: 'PLP' + (Date.now() - 7 * 24 * 60 * 60 * 1000),
+        recurring: false
+      }
+    ]);
+
+    // Add demo donation history for guest user
+    this.donationHistory.set(guestUserId, [
+      {
+        id: 'guest-donation-1',
+        amount: 100,
+        currency: 'USD',
+        category: 'general',
+        paymentMethod: 'card',
+        paymentMethodId: 'guest-card-1',
+        status: 'completed',
+        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+        confirmationNumber: 'PLP' + (Date.now() - 14 * 24 * 60 * 60 * 1000),
+        recurring: false
+      },
+      {
+        id: 'guest-donation-2',
+        amount: 50,
+        currency: 'USD',
+        category: 'healthcare',
+        paymentMethod: 'card',
+        paymentMethodId: 'guest-card-1',
+        status: 'completed',
+        date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        confirmationNumber: 'PLP' + (Date.now() - 30 * 24 * 60 * 60 * 1000),
+        recurring: false
+      },
+      {
+        id: 'guest-donation-3',
+        amount: 25,
+        currency: 'USD',
+        category: 'education',
+        paymentMethod: 'card',
+        paymentMethodId: 'guest-card-1',
+        status: 'completed',
+        date: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
+        confirmationNumber: 'PLP' + (Date.now() - 45 * 24 * 60 * 60 * 1000),
         recurring: false
       }
     ]);
@@ -130,6 +187,21 @@ export class MockApiService {
     await simulateNetworkDelay(100, 300);
     this.currentUser = null;
     return { success: true };
+  }
+
+  // Guest login
+  loginAsGuest() {
+    this.currentUser = {
+      id: 'guest',
+      name: 'Demo User',
+      email: 'demo@plp.bs',
+      isGuest: true,
+      donationTotal: 175.00,
+      permissions: {
+        donate: true
+      }
+    };
+    return { success: true, user: this.currentUser };
   }
 
   // News

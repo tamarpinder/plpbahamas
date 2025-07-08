@@ -39,6 +39,18 @@ import RecentActivityFeed from './home/RecentActivityFeed';
 import { PLPColors } from '../../../constants/brandColors';
 import { toast } from 'sonner';
 import ConfirmationModal from '../../ui/ConfirmationModal';
+import { 
+  TEST_CARDS, 
+  formatCardNumber, 
+  formatExpiryDate, 
+  detectCardType, 
+  getCardTypeInfo,
+  generateFutureExpiryDate,
+  generateCVV,
+  generateTestName,
+  createPaymentMethodFromCard,
+  isValidCardNumber
+} from '../../../utils/testCardData';
 
 // Payment Methods Management View
 const PaymentMethodsView = ({ onBack, user }) => {
@@ -48,12 +60,22 @@ const PaymentMethodsView = ({ onBack, user }) => {
     isLoading, 
     error,
     loadPaymentMethods,
+    addPaymentMethod,
     deletePaymentMethod,
     setDefaultPaymentMethod
   } = usePaymentStore();
 
   const [showAddMethod, setShowAddMethod] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    number: '',
+    expiry: '',
+    cvv: '',
+    name: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
     loadPaymentMethods();
@@ -75,6 +97,74 @@ const PaymentMethodsView = ({ onBack, user }) => {
       toast.success('Default payment method updated');
     } else {
       toast.error('Failed to update default payment method');
+    }
+  };
+
+  // Form handlers
+  const handleInputChange = (field, value) => {
+    let formattedValue = value;
+    
+    if (field === 'number') {
+      formattedValue = formatCardNumber(value);
+    } else if (field === 'expiry') {
+      formattedValue = formatExpiryDate(value);
+    } else if (field === 'cvv') {
+      formattedValue = value.replace(/\D/g, '').slice(0, 4);
+    }
+    
+    setFormData(prev => ({
+      ...prev,
+      [field]: formattedValue
+    }));
+  };
+
+  const useTestCard = (cardKey) => {
+    const testCard = TEST_CARDS[cardKey];
+    setFormData({
+      number: formatCardNumber(testCard.number),
+      expiry: generateFutureExpiryDate(),
+      cvv: generateCVV(cardKey),
+      name: generateTestName()
+    });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      number: '',
+      expiry: '',
+      cvv: '',
+      name: ''
+    });
+    setShowAddMethod(false);
+  };
+
+  const handleSubmitPaymentMethod = async () => {
+    if (!formData.number || !formData.expiry || !formData.cvv || !formData.name) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (!isValidCardNumber(formData.number)) {
+      toast.error('Please enter a valid card number');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const paymentMethodData = createPaymentMethodFromCard(formData);
+      const result = await addPaymentMethod(paymentMethodData);
+      
+      if (result.success) {
+        toast.success('Payment method added successfully!');
+        resetForm();
+      } else {
+        toast.error(result.error || 'Failed to add payment method');
+      }
+    } catch (error) {
+      toast.error('Error adding payment method');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -322,7 +412,7 @@ const PaymentMethodsView = ({ onBack, user }) => {
           </div>
         )}
 
-        {/* Add Method Placeholder */}
+        {/* Add Payment Method Form */}
         {showAddMethod && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -332,31 +422,263 @@ const PaymentMethodsView = ({ onBack, user }) => {
               backdropFilter: 'blur(20px)',
               borderRadius: '1rem',
               padding: '2rem',
-              textAlign: 'center',
               marginTop: '1rem'
             }}
           >
-            <Plus size={48} color={PLPColors.primary.blue} style={{ marginBottom: '1rem' }} />
-            <h3 style={{ color: PLPColors.primary.navy, marginBottom: '0.5rem' }}>Add Payment Method</h3>
-            <p style={{ color: PLPColors.neutral.gray600, marginBottom: '1rem' }}>
-              Payment method form will be implemented soon
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAddMethod(false)}
-              style={{
-                background: PLPColors.neutral.gray200,
-                border: 'none',
-                borderRadius: '0.5rem',
-                padding: '0.75rem 1.5rem',
-                cursor: 'pointer',
-                color: PLPColors.primary.navy,
-                fontWeight: '600'
-              }}
-            >
-              Close
-            </motion.button>
+            {/* Form Header */}
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <CreditCard size={48} color={PLPColors.primary.blue} style={{ marginBottom: '1rem' }} />
+              <h3 style={{ color: PLPColors.primary.navy, marginBottom: '0.5rem' }}>Add Payment Method</h3>
+              <p style={{ color: PLPColors.neutral.gray600 }}>
+                Add a test credit card for donation testing
+              </p>
+            </div>
+
+            {/* Quick Test Cards */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h4 style={{ 
+                color: PLPColors.primary.navy, 
+                marginBottom: '1rem', 
+                fontSize: '0.875rem',
+                fontWeight: '600' 
+              }}>
+                Quick Test Cards
+              </h4>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(2, 1fr)', 
+                gap: '0.5rem' 
+              }}>
+                {Object.entries(TEST_CARDS).map(([key, card]) => (
+                  <motion.button
+                    key={key}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => useTestCard(key)}
+                    style={{
+                      background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1),
+                      border: `1px solid ${PLPColors.primary.blue}`,
+                      borderRadius: '0.5rem',
+                      padding: '0.75rem',
+                      cursor: 'pointer',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <div style={{ 
+                      fontSize: '0.75rem', 
+                      fontWeight: '600',
+                      color: PLPColors.primary.navy 
+                    }}>
+                      {card.brand}
+                    </div>
+                    <div style={{ 
+                      fontSize: '0.625rem', 
+                      color: PLPColors.neutral.gray600 
+                    }}>
+                      •••• {card.number.slice(-4)}
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Fields */}
+            <div style={{ marginBottom: '2rem' }}>
+              {/* Card Number */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: PLPColors.primary.navy 
+                }}>
+                  Card Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  value={formData.number}
+                  onChange={(e) => handleInputChange('number', e.target.value)}
+                  maxLength={19}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: `1px solid ${PLPColors.neutral.gray300}`,
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    background: 'white'
+                  }}
+                />
+                {formData.number && (
+                  <div style={{ 
+                    fontSize: '0.75rem', 
+                    color: PLPColors.primary.blue,
+                    marginTop: '0.25rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    {getCardTypeInfo(detectCardType(formData.number)).icon}
+                    {getCardTypeInfo(detectCardType(formData.number)).name}
+                  </div>
+                )}
+              </div>
+
+              {/* Expiry and CVV */}
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr', 
+                gap: '1rem',
+                marginBottom: '1rem' 
+              }}>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    color: PLPColors.primary.navy 
+                  }}>
+                    Expiry Date
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
+                    value={formData.expiry}
+                    onChange={(e) => handleInputChange('expiry', e.target.value)}
+                    maxLength={5}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: `1px solid ${PLPColors.neutral.gray300}`,
+                      borderRadius: '0.5rem',
+                      fontSize: '1rem',
+                      background: 'white'
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    marginBottom: '0.5rem',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    color: PLPColors.primary.navy 
+                  }}>
+                    CVV
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="123"
+                    value={formData.cvv}
+                    onChange={(e) => handleInputChange('cvv', e.target.value)}
+                    maxLength={4}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: `1px solid ${PLPColors.neutral.gray300}`,
+                      borderRadius: '0.5rem',
+                      fontSize: '1rem',
+                      background: 'white'
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Name on Card */}
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: PLPColors.primary.navy 
+                }}>
+                  Name on Card
+                </label>
+                <input
+                  type="text"
+                  placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: `1px solid ${PLPColors.neutral.gray300}`,
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    background: 'white'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={resetForm}
+                disabled={isSubmitting}
+                style={{
+                  flex: 1,
+                  background: PLPColors.neutral.gray200,
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  color: PLPColors.primary.navy,
+                  fontWeight: '600',
+                  opacity: isSubmitting ? 0.5 : 1
+                }}
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleSubmitPaymentMethod}
+                disabled={isSubmitting || !formData.number || !formData.expiry || !formData.cvv || !formData.name}
+                style={{
+                  flex: 2,
+                  background: isSubmitting || !formData.number || !formData.expiry || !formData.cvv || !formData.name
+                    ? PLPColors.neutral.gray400
+                    : PLPColors.primary.blue,
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem',
+                  cursor: isSubmitting || !formData.number || !formData.expiry || !formData.cvv || !formData.name 
+                    ? 'not-allowed' 
+                    : 'pointer',
+                  color: 'white',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid rgba(255, 255, 255, 0.3)',
+                      borderTop: '2px solid white',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite'
+                    }} />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <Plus size={16} />
+                    Add Payment Method
+                  </>
+                )}
+              </motion.button>
+            </div>
           </motion.div>
         )}
 

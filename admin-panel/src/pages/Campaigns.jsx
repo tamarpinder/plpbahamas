@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { mockCampaigns, donationStats } from '../data/mockCampaigns';
+import { CreateCampaignModal } from '../components/modals/CreateCampaignModal';
 
 function ProgressBar({ current, goal, className = "" }) {
   const percentage = Math.min((current / goal) * 100, 100);
@@ -137,8 +138,10 @@ export function Campaigns() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [campaigns, setCampaigns] = useState(mockCampaigns);
 
-  const filteredCampaigns = mockCampaigns.filter(campaign => {
+  const filteredCampaigns = campaigns.filter(campaign => {
     const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          campaign.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || campaign.status === statusFilter;
@@ -147,8 +150,12 @@ export function Campaigns() {
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  const categories = [...new Set(mockCampaigns.map(campaign => campaign.category))];
+  const categories = [...new Set(campaigns.map(campaign => campaign.category))];
   const recentDonations = donationStats.recentTransactions.slice(0, 5);
+
+  const handleCreateCampaign = (campaignData) => {
+    setCampaigns(prev => [campaignData, ...prev]);
+  };
 
   return (
     <div className="space-y-6">
@@ -258,7 +265,10 @@ export function Campaigns() {
             </select>
           </div>
           
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             <Plus size={18} />
             New Campaign
           </button>
@@ -333,6 +343,13 @@ export function Campaigns() {
           </div>
         </div>
       </div>
+
+      {/* Create Campaign Modal */}
+      <CreateCampaignModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateCampaign}
+      />
     </div>
   );
 }

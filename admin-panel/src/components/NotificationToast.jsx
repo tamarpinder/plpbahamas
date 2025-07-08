@@ -131,14 +131,16 @@ export function NotificationToastContainer() {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
-      {toasts.map((toast) => (
-        <NotificationToast
-          key={toast.id}
-          {...toast}
-          onClose={removeToast}
-        />
-      ))}
+    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm w-full pointer-events-none">
+      <div className="pointer-events-auto space-y-2">
+        {toasts.map((toast) => (
+          <NotificationToast
+            key={toast.id}
+            {...toast}
+            onClose={removeToast}
+          />
+        ))}
+      </div>
     </div>
   );
 }

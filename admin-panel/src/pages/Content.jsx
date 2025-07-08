@@ -27,6 +27,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { mockContent, contentStats } from '../data/mockContent';
+import { CreateContentModal } from '../components/modals/CreateContentModal';
 
 function ContentCard({ content }) {
   const getStatusColor = (status) => {
@@ -205,20 +206,26 @@ export function Content() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [content, setContent] = useState(mockContent);
 
-  const filteredContent = mockContent.filter(content => {
-    const matchesSearch = content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         content.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || content.status === statusFilter;
-    const matchesType = typeFilter === 'all' || content.type === typeFilter;
-    const matchesCategory = categoryFilter === 'all' || content.category === categoryFilter;
+  const filteredContent = content.filter(contentItem => {
+    const matchesSearch = contentItem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         contentItem.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || contentItem.status === statusFilter;
+    const matchesType = typeFilter === 'all' || contentItem.type === typeFilter;
+    const matchesCategory = categoryFilter === 'all' || contentItem.category === categoryFilter;
     
     return matchesSearch && matchesStatus && matchesType && matchesCategory;
   });
 
-  const contentTypes = [...new Set(mockContent.map(content => content.type))];
-  const categories = [...new Set(mockContent.map(content => content.category).filter(Boolean))];
+  const contentTypes = [...new Set(content.map(item => item.type))];
+  const categories = [...new Set(content.map(item => item.category).filter(Boolean))];
   const recentActivity = contentStats.recentActivity.slice(0, 5);
+
+  const handleCreateContent = (contentData) => {
+    setContent(prev => [contentData, ...prev]);
+  };
 
   return (
     <div className="space-y-6">
@@ -348,7 +355,10 @@ export function Content() {
               <Upload size={18} />
               Upload
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button 
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
               <Plus size={18} />
               New Content
             </button>
@@ -393,11 +403,11 @@ export function Content() {
           {/* Content performance */}
           <div className="admin-card p-6">
             <h3 className="heading-sm mb-4">Top Performing</h3>
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-hidden">
               {contentStats.topPerforming.slice(0, 5).map((content, index) => (
-                <div key={content.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                <div key={content.id} className="flex items-center justify-between min-w-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                       {index + 1}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -405,7 +415,7 @@ export function Content() {
                       <p className="text-xs text-gray-500">{content.type}</p>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex-shrink-0 ml-2">
                     <p className="text-sm font-medium text-gray-900">{content.views.toLocaleString()}</p>
                     <p className="text-xs text-gray-500">views</p>
                   </div>
@@ -415,6 +425,13 @@ export function Content() {
           </div>
         </div>
       </div>
+
+      {/* Create Content Modal */}
+      <CreateContentModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateContent}
+      />
     </div>
   );
 }

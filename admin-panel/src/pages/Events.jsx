@@ -20,6 +20,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { mockEvents } from '../data/mockEvents';
+import { CreateEventModal } from '../components/modals/CreateEventModal';
 
 function EventCard({ event }) {
   const getStatusColor = (status) => {
@@ -214,8 +215,10 @@ export function Events() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [selectedDate, setSelectedDate] = useState(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [events, setEvents] = useState(mockEvents);
 
-  const filteredEvents = mockEvents.filter(event => {
+  const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || event.status === statusFilter;
@@ -226,9 +229,13 @@ export function Events() {
     return matchesSearch && matchesStatus && matchesType && matchesDate;
   });
 
-  const eventTypes = [...new Set(mockEvents.map(event => event.type))];
-  const upcomingEvents = mockEvents.filter(event => event.status === 'upcoming').slice(0, 3);
-  const liveEvents = mockEvents.filter(event => event.status === 'live');
+  const eventTypes = [...new Set(events.map(event => event.type))];
+  const upcomingEvents = events.filter(event => event.status === 'upcoming').slice(0, 3);
+  const liveEvents = events.filter(event => event.status === 'live');
+
+  const handleCreateEvent = (eventData) => {
+    setEvents(prev => [eventData, ...prev]);
+  };
 
   return (
     <div className="space-y-6">
@@ -332,7 +339,10 @@ export function Events() {
             </select>
           </div>
           
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             <Plus size={18} />
             New Event
           </button>
@@ -418,6 +428,13 @@ export function Events() {
           )}
         </div>
       </div>
+
+      {/* Create Event Modal */}
+      <CreateEventModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleCreateEvent}
+      />
     </div>
   );
 }

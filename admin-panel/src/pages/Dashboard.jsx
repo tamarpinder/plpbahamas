@@ -19,6 +19,9 @@ import {
 import { PLPColors } from '../constants/colors';
 import { DashboardCustomizer } from '../components/DashboardCustomizer';
 import { LiveNotificationsWidget } from '../components/LiveNotificationsWidget';
+import { AddSupporterModal } from '../components/modals/AddSupporterModal';
+import { CreateEventModal } from '../components/modals/CreateEventModal';
+import { CreateCampaignModal } from '../components/modals/CreateCampaignModal';
 
 // Mock data for the dashboard
 const stats = [
@@ -236,6 +239,9 @@ function TaskListWidget() {
 
 export function Dashboard() {
   const [showCustomizer, setShowCustomizer] = useState(false);
+  const [showAddSupporterModal, setShowAddSupporterModal] = useState(false);
+  const [showCreateEventModal, setShowCreateEventModal] = useState(false);
+  const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
   const [widgets, setWidgets] = useState([
     { id: 'stats', name: 'Key Statistics', enabled: true, size: 'full', component: StatsWidget },
     { id: 'recent', name: 'Recent Activity', enabled: true, size: 'half', component: RecentActivityWidget },
@@ -261,6 +267,21 @@ export function Dashboard() {
       case 'full': return 'lg:col-span-4';
       default: return 'lg:col-span-2';
     }
+  };
+
+  const handleAddSupporter = (supporterData) => {
+    console.log('New supporter added:', supporterData);
+    // In a real app, this would sync with the Users page state or update a global store
+  };
+
+  const handleCreateEvent = (eventData) => {
+    console.log('New event created:', eventData);
+    // In a real app, this would sync with the Events page state or update a global store
+  };
+
+  const handleCreateCampaign = (campaignData) => {
+    console.log('New campaign created:', campaignData);
+    // In a real app, this would sync with the Campaigns page state or update a global store
   };
 
   return (
@@ -300,7 +321,10 @@ export function Dashboard() {
       <div className="admin-card p-6">
         <h2 className="heading-md mb-6">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group">
+          <button 
+            onClick={() => setShowAddSupporterModal(true)}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
+          >
             <UserPlus size={20} className="text-gray-400 group-hover:text-blue-600" />
             <div className="text-left">
               <div className="font-medium text-gray-900">Add Supporter</div>
@@ -308,7 +332,10 @@ export function Dashboard() {
             </div>
           </button>
           
-          <button className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group">
+          <button 
+            onClick={() => setShowCreateEventModal(true)}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
+          >
             <Calendar size={20} className="text-gray-400 group-hover:text-blue-600" />
             <div className="text-left">
               <div className="font-medium text-gray-900">Create Event</div>
@@ -316,11 +343,14 @@ export function Dashboard() {
             </div>
           </button>
           
-          <button className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group">
+          <button 
+            onClick={() => setShowCreateCampaignModal(true)}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
+          >
             <MessageCircle size={20} className="text-gray-400 group-hover:text-blue-600" />
             <div className="text-left">
-              <div className="font-medium text-gray-900">Send Message</div>
-              <div className="text-sm text-gray-500">Broadcast to supporters</div>
+              <div className="font-medium text-gray-900">Create Campaign</div>
+              <div className="text-sm text-gray-500">Start new fundraising campaign</div>
             </div>
           </button>
         </div>
@@ -332,6 +362,25 @@ export function Dashboard() {
         onClose={() => setShowCustomizer(false)}
         widgets={widgets}
         onSave={handleSaveWidgets}
+      />
+
+      {/* Quick Action Modals */}
+      <AddSupporterModal
+        isOpen={showAddSupporterModal}
+        onClose={() => setShowAddSupporterModal(false)}
+        onSave={handleAddSupporter}
+      />
+      
+      <CreateEventModal
+        isOpen={showCreateEventModal}
+        onClose={() => setShowCreateEventModal(false)}
+        onSave={handleCreateEvent}
+      />
+      
+      <CreateCampaignModal
+        isOpen={showCreateCampaignModal}
+        onClose={() => setShowCreateCampaignModal(false)}
+        onSave={handleCreateCampaign}
       />
     </div>
   );

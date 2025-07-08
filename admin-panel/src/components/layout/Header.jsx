@@ -26,10 +26,10 @@ export function Header({ onMenuClick }) {
             </button>
             
             {/* Search */}
-            <div className="hidden sm:block">
+            <div className="hidden sm:block flex-1 max-w-2xl">
               <button
                 onClick={openSearch}
-                className="flex items-center gap-2 pl-10 pr-4 py-2 w-96 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors text-left"
+                className="flex items-center gap-2 pl-10 pr-4 py-2 w-full bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors text-left relative"
               >
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                 <span className="text-gray-500">Search supporters, events, campaigns...</span>

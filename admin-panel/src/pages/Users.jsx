@@ -22,6 +22,7 @@ import {
 import { generateMockUsers, userStats } from '../data/mockUsers';
 import { FilterPanel } from '../components/FilterPanel';
 import { BulkActions } from '../components/BulkActions';
+import { AddSupporterModal } from '../components/modals/AddSupporterModal';
 
 const allUsers = generateMockUsers(50);
 
@@ -263,9 +264,11 @@ export function Users() {
   const [activeFilters, setActiveFilters] = useState({});
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [users, setUsers] = useState(allUsers);
 
   const filteredUsers = useMemo(() => {
-    return allUsers.filter(user => {
+    return users.filter(user => {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
@@ -313,9 +316,9 @@ export function Users() {
       
       return matchesSearch && matchesStatus && matchesDistrict && matchesAdvancedFilters;
     });
-  }, [searchTerm, statusFilter, districtFilter, activeFilters]);
+  }, [searchTerm, statusFilter, districtFilter, activeFilters, users]);
 
-  const districts = [...new Set(allUsers.map(user => user.votingDistrict))];
+  const districts = [...new Set(users.map(user => user.votingDistrict))];
 
   const handleSelectUser = (userId) => {
     setSelectedUsers(prev => {
@@ -376,6 +379,10 @@ export function Users() {
     return Object.entries(activeFilters).filter(([key, value]) => 
       value && (Array.isArray(value) ? value.length > 0 : true)
     ).length;
+  };
+
+  const handleAddSupporter = (supporterData) => {
+    setUsers(prev => [supporterData, ...prev]);
   };
 
   return (
@@ -489,7 +496,10 @@ export function Users() {
               <Download size={18} />
               Export
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button 
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
               <UserPlus size={18} />
               Add Supporter
             </button>
@@ -586,6 +596,13 @@ export function Users() {
           onClose={() => setSelectedUser(null)}
         />
       )}
+
+      {/* Add Supporter Modal */}
+      <AddSupporterModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleAddSupporter}
+      />
     </div>
   );
 }

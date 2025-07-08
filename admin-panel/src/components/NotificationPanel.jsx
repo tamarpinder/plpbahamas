@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useNotifications } from '../contexts/NotificationContext';
 import { NotificationSettings } from './NotificationSettings';
+import { IntegratedDrawer } from './IntegratedDrawer';
 
 function NotificationItem({ notification, onMarkAsRead, onDelete }) {
   const getIcon = () => {
@@ -128,20 +129,16 @@ export function NotificationPanel({ isOpen, onClose }) {
     return n.type === filter;
   });
 
-  if (!isOpen) return null;
-
   return (
     <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
-        onClick={onClose}
-      />
-      
-      {/* Panel */}
-      <div className="fixed right-0 top-0 h-full w-96 bg-white shadow-xl z-50 flex flex-col">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+      <IntegratedDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        width="w-96"
+        showHeader={false}
+      >
+        {/* Custom Header */}
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -156,7 +153,7 @@ export function NotificationPanel({ isOpen, onClose }) {
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <X size={20} />
             </button>
@@ -254,7 +251,7 @@ export function NotificationPanel({ isOpen, onClose }) {
             Notification Settings
           </button>
         </div>
-      </div>
+      </IntegratedDrawer>
       
       {/* Notification Settings Modal */}
       <NotificationSettings 

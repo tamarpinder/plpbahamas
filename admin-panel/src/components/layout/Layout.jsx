@@ -30,7 +30,7 @@ export function Layout({ children }) {
       />
       
       {/* Main content */}
-      <div className="flex flex-col lg:pl-64">
+      <div className="flex flex-col lg:pl-64 main-content">
         {/* Header */}
         <Header onMenuClick={() => setSidebarOpen(true)} />
         

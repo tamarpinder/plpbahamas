@@ -27,6 +27,7 @@ import {
   Radio
 } from 'lucide-react';
 import { mockCommunications, communicationStats } from '../data/mockCommunications';
+import { CreateCampaignModal } from '../components/modals/CreateCampaignModal';
 
 function CommunicationCard({ communication }) {
   const getStatusColor = (status) => {
@@ -228,6 +229,7 @@ export function Communications() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [channelFilter, setChannelFilter] = useState('all');
   const [audienceFilter, setAudienceFilter] = useState('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const filteredCommunications = mockCommunications.filter(comm => {
     const matchesSearch = comm.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -366,7 +368,10 @@ export function Communications() {
             </select>
           </div>
           
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
             <Plus size={18} />
             New Campaign
           </button>
@@ -440,6 +445,16 @@ export function Communications() {
           </div>
         </div>
       </div>
+
+      {/* Create Campaign Modal */}
+      <CreateCampaignModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={(campaignData) => {
+          console.log('New campaign created:', campaignData);
+          setShowCreateModal(false);
+        }}
+      />
     </div>
   );
 }

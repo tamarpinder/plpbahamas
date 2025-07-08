@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, FileText, Image, Video, Mic, Calendar, Tag, User, Globe } from 'lucide-react';
+import { FormDrawer } from '../IntegratedDrawer';
 
 export function CreateContentModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -95,28 +96,15 @@ export function CreateContentModal({ isOpen, onClose, onSave }) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <FileText className="w-5 h-5 text-orange-600" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900">Create New Content</h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+    <FormDrawer
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create New Content"
+      icon={FileText}
+      width="w-[700px]"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-4">Content Details</h3>
@@ -326,26 +314,24 @@ export function CreateContentModal({ isOpen, onClose, onSave }) {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700"
-              >
-                {formData.status === 'published' ? 'Publish Now' :
-                 formData.status === 'scheduled' ? 'Schedule Content' :
-                 'Save as Draft'}
-              </button>
-            </div>
-          </form>
+        <div className="flex justify-end gap-3 pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-sm font-medium text-white bg-orange-600 rounded-lg hover:bg-orange-700"
+          >
+            {formData.status === 'published' ? 'Publish Now' :
+             formData.status === 'scheduled' ? 'Schedule Content' :
+             'Save as Draft'}
+          </button>
         </div>
-      </div>
-    </div>
+      </form>
+    </FormDrawer>
   );
 }

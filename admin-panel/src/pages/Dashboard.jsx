@@ -14,7 +14,13 @@ import {
   MapPin,
   Activity,
   Bell,
-  CheckCircle2
+  CheckCircle2,
+  Send,
+  VideoIcon,
+  BarChart3,
+  Upload,
+  Download,
+  FileText
 } from 'lucide-react';
 import { PLPColors } from '../constants/colors';
 import { DashboardCustomizer } from '../components/DashboardCustomizer';
@@ -22,6 +28,7 @@ import { LiveNotificationsWidget } from '../components/LiveNotificationsWidget';
 import { AddSupporterModal } from '../components/modals/AddSupporterModal';
 import { CreateEventModal } from '../components/modals/CreateEventModal';
 import { CreateCampaignModal } from '../components/modals/CreateCampaignModal';
+import { useDrawerTransition } from '../components/IntegratedDrawer';
 
 // Mock data for the dashboard
 const stats = [
@@ -242,6 +249,7 @@ export function Dashboard() {
   const [showAddSupporterModal, setShowAddSupporterModal] = useState(false);
   const [showCreateEventModal, setShowCreateEventModal] = useState(false);
   const [showCreateCampaignModal, setShowCreateCampaignModal] = useState(false);
+  const { isDrawerOpen, openDrawer, closeDrawer } = useDrawerTransition();
   const [widgets, setWidgets] = useState([
     { id: 'stats', name: 'Key Statistics', enabled: true, size: 'full', component: StatsWidget },
     { id: 'recent', name: 'Recent Activity', enabled: true, size: 'half', component: RecentActivityWidget },
@@ -320,9 +328,9 @@ export function Dashboard() {
       {/* Quick Actions */}
       <div className="admin-card p-6">
         <h2 className="heading-md mb-6">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <button 
-            onClick={() => setShowAddSupporterModal(true)}
+            onClick={() => { setShowAddSupporterModal(true); openDrawer(); }}
             className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
           >
             <UserPlus size={20} className="text-gray-400 group-hover:text-blue-600" />
@@ -333,10 +341,10 @@ export function Dashboard() {
           </button>
           
           <button 
-            onClick={() => setShowCreateEventModal(true)}
-            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
+            onClick={() => { setShowCreateEventModal(true); openDrawer(); }}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-400 hover:bg-green-50 transition-all group"
           >
-            <Calendar size={20} className="text-gray-400 group-hover:text-blue-600" />
+            <Calendar size={20} className="text-gray-400 group-hover:text-green-600" />
             <div className="text-left">
               <div className="font-medium text-gray-900">Create Event</div>
               <div className="text-sm text-gray-500">Schedule new event</div>
@@ -344,13 +352,46 @@ export function Dashboard() {
           </button>
           
           <button 
-            onClick={() => setShowCreateCampaignModal(true)}
-            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all group"
+            onClick={() => { setShowCreateCampaignModal(true); openDrawer(); }}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all group"
           >
-            <MessageCircle size={20} className="text-gray-400 group-hover:text-blue-600" />
+            <MessageCircle size={20} className="text-gray-400 group-hover:text-purple-600" />
             <div className="text-left">
               <div className="font-medium text-gray-900">Create Campaign</div>
               <div className="text-sm text-gray-500">Start new fundraising campaign</div>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => alert('Send Message feature coming soon!')}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-all group"
+          >
+            <Send size={20} className="text-gray-400 group-hover:text-orange-600" />
+            <div className="text-left">
+              <div className="font-medium text-gray-900">Send Message</div>
+              <div className="text-sm text-gray-500">Mass communication</div>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => alert('Schedule Meeting feature coming soon!')}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-teal-400 hover:bg-teal-50 transition-all group"
+          >
+            <VideoIcon size={20} className="text-gray-400 group-hover:text-teal-600" />
+            <div className="text-left">
+              <div className="font-medium text-gray-900">Schedule Meeting</div>
+              <div className="text-sm text-gray-500">Calendar integration</div>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => alert('Generate Report feature coming soon!')}
+            className="flex items-center gap-3 p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-400 hover:bg-indigo-50 transition-all group"
+          >
+            <BarChart3 size={20} className="text-gray-400 group-hover:text-indigo-600" />
+            <div className="text-left">
+              <div className="font-medium text-gray-900">Generate Report</div>
+              <div className="text-sm text-gray-500">Analytics shortcut</div>
             </div>
           </button>
         </div>
@@ -367,19 +408,19 @@ export function Dashboard() {
       {/* Quick Action Modals */}
       <AddSupporterModal
         isOpen={showAddSupporterModal}
-        onClose={() => setShowAddSupporterModal(false)}
+        onClose={() => { setShowAddSupporterModal(false); closeDrawer(); }}
         onSave={handleAddSupporter}
       />
       
       <CreateEventModal
         isOpen={showCreateEventModal}
-        onClose={() => setShowCreateEventModal(false)}
+        onClose={() => { setShowCreateEventModal(false); closeDrawer(); }}
         onSave={handleCreateEvent}
       />
       
       <CreateCampaignModal
         isOpen={showCreateCampaignModal}
-        onClose={() => setShowCreateCampaignModal(false)}
+        onClose={() => { setShowCreateCampaignModal(false); closeDrawer(); }}
         onSave={handleCreateCampaign}
       />
     </div>

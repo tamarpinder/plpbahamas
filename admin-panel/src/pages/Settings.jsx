@@ -30,6 +30,7 @@ import {
   Calendar,
   BarChart3
 } from 'lucide-react';
+import { AddSupporterModal } from '../components/modals/AddSupporterModal';
 
 function SettingCard({ icon: Icon, title, description, children, badge }) {
   return (
@@ -126,6 +127,7 @@ function UserRoleCard({ user, onEdit, onDelete }) {
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState('general');
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [settings, setSettings] = useState({
     // General Settings
     organizationName: 'Progressive Liberal Party',
@@ -157,7 +159,7 @@ export function Settings() {
     primaryColor: '#0066CC'
   });
 
-  const [users] = useState([
+  const [users, setUsers] = useState([
     { id: 1, name: 'Philip Davis', email: 'p.davis@plp.bs', role: 'Super Admin', lastLogin: '2024-01-08' },
     { id: 2, name: 'Chester Cooper', email: 'c.cooper@plp.bs', role: 'Admin', lastLogin: '2024-01-08' },
     { id: 3, name: 'Sarah Johnson', email: 's.johnson@plp.bs', role: 'Manager', lastLogin: '2024-01-07' },
@@ -167,6 +169,17 @@ export function Settings() {
 
   const updateSetting = (key, value) => {
     setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleAddUser = (userData) => {
+    const newUser = {
+      id: Date.now(),
+      name: `${userData.firstName} ${userData.lastName}`,
+      email: userData.email,
+      role: userData.supportLevel === 'leader' ? 'Admin' : 'Viewer',
+      lastLogin: 'Never'
+    };
+    setUsers(prev => [newUser, ...prev]);
   };
 
   const tabs = [
@@ -302,7 +315,10 @@ export function Settings() {
                     <h4 className="font-medium text-gray-900">Current Team Members</h4>
                     <p className="text-sm text-gray-500">Manage roles and permissions for each team member</p>
                   </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  <button 
+                    onClick={() => setShowAddUserModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
                     <Plus size={16} />
                     Add User
                   </button>
@@ -719,6 +735,13 @@ export function Settings() {
           Save Changes
         </button>
       </div>
+
+      {/* Add User Modal */}
+      <AddSupporterModal
+        isOpen={showAddUserModal}
+        onClose={() => setShowAddUserModal(false)}
+        onSave={handleAddUser}
+      />
     </div>
   );
 }

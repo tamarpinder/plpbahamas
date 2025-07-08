@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Target, DollarSign, Calendar, Flag, Users, TrendingUp } from 'lucide-react';
+import { FormDrawer } from '../IntegratedDrawer';
 
 export function CreateCampaignModal({ isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -88,28 +89,15 @@ export function CreateCampaignModal({ isOpen, onClose, onSave }) {
     onClose();
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Target className="w-5 h-5 text-purple-600" />
-              </div>
-              <h2 className="text-xl font-semibold text-gray-900">Create New Campaign</h2>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+    <FormDrawer
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create New Campaign"
+      icon={Target}
+      width="w-[700px]"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div>
               <h3 className="text-sm font-medium text-gray-900 mb-4">Campaign Details</h3>
@@ -326,24 +314,22 @@ export function CreateCampaignModal({ isOpen, onClose, onSave }) {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
-              >
-                Create Campaign
-              </button>
-            </div>
-          </form>
+        <div className="flex justify-end gap-3 pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700"
+          >
+            Create Campaign
+          </button>
         </div>
-      </div>
-    </div>
+      </form>
+    </FormDrawer>
   );
 }

@@ -338,3 +338,39 @@ body {
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 }
+
+/* Integrated Drawer System */
+.main-content {
+  transition: margin-right 0.3s ease-in-out;
+}
+
+.main-content.drawer-open {
+  margin-right: 24rem; /* 384px - matches w-96 */
+}
+
+@media (max-width: 1024px) {
+  .main-content.drawer-open {
+    margin-right: 0;
+  }
+}
+
+/* Responsive drawer widths */
+@media (max-width: 768px) {
+  .main-content.drawer-open {
+    margin-right: 0;
+  }
+  
+  /* Force drawer to be full width on mobile */
+  .integrated-drawer {
+    width: 100vw !important;
+  }
+}
+
+/* Drawer specific styles */
+.drawer-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
+.drawer-backdrop {
+  backdrop-filter: blur(2px);
+}

@@ -312,7 +312,7 @@ const MobileLiveStreamContent = ({ onNavigate }) => {
           position: 'absolute',
           top: '1rem',
           left: '1rem',
-          background: '#DC2626',
+          background: PLPColors.primary.blue,
           color: PLPColors.neutral.white,
           padding: '0.375rem 0.75rem',
           borderRadius: '1rem',

@@ -124,7 +124,7 @@ const UpcomingLiveEvents = ({ upcomingEvents, onNavigate, itemVariants }) => {
                 </p>
               </div>
               <div style={{
-                background: 'linear-gradient(135deg, #DC2626, #EF4444)',
+                background: `linear-gradient(135deg, ${PLPColors.primary.blue}, ${PLPColors.primary.lightBlue})`,
                 color: 'white',
                 padding: '0.25rem 0.5rem',
                 borderRadius: '0.5rem',

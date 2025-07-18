@@ -917,8 +917,8 @@ const MobileProfileContent = () => {
       icon: Heart, 
       label: 'Donations Made', 
       value: safeUserProfile.actions?.FIRST_DONATION || 0,
-      color: '#EF4444',
-      background: PLPColors.getColorWithOpacity('#EF4444', 0.1)
+      color: PLPColors.primary.blue,
+      background: PLPColors.getColorWithOpacity(PLPColors.primary.blue, 0.1)
     },
     { 
       icon: Award, 
@@ -1002,32 +1002,6 @@ const MobileProfileContent = () => {
           position: 'relative'
         }}
       >
-        {/* PLP Gold Logo - Premium Profile Badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          style={{
-            position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            zIndex: 10
-          }}
-        >
-          <img 
-            src="/assets/logo/PLP LOGO - HAND RAYS GOLD.png" 
-            alt="PLP Premium"
-            style={{
-              height: '28px',
-              width: 'auto',
-              filter: 'drop-shadow(0 2px 8px rgba(255, 215, 0, 0.3))'
-            }}
-            onError={(e) => {
-              console.warn('Gold logo failed to load in profile');
-              e.target.style.display = 'none';
-            }}
-          />
-        </motion.div>
         
         {/* Background Pattern */}
         <div style={{
@@ -1169,69 +1143,6 @@ const MobileProfileContent = () => {
           itemVariants={itemVariants}
         />
 
-        {/* Profile Stats */}
-        <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{
-            fontSize: '1.125rem',
-            fontWeight: 'bold',
-            color: PLPColors.neutral.white,
-            marginBottom: '0.75rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem'
-          }}>
-            <Trophy size={20} color={PLPColors.primary.gold} />
-            Your Impact
-          </h2>
-          
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '0.75rem'
-          }}>
-            {profileStats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.02 }}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.95)',
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '1rem',
-                    padding: '1rem',
-                    textAlign: 'center',
-                    border: `1px solid ${PLPColors.getColorWithOpacity(stat.color, 0.2)}`
-                  }}
-                >
-                  <div style={{
-                    width: '2.5rem',
-                    height: '2.5rem',
-                    background: stat.background,
-                    borderRadius: '50%',
-                    margin: '0 auto 0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Icon size={20} color={stat.color} />
-                  </div>
-                  <div style={{
-                    fontSize: '1.25rem',
-                    fontWeight: 'bold',
-                    color: PLPColors.primary.navy,
-                    marginBottom: '0.25rem'
-                  }}>
-                    {stat.value}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: PLPColors.neutral.gray600 }}>
-                    {stat.label}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
 
         {/* Recent Achievements */}
         {userBadges.length > 0 && (

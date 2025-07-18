@@ -142,7 +142,7 @@ const EventCard = ({ event, onRSVP }) => {
 // Helper function to get event type colors
 const getEventTypeColor = (type) => {
   const colors = {
-    'Rally': 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+    'Rally': 'linear-gradient(135deg, #0066CC 0%, #003366 100%)',
     'Forum': 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
     'Town Hall': 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
     'Summit': 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',

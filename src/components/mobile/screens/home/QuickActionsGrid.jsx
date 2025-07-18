@@ -114,7 +114,7 @@ const QuickActionsGrid = ({ onNavigate, awardUserPoints, itemVariants }) => {
           label="Live Stream"
           subtitle="Watch now"
           onClick={() => handleQuickAction('livestream', 'livestream', 'LIVESTREAM_JOIN')}
-          backgroundColor="#DC2626"
+          backgroundColor={PLPColors.primary.blue}
           textColor={PLPColors.neutral.white}
           status="live"
           isLive={true}

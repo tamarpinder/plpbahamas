@@ -16,7 +16,7 @@ const NewsCard = ({ article, onClick }) => {
     const categoryColors = {
       'HEALTHCARE': PLPColors.primary.blue,
       'COMMUNITY': PLPColors.primary.gold,
-      'EMPLOYMENT': PLPColors.status.success,
+      'EMPLOYMENT': PLPColors.primary.blue,
       'INFRASTRUCTURE': PLPColors.neutral.gray600,
       'ENVIRONMENT': PLPColors.status.success,
       'EDUCATION': PLPColors.primary.blue

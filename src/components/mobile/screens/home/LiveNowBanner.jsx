@@ -11,7 +11,7 @@ const LiveNowBanner = ({ liveEvent, onJoinStream, itemVariants }) => {
       variants={itemVariants}
       style={{
         marginBottom: '1rem',
-        background: 'linear-gradient(135deg, #DC2626 0%, #EF4444 50%, #F87171 100%)',
+        background: `linear-gradient(135deg, ${PLPColors.primary.blue} 0%, ${PLPColors.primary.lightBlue} 50%, ${PLPColors.primary.blue} 100%)`,
         borderRadius: '1rem',
         padding: '1rem',
         position: 'relative',
@@ -39,7 +39,7 @@ const LiveNowBanner = ({ liveEvent, onJoinStream, itemVariants }) => {
       }}>
         <div style={{
           background: '#FFFFFF',
-          color: '#DC2626',
+          color: PLPColors.primary.blue,
           padding: '0.25rem 0.5rem',
           borderRadius: '0.5rem',
           fontSize: '0.75rem',
@@ -94,7 +94,7 @@ const LiveNowBanner = ({ liveEvent, onJoinStream, itemVariants }) => {
         style={{
           width: '100%',
           background: '#FFFFFF',
-          color: '#DC2626',
+          color: PLPColors.primary.blue,
           border: 'none',
           borderRadius: '0.75rem',
           padding: '0.75rem',

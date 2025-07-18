@@ -17,7 +17,7 @@ const ActionButton = ({
 }) => {
   const getStatusColor = () => {
     switch (status) {
-      case 'live': return '#DC2626';
+      case 'live': return PLPColors.primary.blue;
       case 'soon': return PLPColors.primary.orange || PLPColors.primary.gold;
       case 'new': return PLPColors.status.success;
       default: return null;

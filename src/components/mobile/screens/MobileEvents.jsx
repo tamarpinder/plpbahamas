@@ -236,7 +236,7 @@ const MobileEventsContent = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 1 + (index * 0.15) }}
                     style={{
-                      background: PLPColors.status.error,
+                      background: PLPColors.primary.blue,
                       color: PLPColors.neutral.white,
                       fontSize: '0.75rem',
                       fontWeight: '600',

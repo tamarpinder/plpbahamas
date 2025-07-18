@@ -136,9 +136,9 @@ const MobileVolunteerContent = () => {
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'Easy': return PLPColors.status.success;
+      case 'Easy': return PLPColors.primary.blue;
       case 'Medium': return PLPColors.primary.gold;
-      case 'High': return PLPColors.status.error;
+      case 'High': return PLPColors.neutral.black;
       default: return PLPColors.neutral.gray500;
     }
   };

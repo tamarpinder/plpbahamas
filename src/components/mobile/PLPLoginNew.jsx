@@ -204,28 +204,12 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
               width: '120px',
               height: '120px',
               margin: '0 auto 1.5rem',
-              background: `linear-gradient(135deg, ${PLPColors.neutral.white} 0%, ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)} 100%)`,
-              borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: `${PLPShadows.xl}, 0 0 20px ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.3)}`,
-              border: `3px solid ${PLPColors.primary.gold}`,
-              position: 'relative',
-              overflow: 'hidden'
+              position: 'relative'
             }}
           >
-            {/* Subtle golden glow effect */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `conic-gradient(from 0deg, transparent, ${PLPColors.getColorWithOpacity(PLPColors.primary.gold, 0.1)}, transparent)`,
-              borderRadius: '50%',
-              animation: 'rotate 10s linear infinite'
-            }} />
             
             <img 
               src="/assets/logo/PLP LOGO - HAND RAYS GOLD.png"
@@ -268,6 +252,20 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
             }
           `}</style>
 
+          {!isSignUp && (
+            <motion.h2
+              variants={itemVariants}
+              style={{
+                fontSize: '2rem',
+                fontWeight: 'bold',
+                color: PLPColors.primary.gold,
+                marginBottom: '0.5rem',
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+              }}
+            >
+              PLP
+            </motion.h2>
+          )}
           <motion.h1 
             variants={itemVariants}
             style={{
@@ -292,11 +290,12 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
           </motion.p>
         </motion.div>
 
-        {/* Form Section with Glassmorphism */}
+        {/* Form Section with Glassmorphism - Fixed Scrolling */}
         <motion.div
           variants={itemVariants}
           style={{
             flex: '1',
+            overflowY: 'auto',
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(20px)',
             borderTopLeftRadius: '2rem',
@@ -401,8 +400,10 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                       onFocus={() => setFocusedField('name')}
                       onBlur={() => setFocusedField(null)}
                       style={{
+                        width: '100%',
                         height: '3.5rem',
                         paddingLeft: '3rem',
+                        paddingRight: '3rem',
                         border: `2px solid ${validationErrors.name ? PLPColors.status.error : 
                           focusedField === 'name' ? PLPColors.primary.gold : PLPColors.neutral.gray200}`,
                         borderRadius: '1rem',
@@ -546,6 +547,42 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
               )}
             </motion.div>
 
+            {/* Forgot Password Link */}
+            {!isSignUp && (
+              <motion.div 
+                variants={itemVariants}
+                style={{
+                  textAlign: 'right',
+                  marginTop: '-0.5rem'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    toast.info('Password reset functionality coming soon!');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: PLPColors.primary.blue,
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    padding: '0.25rem 0'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.color = PLPColors.primary.navy;
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.color = PLPColors.primary.blue;
+                  }}
+                >
+                  Forgot Password?
+                </button>
+              </motion.div>
+            )}
+
             {/* Confirm Password Field */}
             <AnimatePresence mode="wait">
               {isSignUp && (
@@ -575,6 +612,7 @@ const PLPLoginNew = ({ onLoginSuccess }) => {
                     onFocus={() => setFocusedField('confirmPassword')}
                     onBlur={() => setFocusedField(null)}
                     style={{
+                      width: '100%',
                       height: '3.5rem',
                       paddingLeft: '3rem',
                       paddingRight: '3rem',
